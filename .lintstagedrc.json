@@ -1,0 +1,6 @@
+{
+  "*.{ts,tsx,mts,mjs,js}": ["prettier --write", "eslint --max-warnings 0 --no-warn-ignored"],
+  "*.{json,md,mdx,css,yml,yaml,astro}": ["prettier --write"],
+  "contracts/**/*.sol": ["bash -c 'cd contracts && forge fmt \"${@#contracts/}\"' --"],
+  "contracts/{src,script}/**/*.sol": ["solhint --max-warnings 0 -c contracts/.solhint.json"]
+}

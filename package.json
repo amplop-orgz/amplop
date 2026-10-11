@@ -1,0 +1,53 @@
+{
+  "name": "amplop",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "workspaces": [
+    "packages/shared"
+  ],
+  "engines": {
+    "node": ">=22.0.0 <23.0.0",
+    "npm": ">=10.0.0"
+  },
+  "packageManager": "npm@10.9.9",
+  "scripts": {
+    "prepare": "husky",
+    "generate": "npm run generate -w @amplop/shared",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint:sol": "solhint --max-warnings 0 -c contracts/.solhint.json \"contracts/src/**/*.sol\" \"contracts/script/**/*.sol\"",
+    "fmt:sol": "cd contracts && forge fmt",
+    "fmt:sol:check": "cd contracts && forge fmt --check",
+    "test": "vitest run --dir scripts && npm run test --workspaces --if-present",
+    "test:coverage": "vitest run --dir scripts && npm run test:coverage --workspaces --if-present",
+    "test:contracts": "cd contracts && forge test --fuzz-seed 0x2026",
+    "test:contracts:ci": "cd contracts && FOUNDRY_PROFILE=ci forge test",
+    "coverage:contracts": "cd contracts && FOUNDRY_PROFILE=coverage forge coverage --report lcov --report summary --no-match-coverage \"(test|script|mocks)\" && node ../scripts/check-forge-coverage.mjs lcov.info",
+    "analyze:contracts": "bash scripts/analyze-contracts.sh",
+    "build": "npm run build --workspaces --if-present",
+    "chain:up": "anvil --chain-id 31337 --port 8545 --accounts 10 --balance 10000 --timestamp 1790586000",
+    "deploy:local": "bash contracts/script/deploy-local.sh",
+    "check:deps": "node scripts/check-exact-versions.mjs && node scripts/check-lockfile.mjs && node scripts/check-install-scripts.mjs && node scripts/check-framework-patch.mjs",
+    "check:skills": "node scripts/check-skills.mjs",
+    "check:repo": "node scripts/check-env-example.mjs && node scripts/check-nosemgrep.mjs",
+    "gates": "npm run typecheck && npm run lint && npm run format:check && npm run lint:sol && npm run fmt:sol:check && npm run check:repo && npm run check:deps && npm run check:skills && npm run test:coverage && npm run test:contracts:ci && npm run coverage:contracts && npm run build"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.5",
+    "@types/node": "22.20.5",
+    "@vitest/coverage-v8": "5.0.3",
+    "eslint": "9.39.5",
+    "eslint-config-prettier": "10.1.8",
+    "globals": "17.13.0",
+    "husky": "9.1.7",
+    "lint-staged": "17.6.0",
+    "prettier": "3.9.10",
+    "solhint": "6.2.5",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.71.1",
+    "vitest": "5.0.3"
+  }
+}

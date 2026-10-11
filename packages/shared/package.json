@@ -1,0 +1,32 @@
+{
+  "name": "@amplop/shared",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    "./abi": {
+      "types": "./dist/generated/amplop.d.ts",
+      "default": "./dist/generated/amplop.js"
+    },
+    "./abi/json": "./abi/AmplopEnvelopes.json",
+    "./enums": {
+      "types": "./dist/enums.d.ts",
+      "default": "./dist/enums.js"
+    },
+    "./constants": {
+      "types": "./dist/constants.d.ts",
+      "default": "./dist/constants.js"
+    }
+  },
+  "scripts": {
+    "generate": "cd ../../contracts && forge build && cd ../packages/shared && wagmi generate && node scripts/write-abi-json.mjs && prettier --write src/generated abi",
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage"
+  },
+  "devDependencies": {
+    "@wagmi/cli": "2.10.0"
+  }
+}
