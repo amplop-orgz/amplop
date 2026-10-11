@@ -1,0 +1,4 @@
+forge coverage --report summary (profile coverage), after the SA fixes
+| File                    | % Lines           | % Statements     | % Branches       | % Funcs         |
+| src/AmplopEnvelopes.sol | 100.00% (448/448) | 99.50% (595/598) | 97.12% (101/104) | 100.00% (56/56) |
+| Total                   | 100.00% (448/448) | 99.50% (595/598) | 97.12% (101/104) | 100.00% (56/56) |

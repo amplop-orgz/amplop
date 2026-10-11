@@ -1,0 +1,1195 @@
+No files changed, compilation skipped
+
+Ran 8 tests for test/AuditFixes.t.sol:AuditFixesTest
+[PASS] test_SA01_approvalBoundToRequest() (gas: 218757)
+[PASS] test_SA02_dueRecoveryNotCancelledByRemoval() (gas: 113332)
+[PASS] test_SA02_recoveryCannotBlockRemoval() (gas: 125147)
+[PASS] test_SA03_deadRecoveryCanBeCancelled() (gas: 158917)
+[PASS] test_SA03_liveRecoveryStillNotCancellableAfterWait() (gas: 103277)
+[PASS] test_SA04_onlyNewOwnerFinishesRecovery() (gas: 113000)
+[PASS] test_SA05_recoveryDropsOldKeyInviteAndLockOff() (gas: 201024)
+[PASS] test_SA06_inviteKeyWorksOncePerAccount() (gas: 201585)
+Suite result: ok. 8 passed; 0 failed; 0 skipped; finished in 4.23ms (2.38ms CPU time)
+
+Ran 6 tests for test/FixReview.t.sol:FixReviewTest
+[PASS] test_FR_deadRecoveryCancelledThenAddressFreed() (gas: 573134)
+[PASS] test_FR_deadRecoveryRevives() (gas: 516393)
+[PASS] test_FR_inviteKeyFrontRun() (gas: 313659)
+[PASS] test_FR_lockOffDroppedIsRestartable() (gas: 626277)
+[PASS] test_FR_oldKeyKillsDueRecovery() (gas: 317165)
+[PASS] test_FR_removeTrustedFreesTarget() (gas: 558270)
+Suite result: ok. 6 passed; 0 failed; 0 skipped; finished in 4.24ms (2.33ms CPU time)
+
+Ran 7 tests for test/rules/InputChecks.t.sol:InputChecksTest
+[PASS] test_INPUT_acceptWithoutInvite() (gas: 17714)
+[PASS] test_INPUT_accountIdZeroAndUnknown() (gas: 12497)
+[PASS] test_INPUT_authorizeChecks() (gas: 31564)
+[PASS] test_INPUT_collectAndRefundZero() (gas: 498654)
+[PASS] test_INPUT_depositChecks() (gas: 38882)
+[PASS] test_INPUT_moveTargetAndNothingToMove() (gas: 808815)
+[PASS] test_INPUT_zeroAddresses() (gas: 153096)
+Suite result: ok. 7 passed; 0 failed; 0 skipped; finished in 1.61ms (797.79µs CPU time)
+
+Ran 9 tests for test/Security.t.sol:SecurityTest
+[PASS] test_SEC_collectOnlyToSettlement() (gas: 573844)
+[PASS] test_SEC_feeOnTransferTokenRejected() (gas: 5654800)
+[PASS] test_SEC_inviteSignatureForAnotherChainRejected() (gas: 186870)
+[PASS] test_SEC_inviteSignatureForAnotherContractRejected() (gas: 188236)
+[PASS] test_SEC_malleableSignatureRejected() (gas: 237562)
+[PASS] test_SEC_noEtherAccepted() (gas: 25379)
+[PASS] test_SEC_reentrancyBlocked() (gas: 6266320)
+[PASS] test_SEC_serverKeysCannotTouchLockedOrUnreleased() (gas: 935085)
+[PASS] test_SEC_skipDaysRevertsWithDemoOff() (gas: 5097425)
+Suite result: ok. 9 passed; 0 failed; 0 skipped; finished in 7.37ms (5.35ms CPU time)
+
+Ran 20 tests for test/rules/SplitRelease.t.sol:SplitReleaseTest
+[PASS] test_R21_immediateBeforeFirstAllowance() (gas: 435524)
+[PASS] test_R21_newSplitOnlyForLaterAllowances() (gas: 572717)
+[PASS] test_R21_secondSaveReplacesAndRestarts() (gas: 579208)
+[PASS] test_R3_onlyTreasuryCanDeposit() (gas: 178641)
+[PASS] test_R4_leftoverUnitsGoToEveryday() (gas: 393915)
+[PASS] test_R4_samePaymentIdCannotDepositTwice() (gas: 514301)
+[PASS] test_R4_sampleThousandDollars() (gas: 518043)
+[PASS] test_R4_splitMustTotal100AndStepsOf5() (gas: 242440)
+[PASS] test_R5_arrivalOnMonday() (gas: 836169)
+[PASS] test_R5_arrivalOnSunday() (gas: 551210)
+[PASS] test_R5_firstShareOnArrival() (gas: 482779)
+[PASS] test_R5_leftoverInLastShare() (gas: 480183)
+[PASS] test_R5_nothingAfterFourthShare() (gas: 567128)
+[PASS] test_R5_sharesTwoToFourOnNextThreeMondays() (gas: 542166)
+[PASS] test_R5_skipThreeDaysReleasesNothing() (gas: 466950)
+[PASS] test_R6_unspentMoneyCarriesOver() (gas: 612837)
+[PASS] test_R7_emergencyShareArrivesWholeAndLocked() (gas: 627385)
+[PASS] test_R8_finishedSchedulesFoldOnDeposit() (gas: 1585907)
+[PASS] test_R8_sameWeekAllowancesMergeExactly() (gas: 746309)
+[PASS] test_R8_twoOverlappingAllowancesAddUp() (gas: 813954)
+Suite result: ok. 20 passed; 0 failed; 0 skipped; finished in 10.41ms (6.23ms CPU time)
+
+Ran 20 tests for test/rules/Emergency.t.sol:EmergencyTest
+[PASS] test_R16_cancelKeepsLockedBalance() (gas: 181598)
+[PASS] test_R16_requestAboveLockedFails() (gas: 53389)
+[PASS] test_R16_secondRequestAfterDone() (gas: 328065)
+[PASS] test_R16_secondRequestWhileOpenFails() (gas: 122026)
+[PASS] test_R17_approveAfterOpenedFails() (gas: 263061)
+[PASS] test_R17_approveOpensAtOnce() (gas: 354504)
+[PASS] test_R17_newTrustedCanApproveOldCannot() (gas: 378549)
+[PASS] test_R17_onlyTrustedCanApprove() (gas: 300383)
+[PASS] test_R17_opensByTimeAtExactly48Hours() (gas: 213051)
+[PASS] test_R17_opensByTimeEvenWithTrustedPerson() (gas: 311248)
+[PASS] test_R18_openedMoneyToEverydayRestLocked() (gas: 535973)
+[PASS] test_R19_noTrustedPersonWaits48Hours() (gas: 168369)
+[PASS] test_R20_laterEmergencySharesArriveUnlocked() (gas: 234251)
+[PASS] test_R20_lockOffAfter48HoursMovesBalance() (gas: 166231)
+[PASS] test_R20_lockOffAndRequestBlockEachOther() (gas: 311313)
+[PASS] test_R24_cancelAfterWaitFails() (gas: 110822)
+[PASS] test_R24_cancelLockOff() (gas: 105399)
+[PASS] test_R24_cancelPendingSplit() (gas: 70845)
+[PASS] test_R24_cancelRecovery() (gas: 194503)
+[PASS] test_R24_cancelTrustedRemoval() (gas: 177864)
+Suite result: ok. 20 passed; 0 failed; 0 skipped; finished in 5.90ms (3.88ms CPU time)
+
+Ran 3 tests for test/Deploy.t.sol:DeployTest
+[PASS] test_DEPLOY_localSetupDemoOff() (gas: 12217417)
+[PASS] test_DEPLOY_preflightRejectsBadInputs() (gas: 6056554)
+[PASS] test_DEPLOY_readBacksMatchInputs() (gas: 22922837)
+Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 17.73ms (16.47ms CPU time)
+
+Ran 30 tests for test/rules/Card.t.sol:CardTest
+[PASS] testFuzz_R10_choiceMatchesRule(uint256,uint256,uint256,uint256) (runs: 10000, μ: 669144, ~: 653230)
+[PASS] test_R10_declineWhenBothShort() (gas: 645402)
+[PASS] test_R10_everydayShopNoStepInFromOthers() (gas: 520371)
+[PASS] test_R10_everydayStepsInWhenMatchShort() (gas: 600881)
+[PASS] test_R10_exactAmountApproved() (gas: 454344)
+[PASS] test_R10_neverSplitAcrossEnvelopes() (gas: 679336)
+[PASS] test_R10_purchaseBeforeAllowanceDeclined() (gas: 97429)
+[PASS] test_R10_secondPurchaseForLastDollarsDeclined() (gas: 501749)
+[PASS] test_R11_emergencyNeverPays() (gas: 875799)
+[PASS] test_R12_gamblingAlwaysDeclinedNoBalanceChange() (gas: 396380)
+[PASS] test_R13_collectAfterHoldPeriodFails() (gas: 541024)
+[PASS] test_R13_collectAfterReleaseFails() (gas: 426484)
+[PASS] test_R13_collectLessReturnsDifference() (gas: 521763)
+[PASS] test_R13_collectMoreThanHeldFails() (gas: 421566)
+[PASS] test_R13_refundReturnsToPayingEnvelope() (gas: 703294)
+[PASS] test_R13_releaseAfterSevenDaysByAnyone() (gas: 505662)
+[PASS] test_R15_declinedPurchaseCannotBeMoved() (gas: 86733)
+[PASS] test_R15_failsIfTargetShort() (gas: 429298)
+[PASS] test_R15_heldPurchaseCanBeMoved() (gas: 571848)
+[PASS] test_R15_onlyFromEveryday() (gas: 421713)
+[PASS] test_R15_onlyOnce() (gas: 498443)
+[PASS] test_R15_onlyWithinSevenDays() (gas: 422707)
+[PASS] test_R15_overrideAppliesToNextPurchase() (gas: 590184)
+[PASS] test_R15_stepInPurchaseCanMoveToFood() (gas: 635229)
+[PASS] test_R1_onlyOwnerCanMove() (gas: 519905)
+[PASS] test_R3_onlyCardServiceCanAuthorize() (gas: 304466)
+[PASS] test_R3_onlyCardServiceCollectsAndRefunds() (gas: 473680)
+[PASS] test_R3_purchaseIdCannotBeReused() (gas: 460315)
+[PASS] test_R9_defaultShopTable() (gas: 160826)
+[PASS] test_R9_matchingEnvelopePays() (gas: 1631185)
+Suite result: ok. 30 passed; 0 failed; 0 skipped; finished in 3.43s (3.43s CPU time)
+
+Ran 30 tests for test/Decimals18.t.sol:Card18Test
+[PASS] testFuzz_R10_choiceMatchesRule(uint256,uint256,uint256,uint256) (runs: 10000, μ: 673713, ~: 684441)
+[PASS] test_R10_declineWhenBothShort() (gas: 645402)
+[PASS] test_R10_everydayShopNoStepInFromOthers() (gas: 520371)
+[PASS] test_R10_everydayStepsInWhenMatchShort() (gas: 600881)
+[PASS] test_R10_exactAmountApproved() (gas: 454344)
+[PASS] test_R10_neverSplitAcrossEnvelopes() (gas: 679336)
+[PASS] test_R10_purchaseBeforeAllowanceDeclined() (gas: 97429)
+[PASS] test_R10_secondPurchaseForLastDollarsDeclined() (gas: 501749)
+[PASS] test_R11_emergencyNeverPays() (gas: 875799)
+[PASS] test_R12_gamblingAlwaysDeclinedNoBalanceChange() (gas: 396380)
+[PASS] test_R13_collectAfterHoldPeriodFails() (gas: 541024)
+[PASS] test_R13_collectAfterReleaseFails() (gas: 426484)
+[PASS] test_R13_collectLessReturnsDifference() (gas: 521763)
+[PASS] test_R13_collectMoreThanHeldFails() (gas: 421566)
+[PASS] test_R13_refundReturnsToPayingEnvelope() (gas: 703294)
+[PASS] test_R13_releaseAfterSevenDaysByAnyone() (gas: 505662)
+[PASS] test_R15_declinedPurchaseCannotBeMoved() (gas: 86733)
+[PASS] test_R15_failsIfTargetShort() (gas: 429298)
+[PASS] test_R15_heldPurchaseCanBeMoved() (gas: 571848)
+[PASS] test_R15_onlyFromEveryday() (gas: 421713)
+[PASS] test_R15_onlyOnce() (gas: 498443)
+[PASS] test_R15_onlyWithinSevenDays() (gas: 422707)
+[PASS] test_R15_overrideAppliesToNextPurchase() (gas: 590184)
+[PASS] test_R15_stepInPurchaseCanMoveToFood() (gas: 635229)
+[PASS] test_R1_onlyOwnerCanMove() (gas: 519905)
+[PASS] test_R3_onlyCardServiceCanAuthorize() (gas: 304466)
+[PASS] test_R3_onlyCardServiceCollectsAndRefunds() (gas: 473680)
+[PASS] test_R3_purchaseIdCannotBeReused() (gas: 460315)
+[PASS] test_R9_defaultShopTable() (gas: 160826)
+[PASS] test_R9_matchingEnvelopePays() (gas: 1631185)
+Suite result: ok. 30 passed; 0 failed; 0 skipped; finished in 3.78s (3.78s CPU time)
+
+Ran 18 tests for test/invariant/Invariants.t.sol:InvariantsTest
+[PASS] invariant_1_tokenBalanceEqualsAllMoney() (runs: 1000, calls: 50000, reverts: 21)
+
+╭----------+---------------------+-------+---------+----------╮
+| Contract | Selector            | Calls | Reverts | Discards |
++=============================================================+
+| Handler  | acceptInvite        | 2072  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveEmergency    | 2111  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveRecovery     | 2069  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | authorize           | 2016  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelEmergency     | 2127  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelPending       | 2110  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | collect             | 1995  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | createInvite        | 2069  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | deposit             | 2103  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | disallowed          | 2103  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finalizeEmergency   | 2090  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishLockOff       | 2003  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRecovery      | 2078  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRemoveTrusted | 2080  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | movePurchase        | 2079  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | refund              | 2115  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | register            | 2141  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | releaseHold         | 2077  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | removeTrusted       | 2125  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | requestEmergency    | 2087  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | saveSplit           | 2079  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | skipDays            | 2098  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | startLockOff        | 2117  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | warp                | 2056  | 0       | 0        |
+╰----------+---------------------+-------+---------+----------╯
+
+[PASS] invariant_2_lockedLeavesOnlyByR17ToR20() (runs: 1000, calls: 50000, reverts: 20)
+
+╭----------+---------------------+-------+---------+----------╮
+| Contract | Selector            | Calls | Reverts | Discards |
++=============================================================+
+| Handler  | acceptInvite        | 2072  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveEmergency    | 2111  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveRecovery     | 2069  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | authorize           | 2016  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelEmergency     | 2127  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelPending       | 2110  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | collect             | 1995  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | createInvite        | 2069  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | deposit             | 2103  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | disallowed          | 2103  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finalizeEmergency   | 2090  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishLockOff       | 2003  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRecovery      | 2078  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRemoveTrusted | 2080  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | movePurchase        | 2079  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | refund              | 2115  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | register            | 2141  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | releaseHold         | 2077  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | removeTrusted       | 2125  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | requestEmergency    | 2087  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | saveSplit           | 2079  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | skipDays            | 2098  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | startLockOff        | 2117  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | warp                | 2056  | 0       | 0        |
+╰----------+---------------------+-------+---------+----------╯
+
+[PASS] invariant_3_purchaseLowersOneEnvelope() (runs: 1000, calls: 50000, reverts: 21)
+
+╭----------+---------------------+-------+---------+----------╮
+| Contract | Selector            | Calls | Reverts | Discards |
++=============================================================+
+| Handler  | acceptInvite        | 2072  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveEmergency    | 2111  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveRecovery     | 2069  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | authorize           | 2016  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelEmergency     | 2127  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelPending       | 2110  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | collect             | 1995  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | createInvite        | 2069  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | deposit             | 2103  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | disallowed          | 2103  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finalizeEmergency   | 2090  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishLockOff       | 2003  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRecovery      | 2078  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRemoveTrusted | 2080  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | movePurchase        | 2079  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | refund              | 2115  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | register            | 2141  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | releaseHold         | 2077  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | removeTrusted       | 2125  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | requestEmergency    | 2087  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | saveSplit           | 2079  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | skipDays            | 2098  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | startLockOff        | 2117  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | warp                | 2056  | 0       | 0        |
+╰----------+---------------------+-------+---------+----------╯
+
+[PASS] invariant_4_collectedOnlyToSettlement() (runs: 1000, calls: 50000, reverts: 22)
+
+╭----------+---------------------+-------+---------+----------╮
+| Contract | Selector            | Calls | Reverts | Discards |
++=============================================================+
+| Handler  | acceptInvite        | 2072  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveEmergency    | 2111  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveRecovery     | 2069  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | authorize           | 2016  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelEmergency     | 2127  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelPending       | 2110  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | collect             | 1995  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | createInvite        | 2069  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | deposit             | 2103  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | disallowed          | 2103  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finalizeEmergency   | 2090  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishLockOff       | 2003  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRecovery      | 2078  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRemoveTrusted | 2080  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | movePurchase        | 2079  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | refund              | 2115  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | register            | 2141  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | releaseHold         | 2077  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | removeTrusted       | 2125  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | requestEmergency    | 2087  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | saveSplit           | 2079  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | skipDays            | 2098  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | startLockOff        | 2117  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | warp                | 2056  | 0       | 0        |
+╰----------+---------------------+-------+---------+----------╯
+
+[PASS] invariant_5_onlyAllowedCallersSucceed() (runs: 1000, calls: 50000, reverts: 20)
+
+╭----------+---------------------+-------+---------+----------╮
+| Contract | Selector            | Calls | Reverts | Discards |
++=============================================================+
+| Handler  | acceptInvite        | 2072  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveEmergency    | 2111  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveRecovery     | 2069  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | authorize           | 2016  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelEmergency     | 2127  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelPending       | 2110  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | collect             | 1995  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | createInvite        | 2069  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | deposit             | 2103  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | disallowed          | 2103  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finalizeEmergency   | 2090  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishLockOff       | 2003  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRecovery      | 2078  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRemoveTrusted | 2080  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | movePurchase        | 2079  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | refund              | 2115  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | register            | 2141  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | releaseHold         | 2077  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | removeTrusted       | 2125  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | requestEmergency    | 2087  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | saveSplit           | 2079  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | skipDays            | 2098  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | startLockOff        | 2117  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | warp                | 2056  | 0       | 0        |
+╰----------+---------------------+-------+---------+----------╯
+
+[PASS] invariant_6_everyWaitReadsAccountClock() (runs: 1000, calls: 50000, reverts: 20)
+
+╭----------+---------------------+-------+---------+----------╮
+| Contract | Selector            | Calls | Reverts | Discards |
++=============================================================+
+| Handler  | acceptInvite        | 2072  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveEmergency    | 2111  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveRecovery     | 2069  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | authorize           | 2016  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelEmergency     | 2127  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelPending       | 2110  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | collect             | 1995  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | createInvite        | 2069  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | deposit             | 2103  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | disallowed          | 2103  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finalizeEmergency   | 2090  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishLockOff       | 2003  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRecovery      | 2078  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRemoveTrusted | 2080  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | movePurchase        | 2079  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | refund              | 2115  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | register            | 2141  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | releaseHold         | 2077  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | removeTrusted       | 2125  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | requestEmergency    | 2087  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | saveSplit           | 2079  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | skipDays            | 2098  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | startLockOff        | 2117  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | warp                | 2056  | 0       | 0        |
+╰----------+---------------------+-------+---------+----------╯
+
+[PASS] invariant_XR_accountClockIsBlockTimePlusSkips() (runs: 1000, calls: 50000, reverts: 22)
+
+╭----------+---------------------+-------+---------+----------╮
+| Contract | Selector            | Calls | Reverts | Discards |
++=============================================================+
+| Handler  | acceptInvite        | 2072  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveEmergency    | 2111  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveRecovery     | 2069  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | authorize           | 2016  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelEmergency     | 2127  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelPending       | 2110  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | collect             | 1995  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | createInvite        | 2069  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | deposit             | 2103  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | disallowed          | 2103  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finalizeEmergency   | 2090  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishLockOff       | 2003  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRecovery      | 2078  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRemoveTrusted | 2080  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | movePurchase        | 2079  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | refund              | 2115  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | register            | 2141  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | releaseHold         | 2077  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | removeTrusted       | 2125  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | requestEmergency    | 2087  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | saveSplit           | 2079  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | skipDays            | 2098  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | startLockOff        | 2117  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | warp                | 2056  | 0       | 0        |
+╰----------+---------------------+-------+---------+----------╯
+
+[PASS] invariant_XR_deadRecoveryCancellable() (runs: 1000, calls: 50000, reverts: 24)
+
+╭----------+---------------------+-------+---------+----------╮
+| Contract | Selector            | Calls | Reverts | Discards |
++=============================================================+
+| Handler  | acceptInvite        | 2072  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveEmergency    | 2111  | 4       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveRecovery     | 2069  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | authorize           | 2016  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelEmergency     | 2127  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelPending       | 2110  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | collect             | 1995  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | createInvite        | 2069  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | deposit             | 2103  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | disallowed          | 2103  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finalizeEmergency   | 2090  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishLockOff       | 2003  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRecovery      | 2078  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRemoveTrusted | 2080  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | movePurchase        | 2079  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | refund              | 2115  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | register            | 2141  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | releaseHold         | 2077  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | removeTrusted       | 2125  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | requestEmergency    | 2087  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | saveSplit           | 2079  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | skipDays            | 2098  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | startLockOff        | 2117  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | warp                | 2056  | 0       | 0        |
+╰----------+---------------------+-------+---------+----------╯
+
+[PASS] invariant_XR_heldMatchesHeldPurchases() (runs: 1000, calls: 50000, reverts: 21)
+
+╭----------+---------------------+-------+---------+----------╮
+| Contract | Selector            | Calls | Reverts | Discards |
++=============================================================+
+| Handler  | acceptInvite        | 2072  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveEmergency    | 2111  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveRecovery     | 2069  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | authorize           | 2016  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelEmergency     | 2127  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelPending       | 2110  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | collect             | 1995  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | createInvite        | 2069  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | deposit             | 2103  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | disallowed          | 2103  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finalizeEmergency   | 2090  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishLockOff       | 2003  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRecovery      | 2078  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRemoveTrusted | 2080  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | movePurchase        | 2079  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | refund              | 2115  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | register            | 2141  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | releaseHold         | 2077  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | removeTrusted       | 2125  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | requestEmergency    | 2087  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | saveSplit           | 2079  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | skipDays            | 2098  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | startLockOff        | 2117  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | warp                | 2056  | 0       | 0        |
+╰----------+---------------------+-------+---------+----------╯
+
+[PASS] invariant_XR_lockOffMeansNothingLocked() (runs: 1000, calls: 50000, reverts: 22)
+
+╭----------+---------------------+-------+---------+----------╮
+| Contract | Selector            | Calls | Reverts | Discards |
++=============================================================+
+| Handler  | acceptInvite        | 2072  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveEmergency    | 2111  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveRecovery     | 2069  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | authorize           | 2016  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelEmergency     | 2127  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelPending       | 2110  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | collect             | 1995  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | createInvite        | 2069  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | deposit             | 2103  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | disallowed          | 2103  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finalizeEmergency   | 2090  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishLockOff       | 2003  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRecovery      | 2078  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRemoveTrusted | 2080  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | movePurchase        | 2079  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | refund              | 2115  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | register            | 2141  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | releaseHold         | 2077  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | removeTrusted       | 2125  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | requestEmergency    | 2087  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | saveSplit           | 2079  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | skipDays            | 2098  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | startLockOff        | 2117  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | warp                | 2056  | 0       | 0        |
+╰----------+---------------------+-------+---------+----------╯
+
+[PASS] invariant_XR_openEmergencyWithinLocked() (runs: 1000, calls: 50000, reverts: 22)
+
+╭----------+---------------------+-------+---------+----------╮
+| Contract | Selector            | Calls | Reverts | Discards |
++=============================================================+
+| Handler  | acceptInvite        | 2072  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveEmergency    | 2111  | 4       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveRecovery     | 2069  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | authorize           | 2016  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelEmergency     | 2127  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelPending       | 2110  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | collect             | 1995  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | createInvite        | 2069  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | deposit             | 2103  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | disallowed          | 2103  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finalizeEmergency   | 2090  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishLockOff       | 2003  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRecovery      | 2078  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRemoveTrusted | 2080  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | movePurchase        | 2079  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | refund              | 2115  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | register            | 2141  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | releaseHold         | 2077  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | removeTrusted       | 2125  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | requestEmergency    | 2087  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | saveSplit           | 2079  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | skipDays            | 2098  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | startLockOff        | 2117  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | warp                | 2056  | 0       | 0        |
+╰----------+---------------------+-------+---------+----------╯
+
+[PASS] invariant_XR_ownerAndTrustedMapsOneToOne() (runs: 1000, calls: 50000, reverts: 24)
+
+╭----------+---------------------+-------+---------+----------╮
+| Contract | Selector            | Calls | Reverts | Discards |
++=============================================================+
+| Handler  | acceptInvite        | 2072  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveEmergency    | 2111  | 5       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveRecovery     | 2069  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | authorize           | 2016  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelEmergency     | 2127  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelPending       | 2110  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | collect             | 1995  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | createInvite        | 2069  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | deposit             | 2103  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | disallowed          | 2103  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finalizeEmergency   | 2090  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishLockOff       | 2003  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRecovery      | 2078  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRemoveTrusted | 2080  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | movePurchase        | 2079  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | refund              | 2115  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | register            | 2141  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | releaseHold         | 2077  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | removeTrusted       | 2125  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | requestEmergency    | 2087  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | saveSplit           | 2079  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | skipDays            | 2098  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | startLockOff        | 2117  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | warp                | 2056  | 0       | 0        |
+╰----------+---------------------+-------+---------+----------╯
+
+[PASS] invariant_XR_paymentAndPurchaseIdsNeverReused() (runs: 1000, calls: 50000, reverts: 23)
+
+╭----------+---------------------+-------+---------+----------╮
+| Contract | Selector            | Calls | Reverts | Discards |
++=============================================================+
+| Handler  | acceptInvite        | 2072  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveEmergency    | 2111  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveRecovery     | 2069  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | authorize           | 2016  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelEmergency     | 2127  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelPending       | 2110  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | collect             | 1995  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | createInvite        | 2069  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | deposit             | 2103  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | disallowed          | 2103  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finalizeEmergency   | 2090  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishLockOff       | 2003  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRecovery      | 2078  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRemoveTrusted | 2080  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | movePurchase        | 2079  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | refund              | 2115  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | register            | 2141  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | releaseHold         | 2077  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | removeTrusted       | 2125  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | requestEmergency    | 2087  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | saveSplit           | 2079  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | skipDays            | 2098  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | startLockOff        | 2117  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | warp                | 2056  | 0       | 0        |
+╰----------+---------------------+-------+---------+----------╯
+
+[PASS] invariant_XR_purchaseRecordConsistent() (runs: 1000, calls: 50000, reverts: 22)
+
+╭----------+---------------------+-------+---------+----------╮
+| Contract | Selector            | Calls | Reverts | Discards |
++=============================================================+
+| Handler  | acceptInvite        | 2072  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveEmergency    | 2111  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveRecovery     | 2069  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | authorize           | 2016  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelEmergency     | 2127  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelPending       | 2110  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | collect             | 1995  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | createInvite        | 2069  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | deposit             | 2103  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | disallowed          | 2103  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finalizeEmergency   | 2090  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishLockOff       | 2003  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRecovery      | 2078  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRemoveTrusted | 2080  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | movePurchase        | 2079  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | refund              | 2115  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | register            | 2141  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | releaseHold         | 2077  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | removeTrusted       | 2125  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | requestEmergency    | 2087  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | saveSplit           | 2079  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | skipDays            | 2098  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | startLockOff        | 2117  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | warp                | 2056  | 0       | 0        |
+╰----------+---------------------+-------+---------+----------╯
+
+[PASS] invariant_XR_recoveryMapMatchesPending() (runs: 1000, calls: 50000, reverts: 22)
+
+╭----------+---------------------+-------+---------+----------╮
+| Contract | Selector            | Calls | Reverts | Discards |
++=============================================================+
+| Handler  | acceptInvite        | 2072  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveEmergency    | 2111  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveRecovery     | 2069  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | authorize           | 2016  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelEmergency     | 2127  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelPending       | 2110  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | collect             | 1995  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | createInvite        | 2069  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | deposit             | 2103  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | disallowed          | 2103  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finalizeEmergency   | 2090  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishLockOff       | 2003  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRecovery      | 2078  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRemoveTrusted | 2080  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | movePurchase        | 2079  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | refund              | 2115  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | register            | 2141  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | releaseHold         | 2077  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | removeTrusted       | 2125  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | requestEmergency    | 2087  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | saveSplit           | 2079  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | skipDays            | 2098  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | startLockOff        | 2117  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | warp                | 2056  | 0       | 0        |
+╰----------+---------------------+-------+---------+----------╯
+
+[PASS] invariant_XR_scheduleCountAtMostThree() (runs: 1000, calls: 50000, reverts: 23)
+
+╭----------+---------------------+-------+---------+----------╮
+| Contract | Selector            | Calls | Reverts | Discards |
++=============================================================+
+| Handler  | acceptInvite        | 2072  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveEmergency    | 2111  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveRecovery     | 2069  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | authorize           | 2016  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelEmergency     | 2127  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelPending       | 2110  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | collect             | 1995  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | createInvite        | 2069  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | deposit             | 2103  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | disallowed          | 2103  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finalizeEmergency   | 2090  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishLockOff       | 2003  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRecovery      | 2078  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRemoveTrusted | 2080  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | movePurchase        | 2079  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | refund              | 2115  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | register            | 2141  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | releaseHold         | 2077  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | removeTrusted       | 2125  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | requestEmergency    | 2087  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | saveSplit           | 2079  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | skipDays            | 2098  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | startLockOff        | 2117  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | warp                | 2056  | 0       | 0        |
+╰----------+---------------------+-------+---------+----------╯
+
+[PASS] invariant_XR_scheduleRecordsWellFormed() (runs: 1000, calls: 50000, reverts: 22)
+
+╭----------+---------------------+-------+---------+----------╮
+| Contract | Selector            | Calls | Reverts | Discards |
++=============================================================+
+| Handler  | acceptInvite        | 2072  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveEmergency    | 2111  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveRecovery     | 2069  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | authorize           | 2016  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelEmergency     | 2127  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelPending       | 2110  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | collect             | 1995  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | createInvite        | 2069  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | deposit             | 2103  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | disallowed          | 2103  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finalizeEmergency   | 2090  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishLockOff       | 2003  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRecovery      | 2078  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRemoveTrusted | 2080  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | movePurchase        | 2079  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | refund              | 2115  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | register            | 2141  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | releaseHold         | 2077  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | removeTrusted       | 2125  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | requestEmergency    | 2087  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | saveSplit           | 2079  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | skipDays            | 2098  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | startLockOff        | 2117  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | warp                | 2056  | 0       | 0        |
+╰----------+---------------------+-------+---------+----------╯
+
+[PASS] invariant_XR_splitAlwaysValid() (runs: 1000, calls: 50000, reverts: 22)
+
+╭----------+---------------------+-------+---------+----------╮
+| Contract | Selector            | Calls | Reverts | Discards |
++=============================================================+
+| Handler  | acceptInvite        | 2072  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveEmergency    | 2111  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | approveRecovery     | 2069  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | authorize           | 2016  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelEmergency     | 2127  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | cancelPending       | 2110  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | collect             | 1995  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | createInvite        | 2069  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | deposit             | 2103  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | disallowed          | 2103  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finalizeEmergency   | 2090  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishLockOff       | 2003  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRecovery      | 2078  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | finishRemoveTrusted | 2080  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | movePurchase        | 2079  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | refund              | 2115  | 2       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | register            | 2141  | 1       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | releaseHold         | 2077  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | removeTrusted       | 2125  | 3       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | requestEmergency    | 2087  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | saveSplit           | 2079  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | skipDays            | 2098  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | startLockOff        | 2117  | 0       | 0        |
+|----------+---------------------+-------+---------+----------|
+| Handler  | warp                | 2056  | 0       | 0        |
+╰----------+---------------------+-------+---------+----------╯
+
+Suite result: ok. 18 passed; 0 failed; 0 skipped; finished in 148.37s (965.92s CPU time)
+
+Ran 4 tests for test/rules/FuzzMaths.t.sol:FuzzMathsTest
+[PASS] testFuzz_R4_partsSumToAmount(uint128,uint8[5]) (runs: 10000, μ: 383015, ~: 399255)
+[PASS] testFuzz_R5_sharesSumToPart(uint128) (runs: 10000, μ: 415324, ~: 416438)
+[PASS] testFuzz_R8_mergeEqualsSeparate(uint128,uint128) (runs: 10000, μ: 757829, ~: 758479)
+[PASS] testFuzz_mondayMaths(uint64) (runs: 10000, μ: 460122, ~: 460256)
+Suite result: ok. 4 passed; 0 failed; 0 skipped; finished in 148.37s (166.69s CPU time)
+
+Ran 24 tests for test/rules/Trust.t.sol:TrustTest
+[PASS] test_CTOR_zeroAddressesAndDecimals() (gas: 5628930)
+[PASS] test_DEMO_skipAffectsOnlyCallersAccount() (gas: 862911)
+[PASS] test_DEMO_skipDaysBounds() (gas: 131889)
+[PASS] test_DEMO_skipDaysRevertsWhenDemoOff() (gas: 4985793)
+[PASS] test_EVENTS_everyWriteEmitsExactlyOne() (gas: 1164655)
+[PASS] test_R1_onlyOwnerActsAsStudent() (gas: 161290)
+[PASS] test_R22_cannotLinkWhileTrustedLinked() (gas: 296576)
+[PASS] test_R22_inviteExpiresAfterSevenDays() (gas: 240961)
+[PASS] test_R22_inviteWorksOnce() (gas: 271961)
+[PASS] test_R22_newInviteReplacesOld() (gas: 282039)
+[PASS] test_R22_ownerCannotAcceptOwnInvite() (gas: 185132)
+[PASS] test_R22_replaceTrustedAfter48Hours() (gas: 343999)
+[PASS] test_R22_signatureForAnotherAddressFails() (gas: 189037)
+[PASS] test_R22_trustedOfAnotherCannotAccept() (gas: 405783)
+[PASS] test_R23_newOwnerControlsAfter48Hours() (gas: 812632)
+[PASS] test_R23_newOwnerWithAccountRejected() (gas: 478555)
+[PASS] test_R23_noTrustedPersonNoRecovery() (gas: 135390)
+[PASS] test_R23_nothingHappensWithoutApproval() (gas: 268119)
+[PASS] test_R23_oldOwnerCanCancel() (gas: 280824)
+[PASS] test_R23_onlyTrustedCanApprove() (gas: 260834)
+[PASS] test_R23_recoveryAccountOfTracksPending() (gas: 510168)
+[PASS] test_R23_removalAndRecoveryBlockEachOther() (gas: 304505)
+[PASS] test_R23_secondApprovalRestartsWait() (gas: 347830)
+[PASS] test_R2_atMostOneTrustedPerson() (gas: 465198)
+Suite result: ok. 24 passed; 0 failed; 0 skipped; finished in 148.37s (8.18ms CPU time)
+
+Ran 20 tests for test/Decimals18.t.sol:SplitRelease18Test
+[PASS] test_R21_immediateBeforeFirstAllowance() (gas: 435524)
+[PASS] test_R21_newSplitOnlyForLaterAllowances() (gas: 572717)
+[PASS] test_R21_secondSaveReplacesAndRestarts() (gas: 579208)
+[PASS] test_R3_onlyTreasuryCanDeposit() (gas: 178641)
+[PASS] test_R4_leftoverUnitsGoToEveryday() (gas: 393203)
+[PASS] test_R4_samePaymentIdCannotDepositTwice() (gas: 514301)
+[PASS] test_R4_sampleThousandDollars() (gas: 518043)
+[PASS] test_R4_splitMustTotal100AndStepsOf5() (gas: 242440)
+[PASS] test_R5_arrivalOnMonday() (gas: 836169)
+[PASS] test_R5_arrivalOnSunday() (gas: 551210)
+[PASS] test_R5_firstShareOnArrival() (gas: 482779)
+[PASS] test_R5_leftoverInLastShare() (gas: 479850)
+[PASS] test_R5_nothingAfterFourthShare() (gas: 567128)
+[PASS] test_R5_sharesTwoToFourOnNextThreeMondays() (gas: 542166)
+[PASS] test_R5_skipThreeDaysReleasesNothing() (gas: 466950)
+[PASS] test_R6_unspentMoneyCarriesOver() (gas: 612837)
+[PASS] test_R7_emergencyShareArrivesWholeAndLocked() (gas: 627385)
+[PASS] test_R8_finishedSchedulesFoldOnDeposit() (gas: 1585907)
+[PASS] test_R8_sameWeekAllowancesMergeExactly() (gas: 746309)
+[PASS] test_R8_twoOverlappingAllowancesAddUp() (gas: 813954)
+Suite result: ok. 20 passed; 0 failed; 0 skipped; finished in 148.37s (12.10ms CPU time)
+
+Ran 13 test suites in 148.38s (600.75s CPU time): 199 tests passed, 0 failed, 0 skipped (199 total tests)

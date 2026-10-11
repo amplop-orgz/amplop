@@ -1,0 +1,67 @@
+
+Detector: arbitrary-send-erc20
+AmplopEnvelopes.deposit(uint256,uint256,bytes32) (src/AmplopEnvelopes.sol#792-833) uses arbitrary from in transferFrom: token.safeTransferFrom(treasury,address(this),amount) (src/AmplopEnvelopes.sol#830)
+AmplopEnvelopes.refund(bytes32,uint256) (src/AmplopEnvelopes.sol#927-942) uses arbitrary from in transferFrom: token.safeTransferFrom(settlement,address(this),amount) (src/AmplopEnvelopes.sol#939)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#arbitrary-from-in-transferfrom
+
+Detector: incorrect-equality
+AmplopEnvelopes._scheduleFor(AmplopEnvelopes.Account,uint64) (src/AmplopEnvelopes.sol#1173-1182) uses a dangerous strict equality:
+	- acc.schedules[i].startMonday == monday (src/AmplopEnvelopes.sol#1176)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities
+
+Detector: unused-return
+AmplopEnvelopes.acceptInvite(uint256,bytes) (src/AmplopEnvelopes.sol#688-705) ignores return value by (signer,err,None) = ECDSA.tryRecover(digest,signature) (src/AmplopEnvelopes.sol#695)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return
+
+Detector: timestamp
+AmplopEnvelopes.movePurchase(bytes32,Envelope) (src/AmplopEnvelopes.sol#591-617) uses timestamp for comparisons
+	Dangerous comparisons:
+	- _clock(acc) >= p.createdAt + MOVE_PERIOD (src/AmplopEnvelopes.sol#599)
+AmplopEnvelopes.cancelPending(PendingKind) (src/AmplopEnvelopes.sol#661-670) uses timestamp for comparisons
+	Dangerous comparisons:
+	- ! p.active || (kind == PendingKind.Split && now_ >= p.readyAt) (src/AmplopEnvelopes.sol#665)
+	- now_ >= p.readyAt (src/AmplopEnvelopes.sol#666)
+AmplopEnvelopes.acceptInvite(uint256,bytes) (src/AmplopEnvelopes.sol#688-705) uses timestamp for comparisons
+	Dangerous comparisons:
+	- _clock(acc) >= inv.expiresAt (src/AmplopEnvelopes.sol#693)
+AmplopEnvelopes.finalizeEmergency(uint256) (src/AmplopEnvelopes.sol#751-756) uses timestamp for comparisons
+	Dangerous comparisons:
+	- _clock(acc) < acc.em.opensAt (src/AmplopEnvelopes.sol#754)
+AmplopEnvelopes.collect(bytes32,uint256) (src/AmplopEnvelopes.sol#887-906) uses timestamp for comparisons
+	Dangerous comparisons:
+	- _clock(acc) >= p.createdAt + HOLD_PERIOD (src/AmplopEnvelopes.sol#895)
+AmplopEnvelopes.releaseHold(bytes32) (src/AmplopEnvelopes.sol#910-922) uses timestamp for comparisons
+	Dangerous comparisons:
+	- msg.sender != cardService && _clock(acc) < p.createdAt + HOLD_PERIOD (src/AmplopEnvelopes.sol#914)
+AmplopEnvelopes.envelopes(uint256) (src/AmplopEnvelopes.sol#950-963) uses timestamp for comparisons
+	Dangerous comparisons:
+	- _sharesOut(acc.schedules[i].startMonday,monday) < 4 (src/AmplopEnvelopes.sol#961)
+AmplopEnvelopes.accountInfo(uint256) (src/AmplopEnvelopes.sol#981-999) uses timestamp for comparisons
+	Dangerous comparisons:
+	- _clock(acc) >= p.readyAt (src/AmplopEnvelopes.sol#988)
+AmplopEnvelopes.pending(uint256,PendingKind) (src/AmplopEnvelopes.sol#1042-1051) uses timestamp for comparisons
+	Dangerous comparisons:
+	- kind == PendingKind.Split && p.active && _clock(acc) >= p.readyAt (src/AmplopEnvelopes.sol#1049)
+AmplopEnvelopes._sharesOut(uint64,uint64) (src/AmplopEnvelopes.sol#1132-1135) uses timestamp for comparisons
+	Dangerous comparisons:
+	- k < 4 (src/AmplopEnvelopes.sol#1134)
+AmplopEnvelopes._live(AmplopEnvelopes.Account,uint8,uint64) (src/AmplopEnvelopes.sol#1138-1147) uses timestamp for comparisons
+	Dangerous comparisons:
+	- k < 4 (src/AmplopEnvelopes.sol#1145)
+AmplopEnvelopes._fold(AmplopEnvelopes.Account,uint64) (src/AmplopEnvelopes.sol#1155-1171) uses timestamp for comparisons
+	Dangerous comparisons:
+	- _sharesOut(r.startMonday,monday) < 4 (src/AmplopEnvelopes.sol#1159)
+AmplopEnvelopes._scheduleFor(AmplopEnvelopes.Account,uint64) (src/AmplopEnvelopes.sol#1173-1182) uses timestamp for comparisons
+	Dangerous comparisons:
+	- acc.schedules[i].startMonday == monday (src/AmplopEnvelopes.sol#1176)
+AmplopEnvelopes._finishPending(AmplopEnvelopes.Account,PendingKind) (src/AmplopEnvelopes.sol#1206-1211) uses timestamp for comparisons
+	Dangerous comparisons:
+	- _clock(acc) < p.readyAt (src/AmplopEnvelopes.sol#1209)
+AmplopEnvelopes._promoteSplit(AmplopEnvelopes.Account) (src/AmplopEnvelopes.sol#1214-1220) uses timestamp for comparisons
+	Dangerous comparisons:
+	- p.active && _clock(acc) >= p.readyAt (src/AmplopEnvelopes.sol#1216)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp
+. analyzed (19 contracts with 76 detectors), 19 result(s) found
+'forge clean' running (wd: /Users/chidx/Documents/Learn/amplop/contracts)
+'forge config --json' running
+'forge build --build-info --deny never --skip ./test/** ./script/** --force' running (wd: /Users/chidx/Documents/Learn/amplop/contracts)

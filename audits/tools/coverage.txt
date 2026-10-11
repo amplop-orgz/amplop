@@ -1,0 +1,4 @@
+forge coverage --report summary (profile coverage), commit audit-2026-10-10-start
+| File                    | % Lines           | % Statements     | % Branches     | % Funcs         |
+| src/AmplopEnvelopes.sol | 100.00% (435/435) | 99.66% (578/580) | 97.96% (96/98) | 100.00% (54/54) |
+| Total                   | 100.00% (435/435) | 99.66% (578/580) | 97.96% (96/98) | 100.00% (54/54) |

@@ -1,0 +1,6 @@
+pashov/skills 92b0ea6 (x-ray 2, solidity-auditor 4.1)
+slither-analyzer 0.11.6
+solc-select 1.2.0, solc 0.8.30
+aderyn 0.6.8
+forge Version: 1.7.1
+OpenZeppelin Contracts v5.7.0, forge-std v1.17.0
