@@ -12,6 +12,8 @@ const example = Object.fromEntries(
 const fromCi = ["DATABASE_URL", "DATABASE_MIGRATION_URL"].filter((k) => process.env[k]);
 
 export default defineConfig({
+  // tsconfig keeps JSX for Next.js; tests compile it here.
+  oxc: { jsx: { runtime: "automatic" } },
   resolve: {
     alias: {
       "@/": fileURLToPath(new URL("./src/", import.meta.url)),

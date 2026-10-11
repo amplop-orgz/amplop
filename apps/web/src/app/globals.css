@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+/* Design tokens from specs/design/SPEC.md (06 S06-37). Light theme only. */
+@theme {
+  --color-ground: #f2f3ee;
+  --color-card: #ffffff;
+  --color-border: #d9dcd3;
+  --color-ink: #111b33;
+  --color-muted: #55606e;
+  --color-quiet: #e7e9e2;
+  --color-input-border: #7c8591;
+  --color-link: #2a5ca6;
+  --color-danger: #a51f1e;
+  --color-food: #2b7a4b;
+  --color-transport: #6e4a9c;
+  --color-study: #2a5ca6;
+  --color-everyday: #8c5a2b;
+  --color-emergency: #b5302a;
+  --color-ok: #0d6332;
+  --color-ok-bg: #d9f8e0;
+  --color-wait: #7e4f04;
+  --color-wait-bg: #feedc5;
+  --color-bad: #a51f1e;
+  --color-bad-bg: #ffe7e4;
+  --color-info: #444d61;
+  --color-info-bg: #e6eaf2;
+  --font-sans: var(--font-jakarta), system-ui, sans-serif;
+  --radius-tile: 16px;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  background: var(--color-ground);
+}
+
+body {
+  margin: 0;
+  background: var(--color-ground);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  line-height: 1.4;
+}
+
+/* Parent and trusted-person screens use a 17px base (06 S06-38). */
+.parent-text {
+  font-size: 1.0625rem;
+}
+
+.amount {
+  font-variant-numeric: tabular-nums;
+}
+
+.user-text {
+  overflow-wrap: anywhere;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-link);
+  outline-offset: 2px;
+}
+
+dialog::backdrop {
+  background: rgb(17 27 51 / 0.4);
+}

@@ -75,12 +75,15 @@ export default tseslint.config(
     languageOptions: { globals: { ...globals.browser, ...globals.node } },
     settings: { react: { version: "19.3" }, next: { rootDir: "apps/web" } },
     rules: {
-      ...reactHooks.configs.recommended.rules,
       ...nextPlugin.configs["core-web-vitals"].rules,
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "error",
       "react/no-danger": "error",
     },
+  },
+  {
+    files: ["apps/web/public/sw.js"],
+    languageOptions: { globals: globals.serviceworker },
   },
   {
     // 05 S05-37: no string-built SQL in the app.
