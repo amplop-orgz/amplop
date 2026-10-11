@@ -36,3 +36,6 @@ export async function closeDb(): Promise<void> {
 }
 
 export { schema };
+
+/** A Drizzle transaction handle, for helpers that must run inside a caller's transaction. */
+export type Tx = Parameters<Parameters<Db["transaction"]>[0]>[0];

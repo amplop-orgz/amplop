@@ -15,7 +15,7 @@ import {
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { sendAlert } from "../alerts";
-import { db } from "../db";
+import { db, type Tx } from "../db";
 import { env, isDemo } from "../env";
 import { log } from "../log";
 import { DAILY_BUDGET_WEI, RESERVE_WEI } from "./reserve";
@@ -119,13 +119,14 @@ export class Chain {
 
   /**
    * The one send function (S05-41). Serialises sends per key across instances with a Postgres
-   * advisory lock held until the receipt, so the next send sees the new nonce.
+   * advisory lock held until the receipt, so the next send sees the new nonce. A caller already in a
+   * transaction passes it as `opts.tx`, so one request never needs two pooled connections.
    */
   async send(
     role: Role,
     request: TxRequest,
     hooks?: SendHooks,
-    opts?: { finalized?: boolean },
+    opts?: { finalized?: boolean; tx?: Tx },
   ): Promise<SendResult> {
     const ready = await this.checkReady().catch((e: unknown) => {
       this.ready = undefined; // a failed read is retried on the next send
@@ -135,7 +136,9 @@ export class Chain {
     const account = this.cfg.accounts[role];
     const rpc = this.cfg.rpc;
     try {
-      return await db().transaction(async (tx) => {
+      const inTx = <T>(fn: (tx: Tx) => Promise<T>): Promise<T> =>
+        opts?.tx ? fn(opts.tx) : db().transaction(fn);
+      return await inTx(async (tx) => {
         await tx.execute(
           sql`SELECT pg_advisory_xact_lock(hashtextextended(${"signer:" + account.address.toLowerCase()}, 0))`,
         );
@@ -219,7 +222,8 @@ export class Chain {
     const balance = await this.cfg.rpc.getBalance(address);
     if (value > 0n && balance - value - maxGasCost < RESERVE_WEI) throw new ReserveTooLow();
     if (balance < RESERVE_WEI + DAILY_BUDGET_WEI[role]) {
-      await sendAlert(
+      // Not awaited: the alert's own query must not wait for this send's connection.
+      void sendAlert(
         `reserve_low:${role}`,
         `Amplop ${role} wallet is below its reserve plus one day's budget. Refill it.`,
       );

@@ -176,6 +176,7 @@ describe("T05-21 reserve", () => {
     const spy = vi.spyOn(console, "log").mockImplementation((s: string) => out.push(s));
     await chain.send("cardService", call("releaseHold", [`0x${"0".repeat(64)}`]));
     await chain.send("cardService", call("releaseHold", [`0x${"0".repeat(64)}`]));
+    await new Promise((r) => setTimeout(r, 100)); // the alert is not awaited by send
     spy.mockRestore();
     expect(
       out.filter((l) => l.includes('"event":"alert"') && l.includes("reserve_low:cardService")),
