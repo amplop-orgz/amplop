@@ -212,7 +212,7 @@ There is no refuse or block button (R17).
 
 "Back to home" goes to `/app/parent`. If the indexer is up and its `EmergencyRequest` for this `requestSeq` has `openedBy = Approval` and this person approved it, the "already opened" row may show 3.4 instead. That is optional.
 
-**S12-20. Approve (R17, R18).** "Approve with passkey" sends `approveEmergency(accountId)` from the trusted person's passkey account through spec 06's contract client (fee check included). The button ignores taps while pending (G11). Record the time from send to receipt. On success, show board 3.4:
+**S12-20. Approve (R17, R18).** "Approve with passkey" sends `approveEmergency(accountId, requestSeq)`, with the `requestSeq` of the request shown on the page (audit change SA-01), from the trusted person's passkey account through spec 06's contract client (fee check included). The button ignores taps while pending (G11). Record the time from send to receipt. On success, show board 3.4:
 
 - Green icon, title "Emergency envelope opened".
 - "<amount> moved to <Name>'s Everyday envelope. <Name> will see it in the app." (mock-up: "$70,00 moved to Raka's Everyday envelope.")
@@ -230,7 +230,7 @@ On a revert, re-read the contract. If the request is now opened, show "Already o
 
 | Kind                | Names (from 01 unless marked)                                                                                                                              |
 | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Contract writes     | `requestEmergency(uint256 amount, bytes32 reasonHash)`, `approveEmergency(uint256 accountId)`, `finalizeEmergency(uint256 accountId)`, `cancelEmergency()` |
+| Contract writes     | `requestEmergency(uint256 amount, bytes32 reasonHash)`, `approveEmergency(uint256 accountId, uint64 requestSeq)`, `finalizeEmergency(uint256 accountId)`, `cancelEmergency()` |
 | Contract reads      | `emergency`, `envelopes`, `accountInfo`, `clock`, `accountOf`, `trustedAccountOf`                                                                          |
 | Enums and constants | `EmergencyStatus`, `OpenedBy`, `WAIT`                                                                                                                      |
 | Events              | `EmergencyRequested` (decoded from the receipt), `EmergencyOpened`, `EmergencyCancelled`                                                                   |

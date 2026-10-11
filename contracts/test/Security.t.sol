@@ -149,7 +149,7 @@ contract SecurityTest is AmplopBase {
         calls[2] = abi.encodeCall(amplop.collect, (pid, usd(10, 0)));
         calls[3] = abi.encodeCall(amplop.refund, (pid, usd(10, 0)));
         calls[4] = abi.encodeCall(amplop.releaseHold, (pid));
-        calls[5] = abi.encodeCall(amplop.approveEmergency, (id));
+        calls[5] = abi.encodeCall(amplop.approveEmergency, (id, amplop.emergency(id).requestSeq));
         calls[6] = abi.encodeCall(amplop.finalizeEmergency, (id));
         calls[7] = abi.encodeCall(amplop.finishLockOff, (id));
         calls[8] = abi.encodeCall(amplop.approveRecovery, (id, stranger));

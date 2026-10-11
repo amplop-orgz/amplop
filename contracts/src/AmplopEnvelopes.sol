@@ -438,6 +438,8 @@ contract AmplopEnvelopes is EIP712, ReentrancyGuard {
     error RequestAlreadyOpen();
     /// @notice No open Emergency request.
     error NoOpenRequest();
+    /// @notice The open request is not the one being approved (SA-01).
+    error RequestChanged();
     /// @notice The request is above the locked balance (R16).
     error AmountAboveLocked();
     /// @notice A reason is required (PRD 14 rule 6).
@@ -705,11 +707,14 @@ contract AmplopEnvelopes is EIP712, ReentrancyGuard {
     }
 
     /// @notice Opens the request at once (R17).
+    /// @dev Bound to `requestSeq` so a request swapped while the approval is in flight is not opened (SA-01).
     /// @param accountId Account.
-    function approveEmergency(uint256 accountId) external {
+    /// @param requestSeq The request number the trusted person is approving.
+    function approveEmergency(uint256 accountId, uint64 requestSeq) external {
         Account storage acc = _account(accountId);
         _onlyTrusted(acc);
         if (acc.em.status != EmergencyStatus.Open) revert NoOpenRequest();
+        if (acc.em.requestSeq != requestSeq) revert RequestChanged();
         _openEmergency(accountId, acc, OpenedBy.Approval);
     }
 

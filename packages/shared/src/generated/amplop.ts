@@ -106,7 +106,10 @@ export const amplopEnvelopesAbi = [
   },
   {
     type: "function",
-    inputs: [{ name: "accountId", internalType: "uint256", type: "uint256" }],
+    inputs: [
+      { name: "accountId", internalType: "uint256", type: "uint256" },
+      { name: "requestSeq", internalType: "uint64", type: "uint64" },
+    ],
     name: "approveEmergency",
     outputs: [],
     stateMutability: "nonpayable",
@@ -790,6 +793,7 @@ export const amplopEnvelopesAbi = [
   { type: "error", inputs: [], name: "ReentrancyGuardReentrantCall" },
   { type: "error", inputs: [], name: "RefundTooLarge" },
   { type: "error", inputs: [], name: "RequestAlreadyOpen" },
+  { type: "error", inputs: [], name: "RequestChanged" },
   {
     type: "error",
     inputs: [

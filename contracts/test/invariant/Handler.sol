@@ -266,7 +266,7 @@ contract Handler is Test {
         }
         EmergencyInfo memory e = amplop.emergency(id);
         vm.prank(_trusted(id));
-        try amplop.approveEmergency(id) {
+        try amplop.approveEmergency(id, e.requestSeq) {
             _okId = id;
             _okLocked = l - e.amount;
         } catch {}
@@ -490,7 +490,7 @@ contract Handler is Test {
                 disallowedSuccesses++;
             } catch {}
         } else if (fn == 4 && !isTrusted) {
-            try amplop.approveEmergency(id) {
+            try amplop.approveEmergency(id, amplop.emergency(id).requestSeq) {
                 disallowedSuccesses++;
             } catch {}
         } else if (fn == 5 && !isTrusted) {

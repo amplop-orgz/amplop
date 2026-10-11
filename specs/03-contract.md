@@ -339,9 +339,9 @@ Everyday gets 2 units more than `floor(20%)` = 14_964_448. Sum of parts = 74_822
 - Effects: `requestSeq += 1`; `em = {Open, requestSeq, amount, reasonHash, clock, clock + WAIT}`.
 - Event: `EmergencyRequested(id, requestSeq, amount, reasonHash, clock + WAIT)`.
 
-**S03-34 `approveEmergency(uint256 accountId)`** (R17)
+**S03-34 `approveEmergency(uint256 accountId, uint64 requestSeq)`** (R17)
 
-- Checks: `AccountNotFound`; caller is not `trusted` (or `trusted == 0`) → `NotTrusted()`; `status != Open` → `NoOpenRequest()`.
+- Checks: `AccountNotFound`; caller is not `trusted` (or `trusted == 0`) → `NotTrusted()`; `status != Open` → `NoOpenRequest()`; `requestSeq != em.requestSeq` → `RequestChanged()` (audit change SA-01: the approval is bound to the request the trusted person saw).
 - Effects: `_open(Approval)`. Works before or after `opensAt`.
 
 **S03-35 `finalizeEmergency(uint256 accountId)`** (R17, R19)
@@ -353,7 +353,7 @@ Everyday gets 2 units more than `floor(20%)` = 14_964_448. Sum of parts = 74_822
 
 **S03-36 `cancelEmergency()`** (R16)
 
-- Checks: `NoAccount()`; `status != Open` → `NoOpenRequest()`.
+- Checks: `NoAccount()`; `status != Open` → `NoOpenRequest()`; `requestSeq != em.requestSeq` → `RequestChanged()` (audit change SA-01: the approval is bound to the request the trusted person saw).
 - Effects: `status = Cancelled`. Locked unchanged. Event `EmergencyCancelled(id, requestSeq)`.
 
 **S03-37 Emergency worked example (G1).** After C1, locked = 100_000_000. Raka requests 70_000_000 at clock T. Mama approves: Everyday available +70_000_000, locked = 30_000_000, `EmergencyOpened(…, Approval)`. Without approval: `finalizeEmergency` at `T + 172_799` reverts `WaitNotOver(T + 172_800)`; at `T + 172_800` it opens with `Time`.
@@ -484,6 +484,7 @@ Everyday gets 2 units more than `floor(20%)` = 14_964_448. Sum of parts = 74_822
 | `TargetShort()`                         | `movePurchase`                                                  |
 | `RequestAlreadyOpen()`                  | `requestEmergency`, `startLockOff`                              |
 | `NoOpenRequest()`                       | `approveEmergency`, `finalizeEmergency`, `cancelEmergency`      |
+| `RequestChanged()` | `approveEmergency` (SA-01) |
 | `AmountAboveLocked()`                   | `requestEmergency`                                              |
 | `ReasonRequired()`                      | `requestEmergency`                                              |
 | `LockOffPending()`                      | `requestEmergency`                                              |

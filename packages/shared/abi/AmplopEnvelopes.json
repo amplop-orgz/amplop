@@ -232,6 +232,11 @@
         "name": "accountId",
         "type": "uint256",
         "internalType": "uint256"
+      },
+      {
+        "name": "requestSeq",
+        "type": "uint64",
+        "internalType": "uint64"
       }
     ],
     "outputs": [],
@@ -1937,6 +1942,11 @@
   {
     "type": "error",
     "name": "RequestAlreadyOpen",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "RequestChanged",
     "inputs": []
   },
   {

@@ -438,8 +438,9 @@ contract TrustTest is AmplopBase {
         vm.prank(raka);
         amplop.requestEmergency(usd(10, 0), keccak256("r"));
         _expectOneLog();
+        uint64 seq10 = amplop.emergency(id).requestSeq;
         vm.prank(mama);
-        amplop.approveEmergency(id);
+        amplop.approveEmergency(id, seq10);
         _expectOneLog();
         vm.prank(raka);
         amplop.requestEmergency(usd(10, 0), keccak256("r"));

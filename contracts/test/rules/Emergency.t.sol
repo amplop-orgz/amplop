@@ -55,12 +55,14 @@ contract EmergencyTest is AmplopBase {
     function test_R16_secondRequestAfterDone() public {
         link(id, raka, mama);
         request(usd(70, 0));
+        uint64 seq1 = amplop.emergency(id).requestSeq;
         vm.prank(mama);
-        amplop.approveEmergency(id);
+        amplop.approveEmergency(id, seq1);
         request(usd(30, 0));
         assertEq(amplop.emergency(id).requestSeq, 2);
+        uint64 seq2 = amplop.emergency(id).requestSeq;
         vm.prank(mama);
-        amplop.approveEmergency(id);
+        amplop.approveEmergency(id, seq2);
         assertEq(locked(id), 0);
         vm.prank(raka);
         vm.expectRevert(AmplopEnvelopes.AmountAboveLocked.selector);
@@ -75,8 +77,9 @@ contract EmergencyTest is AmplopBase {
         request(usd(70, 0));
         vm.expectEmit(address(amplop));
         emit AmplopEnvelopes.EmergencyOpened(id, 1, usd(70, 0), OpenedBy.Approval);
+        uint64 seq3 = amplop.emergency(id).requestSeq;
         vm.prank(mama);
-        amplop.approveEmergency(id);
+        amplop.approveEmergency(id, seq3);
         assertEq(available(id, Envelope.Everyday), everyday + usd(70, 0));
         assertEq(locked(id), usd(30, 0));
         assertEq(uint8(amplop.emergency(id).status), uint8(EmergencyStatus.Opened));
@@ -109,9 +112,10 @@ contract EmergencyTest is AmplopBase {
         request(usd(70, 0));
         vm.warp(block.timestamp + 2 days);
         amplop.finalizeEmergency(id);
+        uint64 seq4 = amplop.emergency(id).requestSeq;
         vm.prank(mama);
         vm.expectRevert(AmplopEnvelopes.NoOpenRequest.selector);
-        amplop.approveEmergency(id);
+        amplop.approveEmergency(id, seq4);
     }
 
     function test_R17_onlyTrustedCanApprove() public {
@@ -119,9 +123,10 @@ contract EmergencyTest is AmplopBase {
         request(usd(70, 0));
         address[3] memory others = [raka, stranger, budi];
         for (uint256 i = 0; i < 3; ++i) {
+            uint64 seq5 = amplop.emergency(id).requestSeq;
             vm.prank(others[i]);
             vm.expectRevert(AmplopEnvelopes.NotTrusted.selector);
-            amplop.approveEmergency(id);
+            amplop.approveEmergency(id, seq5);
         }
         assertEq(locked(id), usd(100, 0));
     }
@@ -136,11 +141,13 @@ contract EmergencyTest is AmplopBase {
         // The request is still open after the removal (G14); new person links and approves.
         assertEq(uint8(amplop.emergency(id).status), uint8(EmergencyStatus.Open));
         link(id, raka, budi);
+        uint64 seq6 = amplop.emergency(id).requestSeq;
         vm.prank(mama);
         vm.expectRevert(AmplopEnvelopes.NotTrusted.selector);
-        amplop.approveEmergency(id);
+        amplop.approveEmergency(id, seq6);
+        uint64 seq7 = amplop.emergency(id).requestSeq;
         vm.prank(budi);
-        amplop.approveEmergency(id);
+        amplop.approveEmergency(id, seq7);
         assertEq(locked(id), usd(30, 0));
     }
 
@@ -150,8 +157,9 @@ contract EmergencyTest is AmplopBase {
         link(id, raka, mama);
         uint256 everyday = available(id, Envelope.Everyday);
         request(usd(70, 0));
+        uint64 seq8 = amplop.emergency(id).requestSeq;
         vm.prank(mama);
-        amplop.approveEmergency(id);
+        amplop.approveEmergency(id, seq8);
         assertEq(available(id, Envelope.Everyday), everyday + usd(70, 0));
         assertEq(locked(id), usd(30, 0));
         assertEq(views(id)[4].available, 0);
@@ -163,9 +171,10 @@ contract EmergencyTest is AmplopBase {
 
     function test_R19_noTrustedPersonWaits48Hours() public {
         request(usd(70, 0));
+        uint64 seq9 = amplop.emergency(id).requestSeq;
         vm.prank(mama);
         vm.expectRevert(AmplopEnvelopes.NotTrusted.selector);
-        amplop.approveEmergency(id);
+        amplop.approveEmergency(id, seq9);
         vm.warp(block.timestamp + 2 days - 1);
         vm.expectRevert();
         amplop.finalizeEmergency(id);
