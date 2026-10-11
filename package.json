@@ -4,7 +4,8 @@
   "license": "MIT",
   "type": "module",
   "workspaces": [
-    "packages/shared"
+    "packages/shared",
+    "apps/web"
   ],
   "engines": {
     "node": ">=24.0.0 <25.0.0",
@@ -33,14 +34,20 @@
     "check:deps": "node scripts/check-exact-versions.mjs && node scripts/check-lockfile.mjs && node scripts/check-install-scripts.mjs && node scripts/check-framework-patch.mjs",
     "check:skills": "node scripts/check-skills.mjs",
     "check:repo": "node scripts/check-env-example.mjs && node scripts/check-nosemgrep.mjs",
-    "gates": "npm run typecheck && npm run lint && npm run format:check && npm run lint:sol && npm run fmt:sol:check && npm run check:repo && npm run check:deps && npm run check:skills && npm run test:coverage && npm run test:contracts:ci && npm run coverage:contracts && npm run build"
+    "gates": "npm run typecheck && npm run lint && npm run format:check && npm run lint:sol && npm run fmt:sol:check && npm run check:repo && npm run check:deps && npm run check:skills && npm run test:coverage && npm run test:contracts:ci && npm run coverage:contracts && npm run build",
+    "db:up": "bash apps/web/scripts/db-up.sh",
+    "db:migrate": "npm run db:migrate -w @amplop/web",
+    "scan:bundle": "node apps/web/scripts/bundle-scan.mjs"
   },
   "devDependencies": {
     "@eslint/js": "9.39.5",
+    "@next/eslint-plugin-next": "16.4.0",
     "@types/node": "24.19.2",
     "@vitest/coverage-v8": "5.0.3",
     "eslint": "9.39.5",
     "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-react": "7.37.5",
+    "eslint-plugin-react-hooks": "7.1.1",
     "globals": "17.13.0",
     "husky": "9.1.7",
     "lint-staged": "17.6.0",

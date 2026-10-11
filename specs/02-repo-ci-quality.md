@@ -323,7 +323,8 @@ indexer/.envio/
 **S02-24. `.env.example`.** At the root. It lists every name in 01 §7, in the same order and with the same "where" comment, each with a fake value:
 
 - Private keys: `0x` followed by `11` repeated 32 times (allowlisted in S02-18).
-- URLs: `http://127.0.0.1:8545`, `postgres://amplop:amplop@127.0.0.1:5432/amplop`, `http://127.0.0.1:8080/v1/graphql`.
+- URLs: `http://127.0.0.1:8545`, `postgres://amplop_app:amplop_app@127.0.0.1:5432/amplop` (`DATABASE_URL`) and `postgres://amplop_migrator:amplop_migrator@127.0.0.1:5432/amplop` (`DATABASE_MIGRATION_URL`), the two local roles `npm run db:up` creates (05 S05-36), `http://127.0.0.1:8080/v1/graphql`.
+- `CRON_SECRET`: a fake value of at least 32 characters, so the cron path is testable (05 S05-47).
 - Addresses: `0x0000000000000000000000000000000000000000`.
 - `MIDTRANS_SERVER_KEY=SB-Mid-server-REPLACE_ME`, `MIDTRANS_IS_PRODUCTION=false`, `DEMO_MODE=true`, `NEXT_PUBLIC_DEMO_MODE=true`, `SAMPLE_RATE_IDR_PER_USD=16500`, `SAMPLE_RATE_USD_PER_EUR=1.1511`, `NEXT_PUBLIC_CHAIN_ID=31337`.
   `scripts/check-env-example.mjs` (part of `static`) fails if a name in 01 §7 is missing from `.env.example`, or if `.env.example` has a name not in 01 §7. The "CI secrets only" row of 01 §7 is excluded: those names live only in GitHub secrets. The README (18) says: copy it to `apps/web/.env.local`.

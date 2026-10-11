@@ -1,6 +1,6 @@
 # Every PRD 15 gate on every push (spec 02, S02-13).
-# Jobs for the web build, bundle scan, end-to-end tiers and the production deploy are added by the
-# specs that create those apps (05, 06, 17, 19); `all-green` must list them when they land.
+# Jobs for the end-to-end tiers and the production deploy are added by specs 19 and 02's deploy step
+# when they land; `all-green` must list them.
 name: ci
 
 on:
@@ -32,6 +32,7 @@ jobs:
         with:
           version: ${{ steps.versions.outputs.FOUNDRY }}
       - run: npm ci
+      - run: npm run build -w @amplop/shared
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run format:check
@@ -69,6 +70,39 @@ jobs:
 
   test-ts:
     runs-on: ubuntu-24.04
+    services:
+      # Same image as apps/web/docker-compose.yml and POSTGRES_IMAGE_DIGEST in tools/versions.env.
+      db:
+        image: postgres:16@sha256:2d2b8998d31037bf721cfdf764d76ba74171b4fab3431b7f72c27c56ddbdf9e3
+        env:
+          POSTGRES_USER: amplop
+          POSTGRES_PASSWORD: amplop
+          POSTGRES_DB: amplop
+        ports:
+          - 5432:5432
+        options: --health-cmd "pg_isready -U amplop -d amplop" --health-interval 2s --health-retries 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - id: versions
+        run: cat tools/versions.env >> "$GITHUB_OUTPUT"
+      - uses: foundry-rs/foundry-toolchain@908c540300062bd5a7e473851cdb4282204cee09 # v1.9.1
+        with:
+          version: ${{ steps.versions.outputs.FOUNDRY }}
+      - run: npm ci
+      - run: npm run build -w @amplop/shared
+      - name: Database roles (05 S05-36)
+        run: psql "postgres://amplop:amplop@127.0.0.1:5432/amplop" -v ON_ERROR_STOP=1 -v migrator_pw=amplop_migrator -v app_pw=amplop_app -f apps/web/drizzle/roles.sql
+      - run: cd contracts && forge build
+      - run: npm run test:coverage
+
+  build:
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
@@ -76,7 +110,13 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      - run: npm run test:coverage
+      - name: Build with the canary values, then scan the browser bundle (S02-20, S05-54)
+        run: |
+          set -a
+          . ./.env.example
+          set +a
+          npm run build
+          npm run scan:bundle
 
   test-contracts:
     runs-on: ubuntu-24.04
@@ -252,6 +292,7 @@ jobs:
       - static
       - commits
       - test-ts
+      - build
       - test-contracts
       - coverage-contracts
       - contracts-local-deploy

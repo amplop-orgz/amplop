@@ -1,0 +1,14 @@
+[
+  {
+    "id": "env-name",
+    "pattern": "\\b(TREASURY_PRIVATE_KEY|CARD_SERVICE_PRIVATE_KEY|FEE_SPONSOR_PRIVATE_KEY|MIDTRANS_SERVER_KEY|CRON_SECRET|DATABASE_URL|DATABASE_MIGRATION_URL|ALERT_WEBHOOK_URL|SETTLEMENT_ADDRESS)\\b"
+  },
+  {
+    "id": "env-name-shadowed",
+    "pattern": "(?<!NEXT_PUBLIC_)\\b(MONAD_RPC_URL|MONAD_RPC_URL_FALLBACK|DEMO_MODE|SAMPLE_RATE_IDR_PER_USD|SAMPLE_RATE_USD_PER_EUR)\\b"
+  },
+  { "id": "midtrans-key", "pattern": "\\b(SB-)?Mid-server-[A-Za-z0-9_-]{8,}" },
+  { "id": "pg-url", "pattern": "postgres(ql)?://[^\\s\"']+" },
+  { "id": "pem", "pattern": "-----BEGIN [A-Z ]*PRIVATE KEY-----" },
+  { "id": "hex32", "pattern": "0x[0-9a-fA-F]{64}(?![0-9a-fA-F])" }
+]

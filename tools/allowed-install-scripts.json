@@ -8,5 +8,10 @@
     "name": "esbuild",
     "version": "0.28.2",
     "reason": "Downloads its platform binary; pulled in by @wagmi/cli and vite. Published by evanw, source on GitHub."
+  },
+  {
+    "name": "esbuild",
+    "version": "0.18.20",
+    "reason": "Downloads its platform binary; pulled in by drizzle-kit (@esbuild-kit/core-utils) for migrations. Dev tool only. Published by evanw, source on GitHub."
   }
 ]

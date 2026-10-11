@@ -1,7 +1,9 @@
-// One flat config for the repository (S02-6). Web rules (React Hooks, Next, react/no-danger) are
-// added by spec 06 together with apps/web.
+// One flat config for the repository (S02-6), with the web rules of S02-6 and specs 05 and 06.
 import js from "@eslint/js";
+import nextPlugin from "@next/eslint-plugin-next";
 import prettier from "eslint-config-prettier";
+import react from "eslint-plugin-react";
+import reactHooks from "eslint-plugin-react-hooks";
 import globals from "globals";
 import tseslint from "typescript-eslint";
 
@@ -65,6 +67,40 @@ export default tseslint.config(
         { selector: "CallExpression[callee.name='parseFloat']", message: "Money is bigint." },
         { selector: "CallExpression[callee.name='Number']", message: "Money is bigint." },
       ],
+    },
+  },
+  {
+    files: ["apps/web/**/*.{ts,tsx}"],
+    plugins: { react, "react-hooks": reactHooks, "@next/next": nextPlugin },
+    languageOptions: { globals: { ...globals.browser, ...globals.node } },
+    settings: { react: { version: "19.3" }, next: { rootDir: "apps/web" } },
+    rules: {
+      ...reactHooks.configs.recommended.rules,
+      ...nextPlugin.configs["core-web-vitals"].rules,
+      "react-hooks/rules-of-hooks": "error",
+      "react-hooks/exhaustive-deps": "error",
+      "react/no-danger": "error",
+    },
+  },
+  {
+    // 05 S05-37: no string-built SQL in the app.
+    files: ["apps/web/src/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "MemberExpression[object.name='sql'][property.name='raw']",
+          message: "sql.raw is forbidden (S05-37).",
+        },
+      ],
+    },
+  },
+  {
+    // 06 Security: the passkey key never touches storage or the console.
+    files: ["apps/web/src/lib/client/account/**"],
+    rules: {
+      "no-restricted-globals": ["error", "localStorage", "sessionStorage", "indexedDB"],
+      "no-restricted-properties": ["error", { object: "document", property: "cookie" }],
     },
   },
   prettier,

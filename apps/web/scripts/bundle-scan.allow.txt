@@ -1,0 +1,2 @@
+# Known public 32-byte constants that may appear in the browser bundle (05 S05-53). One per line,
+# lowercase, each with a comment saying where it comes from. Review every new entry.

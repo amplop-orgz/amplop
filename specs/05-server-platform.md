@@ -572,6 +572,13 @@ From MONSKILLS, pinned to commit `3f8efd2` (plugin 0.7.2). Start with `monskill`
 13. **Status columns are `text` with `CHECK`,** not Postgres enums.
 14. **Cron runs daily at 02:00 and 02:30 UTC** and only as a backstop.
 15. **Alerts are deduplicated hourly per kind,** using the `rate_limits` table.
+16. **Daily fund buckets survive cleanup.** S05-17 drops `rate_limits` windows older than 2 hours, except 07's `fund:*` buckets of the current UTC day, which hold daily counts.
+17. **The migration role also gets `CREATE` on the database.** `drizzle-kit migrate` always runs `CREATE SCHEMA IF NOT EXISTS`, which Postgres checks against the database. Migrations record themselves in `public.__drizzle_migrations`. `roles.sql` guards each `CREATE ROLE` with `\gexec` so a re-run is harmless.
+18. **Two files under `lib/server/` skip `server-only`:** `db/schema.ts`, because `drizzle-kit` loads it outside Next.js where that import throws, and `security/csp.ts`, because `proxy.ts` imports it outside the React server layer. Neither holds a secret.
+19. **A short `CRON_SECRET` switches cron off instead of failing the start.** S05-47's rule (every cron call 401 and `cron_secret_missing`) wins over S05-49's length check, so a missing secret never takes the API down.
+20. **A known path called with another method answers Next.js's own 405,** not the S05-4 404. The catch-all only sees unknown paths; exporting every method from every route adds code for no security gain.
+21. **`experimental_taintUniqueValue` is not used.** It ships only in React canary builds; the stable React 19.3 the app pins does not export it (S05-49 makes it conditional).
+22. **Tests run against Postgres and Anvil.** `apps/web/test` uses `.env.example`'s fake values, migrates with the migration role in a global setup, and starts its own Anvil with the real contract for T05-19 and T05-20 (needs `forge build` output; CI fails if Anvil is missing).
 
 ## Additions to 01 (status)
 

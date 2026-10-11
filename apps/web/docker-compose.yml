@@ -1,0 +1,15 @@
+# Local Postgres 16 for development and tests (05 S05-35). The digest matches POSTGRES_IMAGE_DIGEST in
+# tools/versions.env. The superuser here is local-only; the app logs in as amplop_app (drizzle/roles.sql).
+services:
+  db:
+    image: postgres:16@sha256:2d2b8998d31037bf721cfdf764d76ba74171b4fab3431b7f72c27c56ddbdf9e3
+    environment:
+      POSTGRES_USER: amplop
+      POSTGRES_PASSWORD: amplop
+      POSTGRES_DB: amplop
+    ports:
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U amplop -d amplop"]
+      interval: 1s
+      retries: 30

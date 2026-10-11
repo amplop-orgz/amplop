@@ -1,0 +1,6 @@
+# Reviewed OSV exceptions (S02-19). Each one names why it cannot reach users and expires.
+
+[[IgnoredVulns]]
+id = "GHSA-vfj7-8cjw-p6xm"
+ignoreUntil = 2026-11-15T00:00:00Z
+reason = "braces <=3.0.3 has no fixed release. It is reached only through @next/eslint-plugin-next -> fast-glob at lint time, with the repository's own glob patterns; it is not in the app bundle or the server."
