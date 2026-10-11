@@ -601,6 +601,25 @@
   },
   {
     "type": "function",
+    "name": "inviteKeyUsed",
+    "inputs": [
+      {
+        "name": "inviteKey",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "used",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "inviteOf",
     "inputs": [
       {
@@ -1784,6 +1803,11 @@
   {
     "type": "error",
     "name": "InviteExpired",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InviteKeyReused",
     "inputs": []
   },
   {

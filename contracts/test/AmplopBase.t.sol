@@ -151,11 +151,14 @@ abstract contract AmplopBase is Test {
         return abi.encodePacked(r, s, v);
     }
 
-    /// @dev Raka invites with `inviteKey`; `who` accepts.
+    uint256 private _linkNonce;
+
+    /// @dev The owner invites with a fresh key (each invite key works once, SA-06); `who` accepts.
     function link(uint256 id, address owner, address who) internal {
+        uint256 pk = uint256(keccak256(abi.encode("link-key", ++_linkNonce)));
         vm.prank(owner);
-        amplop.createInvite(inviteKey);
-        bytes memory sig = signInvite(inviteKeyPk, id, who);
+        amplop.createInvite(vm.addr(pk));
+        bytes memory sig = signInvite(pk, id, who);
         vm.prank(who);
         amplop.acceptInvite(id, sig);
     }

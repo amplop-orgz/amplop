@@ -126,4 +126,21 @@ contract AuditFixesTest is AmplopBase {
         amplop.finishLockOff(id);
         assertEq(locked(id), usd(100, 0), "Emergency money stays locked");
     }
+
+    /// SA-06: reusing an invite key is refused, so a removed trusted person's old signature stays dead.
+    function test_SA06_inviteKeyWorksOnce() public {
+        uint256 pk = 0x5EED;
+        vm.prank(raka);
+        amplop.createInvite(vm.addr(pk));
+        vm.prank(raka);
+        vm.expectRevert(AmplopEnvelopes.InviteKeyReused.selector);
+        amplop.createInvite(vm.addr(pk));
+
+        uint256 other = register(dewi, sampleSplit); // and not on another account either
+        vm.prank(dewi);
+        vm.expectRevert(AmplopEnvelopes.InviteKeyReused.selector);
+        amplop.createInvite(vm.addr(pk));
+        assertTrue(amplop.inviteKeyUsed(vm.addr(pk)));
+        assertGt(other, 0);
+    }
 }

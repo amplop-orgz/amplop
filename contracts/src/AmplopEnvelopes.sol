@@ -223,6 +223,8 @@ contract AmplopEnvelopes is EIP712, ReentrancyGuard {
     mapping(address trusted => uint256 accountId) public trustedAccountOf;
     /// @notice Account with a pending recovery to this new owner, 0 = none.
     mapping(address newOwner => uint256 accountId) public recoveryAccountOf;
+    /// @notice Whether an address was ever used as an invite key (SA-06).
+    mapping(address inviteKey => bool used) public inviteKeyUsed;
     /// @notice Whether a deposit payment id was used.
     mapping(bytes32 paymentId => bool used) public paymentUsed;
     /// @notice Whether a purchase id reached the chain (approved or declined).
@@ -475,6 +477,8 @@ contract AmplopEnvelopes is EIP712, ReentrancyGuard {
     error TrustedRemovalPending();
     /// @notice Only the new owner can finish a recovery (SA-04).
     error NotNewOwner();
+    /// @notice This address was used as an invite key before (SA-06).
+    error InviteKeyReused();
     /// @notice The new owner already owns an account.
     error NewOwnerHasAccount();
     /// @notice The new owner is this account's trusted person.
@@ -569,10 +573,14 @@ contract AmplopEnvelopes is EIP712, ReentrancyGuard {
     }
 
     /// @notice Creates an invite for a trusted person, replacing any earlier one (R22).
+    /// @dev Each invite key works once across the whole contract, so a signature made for an earlier invite
+    /// can never be replayed by reusing its key (SA-06).
     /// @param inviteKey Address of the one-time key the invite link carries.
     function createInvite(address inviteKey) external {
         (uint256 id, Account storage acc) = _caller();
         if (inviteKey == address(0)) revert ZeroAddress();
+        if (inviteKeyUsed[inviteKey]) revert InviteKeyReused(); // SA-06: old acceptance signatures stay dead
+        inviteKeyUsed[inviteKey] = true;
         uint64 expiresAt = _clock(acc) + INVITE_LIFE;
         acc.invite = Invite({key: inviteKey, expiresAt: expiresAt, used: false});
         emit InviteCreated(id, inviteKey, expiresAt);

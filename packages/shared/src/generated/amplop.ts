@@ -285,6 +285,13 @@ export const amplopEnvelopesAbi = [
   },
   {
     type: "function",
+    inputs: [{ name: "inviteKey", internalType: "address", type: "address" }],
+    name: "inviteKeyUsed",
+    outputs: [{ name: "used", internalType: "bool", type: "bool" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
     inputs: [{ name: "accountId", internalType: "uint256", type: "uint256" }],
     name: "inviteOf",
     outputs: [
@@ -753,6 +760,7 @@ export const amplopEnvelopesAbi = [
   { type: "error", inputs: [], name: "InvalidSplit" },
   { type: "error", inputs: [], name: "InvalidTarget" },
   { type: "error", inputs: [], name: "InviteExpired" },
+  { type: "error", inputs: [], name: "InviteKeyReused" },
   { type: "error", inputs: [], name: "InviteUsed" },
   { type: "error", inputs: [], name: "LockAlreadyOff" },
   { type: "error", inputs: [], name: "LockOffPending" },

@@ -230,6 +230,7 @@ Every read returns zero values for an unknown `accountId` and never reverts.
 | `approveEmergency`, `approveRecovery`                                                                                                            | `accounts[id].trusted` (non-zero)                        | `NotTrusted()`         |
 | `finishRemoveTrusted`, `finalizeEmergency`, `finishLockOff`                                                                    | Anyone, after the wait                                   | `WaitNotOver(readyAt)` |
 | `finishRecovery` | The new owner, after the wait (SA-04) | `NotNewOwner()`, `WaitNotOver(readyAt)` |
+| `InviteKeyReused()` | `createInvite` (SA-06) |
 
 Treasury can only add money (R3). Card service can only spend available money of the chosen envelope into a hold, release it, collect it to `settlement`, or refund from `settlement`. No server role can touch `locked` or unreleased money.
 
@@ -373,7 +374,7 @@ Everyday gets 2 units more than `floor(20%)` = 14_964_448. Sum of parts = 74_822
 
 **S03-40 `createInvite(address inviteKey)`** (R22)
 
-- Checks: `NoAccount()`; `inviteKey == 0` → `ZeroAddress()`.
+- Checks: `NoAccount()`; `inviteKey == 0` → `ZeroAddress()`; `inviteKeyUsed[inviteKey]` → `InviteKeyReused()` (audit change SA-06: a key works once across the contract, so an old acceptance signature can never be replayed).
 - Effects: `invite = {inviteKey, clock + INVITE_LIFE, false}`, replacing any earlier invite. Allowed while a trusted person is linked (the replacement flow, B10).
 - Event: `InviteCreated(id, inviteKey, clock + INVITE_LIFE)`.
 
