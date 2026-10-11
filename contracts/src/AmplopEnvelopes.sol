@@ -473,6 +473,8 @@ contract AmplopEnvelopes is EIP712, ReentrancyGuard {
     error NoTrustedPerson();
     /// @notice A trusted-person removal is pending.
     error TrustedRemovalPending();
+    /// @notice Only the new owner can finish a recovery (SA-04).
+    error NotNewOwner();
     /// @notice The new owner already owns an account.
     error NewOwnerHasAccount();
     /// @notice The new owner is this account's trusted person.
@@ -774,12 +776,14 @@ contract AmplopEnvelopes is EIP712, ReentrancyGuard {
         emit LockOffDone(accountId, moved);
     }
 
-    /// @notice Moves the account to the approved new owner (R23).
+    /// @notice Moves the account to the approved new owner (R23). Only the new owner can call it.
+    /// @dev The new owner's call is its consent: nobody can push an account onto an address (SA-04).
     /// @param accountId Account.
     function finishRecovery(uint256 accountId) external {
         Account storage acc = _account(accountId);
         address newOwner = address(uint160(uint256(acc.pendings[uint8(PendingKind.Recovery)].data)));
         _finishPending(acc, PendingKind.Recovery);
+        if (msg.sender != newOwner) revert NotNewOwner();
         if (accountOf[newOwner] != 0) revert NewOwnerHasAccount();
         if (newOwner == acc.trusted) revert NewOwnerIsTrusted();
         address old = acc.owner;

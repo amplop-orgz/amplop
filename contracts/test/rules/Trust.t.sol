@@ -194,6 +194,7 @@ contract TrustTest is AmplopBase {
         vm.prank(mama);
         amplop.approveRecovery(id, rakaNew);
         vm.warp(block.timestamp + 48 hours);
+        vm.prank(rakaNew);
         amplop.finishRecovery(id);
 
         assertEq(amplop.accountOf(rakaNew), id);
@@ -233,6 +234,7 @@ contract TrustTest is AmplopBase {
         amplop.approveRecovery(id, rakaNew);
         register(rakaNew, sampleSplit);
         vm.warp(block.timestamp + 48 hours);
+        vm.prank(rakaNew);
         vm.expectRevert(AmplopEnvelopes.NewOwnerHasAccount.selector);
         amplop.finishRecovery(id);
     }
@@ -286,6 +288,7 @@ contract TrustTest is AmplopBase {
         amplop.approveRecovery(b, rakaNew);
 
         vm.warp(block.timestamp + 48 hours);
+        vm.prank(rakaNew);
         amplop.finishRecovery(id);
         assertEq(amplop.recoveryAccountOf(rakaNew), 0);
     }
@@ -469,6 +472,7 @@ contract TrustTest is AmplopBase {
         amplop.approveRecovery(id, rakaNew);
         _expectOneLog();
         vm.warp(block.timestamp + 48 hours);
+        vm.prank(rakaNew);
         amplop.finishRecovery(id);
         _expectOneLog();
 

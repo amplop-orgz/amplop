@@ -85,4 +85,21 @@ contract AuditFixesTest is AmplopBase {
         vm.expectRevert(AmplopEnvelopes.WaitOver.selector);
         amplop.cancelPending(PendingKind.Recovery);
     }
+
+    /// SA-04: an account cannot be pushed onto an address that did not ask for it.
+    function test_SA04_onlyNewOwnerFinishesRecovery() public {
+        address target = makeAddr("target");
+        vm.prank(mama);
+        amplop.approveRecovery(id, target);
+        skip(2 days);
+
+        vm.prank(stranger);
+        vm.expectRevert(AmplopEnvelopes.NotNewOwner.selector);
+        amplop.finishRecovery(id);
+        assertEq(amplop.accountOf(target), 0, "target still free to register");
+
+        vm.prank(target);
+        amplop.finishRecovery(id);
+        assertEq(amplop.accountOf(target), id);
+    }
 }

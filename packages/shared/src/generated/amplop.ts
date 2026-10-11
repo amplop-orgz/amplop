@@ -767,6 +767,7 @@ export const amplopEnvelopesAbi = [
   { type: "error", inputs: [], name: "NotCollected" },
   { type: "error", inputs: [], name: "NotFromEveryday" },
   { type: "error", inputs: [], name: "NotHeld" },
+  { type: "error", inputs: [], name: "NotNewOwner" },
   { type: "error", inputs: [], name: "NotOwner" },
   { type: "error", inputs: [], name: "NotTreasury" },
   { type: "error", inputs: [], name: "NotTrusted" },

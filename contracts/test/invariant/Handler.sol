@@ -334,7 +334,7 @@ contract Handler is Test {
     function finishRecovery(uint256 acct) external trackLocked("finishRecovery") {
         uint256 id = _accountId(acct);
         if (id == 0) return;
-        (bool active, uint64 readyAt,) = amplop.pending(id, PendingKind.Recovery);
+        (bool active, uint64 readyAt, bytes32 data) = amplop.pending(id, PendingKind.Recovery);
         if (!active) {
             _ensureTrusted(id, acct);
             vm.prank(_trusted(id));
@@ -342,6 +342,7 @@ contract Handler is Test {
             return;
         }
         uint64 c = amplop.clock(id);
+        vm.prank(address(uint160(uint256(data)))); // SA-04: only the new owner finishes
         try amplop.finishRecovery(id) {
             if (!active || c < readyAt) clockViolations++;
         } catch {}

@@ -228,7 +228,8 @@ Every read returns zero values for an unknown `accountId` and never reverts.
 | `authorize`, `collect`, `refund`                                                                                                                 | `cardService`                                            | `NotCardService()`     |
 | `releaseHold`                                                                                                                                    | `cardService`, or anyone once the hold period has passed | `HoldNotExpired()`     |
 | `approveEmergency`, `approveRecovery`                                                                                                            | `accounts[id].trusted` (non-zero)                        | `NotTrusted()`         |
-| `finishRemoveTrusted`, `finalizeEmergency`, `finishLockOff`, `finishRecovery`                                                                    | Anyone, after the wait                                   | `WaitNotOver(readyAt)` |
+| `finishRemoveTrusted`, `finalizeEmergency`, `finishLockOff`                                                                    | Anyone, after the wait                                   | `WaitNotOver(readyAt)` |
+| `finishRecovery` | The new owner, after the wait (SA-04) | `NotNewOwner()`, `WaitNotOver(readyAt)` |
 
 Treasury can only add money (R3). Card service can only spend available money of the chosen envelope into a hold, release it, collect it to `settlement`, or refund from `settlement`. No server role can touch `locked` or unreleased money.
 
@@ -413,7 +414,7 @@ Everyday gets 2 units more than `floor(20%)` = 14_964_448. Sum of parts = 74_822
 
 **S03-45 `finishRecovery(uint256 accountId)`** (R23)
 
-- Checks: `AccountNotFound`; not pending → `NothingPending()`; `clock < readyAt` → `WaitNotOver(readyAt)`; re-check `NewOwnerHasAccount()` and `NewOwnerIsTrusted()` (state may have changed during the wait).
+- Checks: `AccountNotFound`; not pending → `NothingPending()`; `clock < readyAt` → `WaitNotOver(readyAt)`; `msg.sender != newOwner` → `NotNewOwner()` (SA-04: the new owner's call is its consent); re-check `NewOwnerHasAccount()` and `NewOwnerIsTrusted()` (state may have changed during the wait).
 - Effects: `old = owner`; `accountOf[old] = 0`; `accountOf[newOwner] = id`; `owner = newOwner`; `recoveryAccountOf[newOwner] = 0`; clear pending. Balances, schedules, holds, the open request, the invite, other pending changes and `skipSeconds` are untouched (I1).
 - Event: `RecoveryDone(accountId, old, newOwner)`. The old address now fails every owner check (I4).
 
@@ -504,6 +505,7 @@ Everyday gets 2 units more than `floor(20%)` = 14_964_448. Sum of parts = 74_822
 | `TrustedRemovalPending()`               | `approveRecovery`                                               |
 | `NewOwnerHasAccount()`                  | `approveRecovery`, `finishRecovery`                             |
 | `NewOwnerIsTrusted()`                   | `approveRecovery`, `finishRecovery`                             |
+| `NotNewOwner()` | `finishRecovery` (SA-04) |
 | `RecoveryTargetBusy()`                  | `approveRecovery`                                               |
 | `DemoOff()`                             | `skipDays`                                                      |
 | `InvalidDays()`                         | `skipDays`                                                      |
