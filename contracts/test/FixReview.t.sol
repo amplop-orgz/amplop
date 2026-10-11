@@ -4,7 +4,7 @@ pragma solidity 0.8.30;
 import {AmplopBase} from "./AmplopBase.t.sol";
 import {AmplopEnvelopes, PendingKind} from "../src/AmplopEnvelopes.sol";
 
-/// @notice Review of the SA-01..SA-06 fixes. Each test asserts the safe behaviour; a failing test is a confirmed issue.
+/// @notice Review of the SA-01..SA-06 fixes. Each test asserts the safe behaviour; every test passes.
 contract FixReviewTest is AmplopBase {
     uint256 private _pk = 0xB0B;
 
@@ -23,7 +23,7 @@ contract FixReviewTest is AmplopBase {
         amplop.approveRecovery(accId, newOwner);
     }
 
-    // ------------------------------------------------------------ issues (expected to fail)
+    // ------------------------------------------------------------ issues found in the fix review (fixed in 3ae9e0f, 84c4a2b)
 
     /// SA-06: anyone who sees createInvite(key) in the mempool can burn that key first.
     function test_FR_inviteKeyFrontRun() public {
@@ -50,7 +50,7 @@ contract FixReviewTest is AmplopBase {
         assertTrue(active, "due recovery should survive, like cancelPending's WaitOver");
     }
 
-    // ------------------------------------------------------------ checked properties (expected to pass)
+    // ------------------------------------------------------------ checked properties
 
     /// SA-03 then the blocker goes away: index stays consistent and the address is usable again.
     function test_FR_deadRecoveryCancelledThenAddressFreed() public {
