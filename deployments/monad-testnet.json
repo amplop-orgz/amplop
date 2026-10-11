@@ -1,0 +1,18 @@
+{
+  "chainId": 10143,
+  "contract": "AmplopEnvelopes",
+  "address": "0x5596Bf1014EC25F760e8976f1DD8a40Ee250c56C",
+  "deployBlock": 70137747,
+  "deployTx": "0x2d0849bb062069a3d679c1169ce6c22a54b456dfc764f9cd0dbd5bde2ee06280",
+  "commit": "43b7c5c8b52caff6ba1fecb2b3a833413818e936",
+  "compiler": "0.8.30",
+  "token": "0xa9012a055bd4e0eDfF8Ce09f960291C09D5322dC",
+  "tokenDecimals": 6,
+  "tokenSource": "0xa9012a055bd4e0eDfF8Ce09f960291C09D5322dC",
+  "settlement": "0xc22A14fB5166A595B887EeA1A8744A1Ec1B5A28F",
+  "treasury": "0xAA56c1D96160D3d290204C1B156B857CAa198bc5",
+  "cardService": "0x4C1ce63Dfa4036970CC26B0d9caFcF6821EB2eB6",
+  "demoMode": true,
+  "verified": false,
+  "deployedAt": "2026-10-11T14:41:06.310Z"
+}

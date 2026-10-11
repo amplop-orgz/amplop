@@ -36,3 +36,10 @@ regexes = [
   # Placeholder Midtrans keys named in the specs and test fixtures.
   '''SB-Mid-server-(e2e-test-key|abc12345)''',
 ]
+
+[[allowlists]]
+description = "Deploy records name the token contract under a key called token: a 20-byte address is public, never a key"
+paths = ['''^deployments/[a-z0-9-]+\.json$''']
+condition = "AND"
+regexTarget = "line"
+regexes = ['''"token(Source)?":\s*"0x[0-9a-fA-F]{40}"''']

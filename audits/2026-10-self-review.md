@@ -132,8 +132,10 @@ Plus `x-ray/` and `solidity-auditor-full-report.md`.
 
 ## 8. Redeploy record
 
-No contract had been deployed when the review ran, so nothing was redeployed. The first Monad testnet deployment uses the fixed commit. When it happens, its address, deploy block and date are recorded here and in `deployments/monad-testnet.json`.
+No contract had been deployed when the review ran, so nothing was redeployed. The first Monad testnet deployment carries every fix above (commit `43b7c5c`, which includes the audit-end tag's contract unchanged). The full record is `deployments/monad-testnet.json`.
 
-| Old address | New address            | Deploy block | Date |
-| ----------- | ---------------------- | ------------ | ---- |
-| none        | (pending first deploy) |              |      |
+| Old address | New address                                  | Deploy block | Date        |
+| ----------- | -------------------------------------------- | ------------ | ----------- |
+| none        | `0x5596Bf1014EC25F760e8976f1DD8a40Ee250c56C` | 70137747     | 11 Oct 2026 |
+
+Read back on chain after the deploy: token, treasury, card service and settlement equal the inputs; `demoMode` is true; `tokenDecimals` is 6; both allowances are the maximum.
