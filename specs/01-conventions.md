@@ -347,7 +347,7 @@ These came out of writing the specs. They bind every spec.
 - `authorize` reverts on any reused purchase id, approved or declined; `purchaseUsed` tells the server whether an id reached the chain after a timeout.
 - Collect works only before `HOLD_PERIOD` ends on the account clock; after that only release works.
 - Lock-off cannot start while an Emergency request is open, and a request cannot start while lock-off is waiting.
-- A trusted-person removal and a recovery cannot be pending at the same time.
+- A trusted-person removal and a recovery cannot be pending at the same time. `removeTrusted` cancels a pending recovery (audit change SA-02, so a trusted person cannot block their own removal by re-approving), and `approveRecovery` reverts while a removal is pending.
 - `recoveryAccountOf(newOwner)` is set by `approveRecovery` and cleared by `finishRecovery`, `cancelPending(Recovery)` and a second approval to another address. `approveRecovery` reverts when another account already has a pending recovery to the same `newOwner`.
 - `acceptInvite` reverts while the account still has a trusted person. In a replacement the app calls `finishRemoveTrusted` first (spec 10).
 - Once the lock is off, later Emergency parts go to Everyday whole and available at once.

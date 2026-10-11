@@ -788,7 +788,6 @@ export const amplopEnvelopesAbi = [
     name: "PurchaseNotFound",
   },
   { type: "error", inputs: [], name: "ReasonRequired" },
-  { type: "error", inputs: [], name: "RecoveryPending" },
   { type: "error", inputs: [], name: "RecoveryTargetBusy" },
   { type: "error", inputs: [], name: "ReentrancyGuardReentrantCall" },
   { type: "error", inputs: [], name: "RefundTooLarge" },

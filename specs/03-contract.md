@@ -393,7 +393,8 @@ Everyday gets 2 units more than `floor(20%)` = 14_964_448. Sum of parts = 74_822
 
 **S03-42 `removeTrusted()`** (R22)
 
-- Checks: `NoAccount()`; `trusted == 0` → `NoTrustedPerson()`; recovery pending → `RecoveryPending()`.
+- Checks: `NoAccount()`; `trusted == 0` → `NoTrustedPerson()`.
+- Effects: a pending recovery is cancelled first (`recoveryAccountOf[newOwner] = 0`, pending cleared). Audit change SA-02: otherwise a trusted person could re-approve after every cancel and never be removed.
 - Effects: `pendings[TrustedRemoval] = {true, clock + WAIT, 0}` (restarts if already pending).
 - Event: `TrustedRemovalStarted(id, trusted, clock + WAIT)`. The trusted person keeps every power during the wait.
 
@@ -500,7 +501,6 @@ Everyday gets 2 units more than `floor(20%)` = 14_964_448. Sum of parts = 74_822
 | `AlreadyTrusted()`                      | `acceptInvite`                                                  |
 | `TrustedAlreadyLinked()`                | `acceptInvite`                                                  |
 | `NoTrustedPerson()`                     | `removeTrusted`                                                 |
-| `RecoveryPending()`                     | `removeTrusted`                                                 |
 | `TrustedRemovalPending()`               | `approveRecovery`                                               |
 | `NewOwnerHasAccount()`                  | `approveRecovery`, `finishRecovery`                             |
 | `NewOwnerIsTrusted()`                   | `approveRecovery`, `finishRecovery`                             |
@@ -534,7 +534,7 @@ None. The contract serves boards 0.3 to 4.3 through the reads above.
 | Approve after Emergency opened by time (G10)               | `NoOpenRequest()`.                                                                                                         |
 | Lock-off while request open                                | `RequestAlreadyOpen()`; cancel the request first.                                                                          |
 | Request while lock-off pending                             | `LockOffPending()`; cancel the lock-off first.                                                                             |
-| Recovery and removal at once                               | Each blocks the other (`RecoveryPending`, `TrustedRemovalPending`).                                                        |
+| Recovery and removal at once | `removeTrusted` cancels a pending recovery (SA-02); `approveRecovery` reverts `TrustedRemovalPending` during a removal. |
 | Two accounts approve a recovery to the same new owner      | The second reverts `RecoveryTargetBusy()`; the new phone creates a fresh passkey.                                          |
 | New owner registers during recovery wait                   | `finishRecovery` reverts `NewOwnerHasAccount()`; the student cancels or the trusted person approves again.                 |
 | Due split never promoted                                   | Views show it as in force; `cancelPending(Split)` reverts `NothingPending()`; the next `saveSplit` or `deposit` stores it. |
@@ -656,7 +656,7 @@ None. The contract serves boards 0.3 to 4.3 through the reads above.
 | Recovery: no trusted         | `test_R23_noTrustedPersonNoRecovery`             | nobody can approve                                                                                                                              | S03-44           | I8          |
 | Recovery: second approval    | `test_R23_secondApprovalRestartsWait`            | readyAt moves; `recoveryAccountOf` of the first address is 0, of the second is the account                                                      | S03-44           |             |
 | Recovery: lookup             | `test_R23_recoveryAccountOfTracksPending`        | set on approve; 0 after cancel and after finish; a second account approving the same new owner reverts `RecoveryTargetBusy`                     | S03-44 to S03-46 | I1, I3      |
-| Recovery vs removal          | `test_R23_removalAndRecoveryBlockEachOther`      | `removeTrusted` during a pending recovery reverts `RecoveryPending`; `approveRecovery` during a pending removal reverts `TrustedRemovalPending` | S03-42, S03-44   |             |
+| Recovery vs removal          | `test_R23_removalAndRecoveryBlockEachOther`      | `removeTrusted` during a pending recovery cancels it (SA-02); `approveRecovery` during a pending removal reverts `TrustedRemovalPending` | S03-42, S03-44   |             |
 | Owner functions              | `test_R1_onlyOwnerActsAsStudent`                 | each owner function from a stranger reverts `NoAccount`                                                                                         | S03-21           |             |
 | Demo: off                    | `test_DEMO_skipDaysRevertsWhenDemoOff`           | `DemoOff`                                                                                                                                       | S03-47           | K4          |
 | Demo: per account            | `test_DEMO_skipAffectsOnlyCallersAccount`        | other account's clock, releases, waits unchanged                                                                                                | S03-6            | K3          |
@@ -733,7 +733,7 @@ Any extra invariant found by the `x-ray` skill in spec 04 is added as `invariant
 3. **Two monotonic counters per envelope** (`inAmt`, `outAmt`) plus `held`; available is computed on read.
 4. **Unlocked Emergency parts go to Everyday whole and at once** (R20, C16), not in four shares.
 5. **Emergency amount is not reserved.** Lock-off cannot start while a request is open, and a request cannot start while lock-off is pending.
-6. **Recovery and trusted removal cannot run together.** Each reverts while the other is pending, so a removed person's approval never completes.
+6. **Recovery and trusted removal cannot run together.** `approveRecovery` reverts while a removal is pending, and `removeTrusted` cancels a pending recovery (audit change SA-02), so a removed person's approval never completes and a trusted person cannot block their removal.
 7. **`acceptInvite` requires no linked trusted person.** In the replacement flow the app calls `finishRemoveTrusted` first (spec 10).
 8. **Collect only within the hold period**; at `createdAt + 7d` only release is possible. Spec 09's collect timer must run before then.
 9. **Refunds may be partial and repeated** up to the collected amount; state becomes `Refunded` on the first one. `refund` has no time limit.

@@ -36,4 +36,24 @@ contract AuditFixesTest is AmplopBase {
         amplop.approveEmergency(id, seq); // approving what she now sees still works
         assertEq(locked(id), 0);
     }
+
+    /// SA-02: a trusted person cannot block their own removal by re-approving a recovery after every cancel.
+    function test_SA02_recoveryCannotBlockRemoval() public {
+        address target = makeAddr("target");
+        vm.prank(mama);
+        amplop.approveRecovery(id, target);
+        vm.prank(raka);
+        amplop.removeTrusted(); // used to revert RecoveryPending
+        (bool active,,) = amplop.pending(id, PendingKind.Recovery);
+        assertFalse(active, "recovery cancelled");
+        assertEq(amplop.recoveryAccountOf(target), 0);
+
+        vm.prank(mama);
+        vm.expectRevert(AmplopEnvelopes.TrustedRemovalPending.selector);
+        amplop.approveRecovery(id, makeAddr("target2"));
+
+        skip(2 days);
+        amplop.finishRemoveTrusted(id);
+        assertEq(amplop.accountInfo(id).trusted, address(0));
+    }
 }

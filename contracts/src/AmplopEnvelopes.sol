@@ -471,8 +471,6 @@ contract AmplopEnvelopes is EIP712, ReentrancyGuard {
     error TrustedAlreadyLinked();
     /// @notice The account has no trusted person.
     error NoTrustedPerson();
-    /// @notice A recovery is pending.
-    error RecoveryPending();
     /// @notice A trusted-person removal is pending.
     error TrustedRemovalPending();
     /// @notice The new owner already owns an account.
@@ -578,11 +576,13 @@ contract AmplopEnvelopes is EIP712, ReentrancyGuard {
         emit InviteCreated(id, inviteKey, expiresAt);
     }
 
-    /// @notice Starts removing the trusted person (R22). They keep every power during the wait.
+    /// @notice Starts removing the trusted person (R22). They keep every power during the wait except
+    /// approving a recovery, and any recovery they already approved is cancelled.
+    /// @dev Cancelling here stops a trusted person re-approving after every cancel to block removal (SA-02).
     function removeTrusted() external {
         (uint256 id, Account storage acc) = _caller();
         if (acc.trusted == address(0)) revert NoTrustedPerson();
-        if (acc.pendings[uint8(PendingKind.Recovery)].active) revert RecoveryPending();
+        _clearRecovery(acc);
         uint64 readyAt = _startPending(acc, PendingKind.TrustedRemoval, bytes32(0));
         emit TrustedRemovalStarted(id, acc.trusted, readyAt);
     }
@@ -1201,6 +1201,14 @@ contract AmplopEnvelopes is EIP712, ReentrancyGuard {
         acc.inAmt[EVERYDAY] += amount;
         acc.em.status = EmergencyStatus.Opened;
         emit EmergencyOpened(accountId, acc.em.requestSeq, amount, by);
+    }
+
+    /// @dev Drops a pending recovery and its lookup entry, if any.
+    function _clearRecovery(Account storage acc) private {
+        Pending storage p = acc.pendings[uint8(PendingKind.Recovery)];
+        if (!p.active) return;
+        recoveryAccountOf[address(uint160(uint256(p.data)))] = 0;
+        delete acc.pendings[uint8(PendingKind.Recovery)];
     }
 
     function _startPending(Account storage acc, PendingKind kind, bytes32 data) private returns (uint64 readyAt) {

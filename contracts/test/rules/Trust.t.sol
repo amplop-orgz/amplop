@@ -294,13 +294,12 @@ contract TrustTest is AmplopBase {
         uint256 id = _linked();
         vm.prank(mama);
         amplop.approveRecovery(id, rakaNew);
-        vm.prank(raka);
-        vm.expectRevert(AmplopEnvelopes.RecoveryPending.selector);
-        amplop.removeTrusted();
-        vm.prank(raka);
-        amplop.cancelPending(PendingKind.Recovery);
+        // SA-02: starting a removal cancels the recovery the trusted person approved.
         vm.prank(raka);
         amplop.removeTrusted();
+        (bool active,,) = amplop.pending(id, PendingKind.Recovery);
+        assertFalse(active);
+        assertEq(amplop.recoveryAccountOf(rakaNew), 0);
         vm.prank(mama);
         vm.expectRevert(AmplopEnvelopes.TrustedRemovalPending.selector);
         amplop.approveRecovery(id, rakaNew);
