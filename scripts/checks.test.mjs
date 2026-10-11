@@ -49,6 +49,31 @@ describe("check-analysis", () => {
     expect(analysis.check(slither("Low"), {}, [], "")).toHaveLength(1));
   it("passes a listed low", () =>
     expect(analysis.check(slither("Low"), {}, accepted, "timestamp: account clock")).toEqual([]));
+  it("accepts a whole-file location for every line", () =>
+    expect(
+      analysis.check(
+        slither("Low"),
+        {},
+        [
+          {
+            tool: "slither",
+            detector: "timestamp",
+            location: "src/A.sol",
+            reason: "account clock",
+          },
+        ],
+        "timestamp",
+      ),
+    ).toEqual([]));
+  it("does not let a file location match another file", () =>
+    expect(
+      analysis.check(
+        slither("Low"),
+        {},
+        [{ tool: "slither", detector: "timestamp", location: "src/A", reason: "x" }],
+        "timestamp",
+      ),
+    ).toHaveLength(1));
   it("fails when SECURITY.md misses an accepted finding", () =>
     expect(analysis.check(slither("Low"), {}, accepted, "")).toHaveLength(1));
   it("fails on an aderyn high", () =>

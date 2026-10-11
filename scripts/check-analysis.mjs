@@ -34,11 +34,19 @@ export function findings(slither, aderyn) {
 }
 
 export function check(slither, aderyn, accepted, securityMd) {
-  const ok = new Set(accepted.map(key));
+  // An accepted location is "file:line" for one finding, or "file" for every finding of that detector in it,
+  // since line numbers move with every edit.
+  const isAccepted = (f) =>
+    accepted.some(
+      (a) =>
+        a.tool === f.tool &&
+        a.detector === f.detector &&
+        (a.location === f.location || f.location.startsWith(`${a.location}:`)),
+    );
   const errors = [];
   for (const f of findings(slither, aderyn)) {
     if (f.severity === "high" || f.severity === "medium") errors.push(`${f.severity}: ${key(f)}`);
-    else if (f.severity === "low" && !ok.has(key(f))) errors.push(`unlisted low: ${key(f)}`);
+    else if (f.severity === "low" && !isAccepted(f)) errors.push(`unlisted low: ${key(f)}`);
   }
   for (const a of accepted) {
     if (!a.reason) errors.push(`accepted finding without reason: ${key(a)}`);

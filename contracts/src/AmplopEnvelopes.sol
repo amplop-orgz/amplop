@@ -506,6 +506,7 @@ contract AmplopEnvelopes is EIP712, ReentrancyGuard {
                 || cardService_ == address(0)
         ) revert ZeroAddress();
         uint8 dec = 0;
+        // aderyn-ignore-next-line(reentrancy-state-change) -- a view call in the constructor; nothing to re-enter (SA-07)
         try IERC20Metadata(address(token_)).decimals() returns (uint8 d) {
             dec = d;
         } catch {
@@ -706,6 +707,7 @@ contract AmplopEnvelopes is EIP712, ReentrancyGuard {
         if (inv.used) revert InviteUsed();
         if (_clock(acc) >= inv.expiresAt) revert InviteExpired();
         bytes32 digest = _hashTypedDataV4(keccak256(abi.encode(ACCEPT_INVITE_TYPEHASH, accountId, msg.sender)));
+        // slither-disable-next-line unused-return -- the error argument adds nothing once err is checked (SA-07)
         (address signer, ECDSA.RecoverError err,) = ECDSA.tryRecover(digest, signature);
         if (err != ECDSA.RecoverError.NoError || signer != inv.key) revert BadSignature();
         if (msg.sender == acc.owner) revert CannotTrustSelf();
@@ -849,6 +851,7 @@ contract AmplopEnvelopes is EIP712, ReentrancyGuard {
         }
 
         uint256 before = token.balanceOf(address(this));
+        // slither-disable-next-line arbitrary-send-erc20 -- `from` is the immutable treasury, only it can call (SA-07)
         token.safeTransferFrom(treasury, address(this), amount);
         _checkReceived(before, amount);
         emit Deposited(accountId, paymentId, amount, parts, today);
@@ -958,6 +961,7 @@ contract AmplopEnvelopes is EIP712, ReentrancyGuard {
         _accounts[p.accountId].inAmt[p.envelope] += amount;
 
         uint256 before = token.balanceOf(address(this));
+        // slither-disable-next-line arbitrary-send-erc20 -- `from` is the immutable settlement, capped per purchase (SA-07)
         token.safeTransferFrom(settlement, address(this), amount);
         _checkReceived(before, amount);
         emit PurchaseRefunded(p.accountId, purchaseId, amount);
@@ -1195,6 +1199,7 @@ contract AmplopEnvelopes is EIP712, ReentrancyGuard {
     function _scheduleFor(Account storage acc, uint64 monday) private returns (Schedule storage) {
         uint8 n = acc.scheduleCount;
         for (uint8 i = 0; i < n; ++i) {
+            // slither-disable-next-line incorrect-equality -- exact week match is the merge rule (S03-10) (SA-07)
             if (acc.schedules[i].startMonday == monday) return acc.schedules[i];
         }
         if (n == MAX_SCHEDULES) revert TooManySchedules();

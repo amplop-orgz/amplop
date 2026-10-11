@@ -1,1 +1,26 @@
-[]
+[
+  {
+    "tool": "slither",
+    "detector": "timestamp",
+    "location": "src/AmplopEnvelopes.sol",
+    "reason": "Every wait, release and hold reads the account clock (block.timestamp plus demo skips) by design (PRD 7 rule 6, S03-8). Comparisons are against 48-hour, 7-day and weekly boundaries, far above any block-time drift."
+  },
+  {
+    "tool": "aderyn",
+    "detector": "costly-loop",
+    "location": "src/AmplopEnvelopes.sol",
+    "reason": "The loops run over at most 3 live schedule records and 4 envelopes (S03-10, S03-51); storage writes inside them are bounded and needed."
+  },
+  {
+    "tool": "aderyn",
+    "detector": "literal-instead-of-constant",
+    "location": "src/AmplopEnvelopes.sol",
+    "reason": "The literals are the PRD's own fixed values: the merchant category codes of the default shop table (R9), 100 for percent, 5 envelopes, 4 weekly shares and 7 days a week. Naming each adds nothing."
+  },
+  {
+    "tool": "aderyn",
+    "detector": "require-revert-in-loop",
+    "location": "src/AmplopEnvelopes.sol",
+    "reason": "The loops are bounded at 5 split values and 3 schedule records; reverting on the first bad value is the intended check (R4)."
+  }
+]
