@@ -65,6 +65,7 @@ const show = (s) => `${s.slice(0, 6)}…`;
 export function scanText(text, { patterns, allow, secrets }) {
   const hits = [];
   for (const p of patterns) {
+    // nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp -- patterns come from the committed bundle-scan.patterns.json, not from input
     for (const m of text.matchAll(new RegExp(p.pattern, "g"))) {
       if (p.id === "hex32" && allow.has(m[0].toLowerCase())) continue;
       hits.push({ id: p.id, offset: m.index, preview: show(m[0]) });

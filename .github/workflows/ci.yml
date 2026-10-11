@@ -242,7 +242,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          alerts=$(gh api --paginate "repos/${{ github.repository }}/code-scanning/alerts?ref=${{ github.ref }}&state=open" \
+          alerts=$(gh api --paginate "repos/${GITHUB_REPOSITORY}/code-scanning/alerts?ref=${GITHUB_REF}&state=open" \
             --jq '[.[] | select((.rule.security_severity_level // "") as $s | ($s == "critical" or $s == "high" or $s == "medium") or ((.rule.security_severity_level == null) and (.rule.severity == "error" or .rule.severity == "warning")))] | length')
           echo "blocking alerts: $alerts"
           [ "$alerts" = "0" ]
