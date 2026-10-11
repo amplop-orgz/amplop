@@ -127,21 +127,21 @@ contract AuditFixesTest is AmplopBase {
         assertEq(locked(id), usd(100, 0), "Emergency money stays locked");
     }
 
-    /// SA-06: reusing an invite key is refused, so a removed trusted person's old signature stays dead.
-    function test_SA06_inviteKeyWorksOnce() public {
+    /// SA-06: reusing an invite key on the same account is refused, so a removed trusted person's old
+    /// signature stays dead; another account can still use that address, so nobody can block an invite.
+    function test_SA06_inviteKeyWorksOncePerAccount() public {
         uint256 pk = 0x5EED;
         vm.prank(raka);
         amplop.createInvite(vm.addr(pk));
         vm.prank(raka);
         vm.expectRevert(AmplopEnvelopes.InviteKeyReused.selector);
         amplop.createInvite(vm.addr(pk));
+        assertTrue(amplop.inviteKeyUsed(id, vm.addr(pk)));
 
-        uint256 other = register(dewi, sampleSplit); // and not on another account either
+        uint256 other = register(dewi, sampleSplit);
         vm.prank(dewi);
-        vm.expectRevert(AmplopEnvelopes.InviteKeyReused.selector);
-        amplop.createInvite(vm.addr(pk));
-        assertTrue(amplop.inviteKeyUsed(vm.addr(pk)));
-        assertGt(other, 0);
+        amplop.createInvite(vm.addr(pk)); // a front-run on another account blocks nothing
+        assertTrue(amplop.inviteKeyUsed(other, vm.addr(pk)));
     }
 
     /// SA-02 follow-up: once a recovery's wait is over, the old key cannot kill it through removeTrusted.

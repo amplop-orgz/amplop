@@ -375,7 +375,7 @@ Everyday gets 2 units more than `floor(20%)` = 14_964_448. Sum of parts = 74_822
 
 **S03-40 `createInvite(address inviteKey)`** (R22)
 
-- Checks: `NoAccount()`; `inviteKey == 0` → `ZeroAddress()`; `inviteKeyUsed[inviteKey]` → `InviteKeyReused()` (audit change SA-06: a key works once across the contract, so an old acceptance signature can never be replayed).
+- Checks: `NoAccount()`; `inviteKey == 0` → `ZeroAddress()`; `inviteKeyUsed[id][inviteKey]` → `InviteKeyReused()` (audit change SA-06: a key works once per account, so an old acceptance signature, which names its account, can never be replayed; per account so nobody can block another account's invite by registering its key first).
 - Effects: `invite = {inviteKey, clock + INVITE_LIFE, false}`, replacing any earlier invite. Allowed while a trusted person is linked (the replacement flow, B10).
 - Event: `InviteCreated(id, inviteKey, clock + INVITE_LIFE)`.
 

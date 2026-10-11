@@ -285,7 +285,10 @@ export const amplopEnvelopesAbi = [
   },
   {
     type: "function",
-    inputs: [{ name: "inviteKey", internalType: "address", type: "address" }],
+    inputs: [
+      { name: "accountId", internalType: "uint256", type: "uint256" },
+      { name: "inviteKey", internalType: "address", type: "address" },
+    ],
     name: "inviteKeyUsed",
     outputs: [{ name: "used", internalType: "bool", type: "bool" }],
     stateMutability: "view",

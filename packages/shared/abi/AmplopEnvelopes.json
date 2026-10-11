@@ -604,6 +604,11 @@
     "name": "inviteKeyUsed",
     "inputs": [
       {
+        "name": "accountId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
         "name": "inviteKey",
         "type": "address",
         "internalType": "address"
