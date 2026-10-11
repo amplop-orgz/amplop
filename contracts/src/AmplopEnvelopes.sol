@@ -777,7 +777,8 @@ contract AmplopEnvelopes is EIP712, ReentrancyGuard {
     }
 
     /// @notice Moves the account to the approved new owner (R23). Only the new owner can call it.
-    /// @dev The new owner's call is its consent: nobody can push an account onto an address (SA-04).
+    /// @dev The new owner's call is its consent: nobody can push an account onto an address (SA-04). The old
+    /// key's unused invite and pending lock-off are dropped so they cannot act on the new owner's account (SA-05).
     /// @param accountId Account.
     function finishRecovery(uint256 accountId) external {
         Account storage acc = _account(accountId);
@@ -791,6 +792,8 @@ contract AmplopEnvelopes is EIP712, ReentrancyGuard {
         accountOf[newOwner] = accountId;
         acc.owner = newOwner;
         recoveryAccountOf[newOwner] = 0;
+        delete acc.invite;
+        delete acc.pendings[uint8(PendingKind.LockOff)];
         emit RecoveryDone(accountId, old, newOwner);
     }
 

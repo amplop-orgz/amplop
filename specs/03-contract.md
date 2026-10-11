@@ -415,7 +415,7 @@ Everyday gets 2 units more than `floor(20%)` = 14_964_448. Sum of parts = 74_822
 **S03-45 `finishRecovery(uint256 accountId)`** (R23)
 
 - Checks: `AccountNotFound`; not pending → `NothingPending()`; `clock < readyAt` → `WaitNotOver(readyAt)`; `msg.sender != newOwner` → `NotNewOwner()` (SA-04: the new owner's call is its consent); re-check `NewOwnerHasAccount()` and `NewOwnerIsTrusted()` (state may have changed during the wait).
-- Effects: `old = owner`; `accountOf[old] = 0`; `accountOf[newOwner] = id`; `owner = newOwner`; `recoveryAccountOf[newOwner] = 0`; clear pending. Balances, schedules, holds, the open request, the invite, other pending changes and `skipSeconds` are untouched (I1).
+- Effects: `old = owner`; `accountOf[old] = 0`; `accountOf[newOwner] = id`; `owner = newOwner`; `recoveryAccountOf[newOwner] = 0`; clear pending; delete the invite and any pending lock-off, which the old key may have started (audit change SA-05). Balances, schedules, holds, the open request, a pending split, a pending removal and `skipSeconds` are untouched (I1).
 - Event: `RecoveryDone(accountId, old, newOwner)`. The old address now fails every owner check (I4).
 
 **S03-46 `cancelPending(PendingKind kind)`** (R24, H5, B11, G17, I3)

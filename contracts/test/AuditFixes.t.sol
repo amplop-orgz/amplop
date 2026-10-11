@@ -102,4 +102,28 @@ contract AuditFixesTest is AmplopBase {
         amplop.finishRecovery(id);
         assertEq(amplop.accountOf(target), id);
     }
+
+    /// SA-05: a thief's invite and lock-off, started with the old key, do not survive a recovery.
+    function test_SA05_recoveryDropsOldKeyInviteAndLockOff() public {
+        uint256 thiefKeyPk = 0xBAD;
+        vm.startPrank(raka); // the thief holds Raka's old key
+        amplop.createInvite(vm.addr(thiefKeyPk));
+        amplop.startLockOff();
+        vm.stopPrank();
+
+        address target = makeAddr("target");
+        vm.prank(mama);
+        amplop.approveRecovery(id, target);
+        skip(2 days);
+        vm.prank(target);
+        amplop.finishRecovery(id);
+
+        (address key,,) = amplop.inviteOf(id);
+        assertEq(key, address(0), "invite dropped");
+        (bool lockOffPending,,) = amplop.pending(id, PendingKind.LockOff);
+        assertFalse(lockOffPending, "lock-off dropped");
+        vm.expectRevert(abi.encodeWithSelector(AmplopEnvelopes.NothingPending.selector));
+        amplop.finishLockOff(id);
+        assertEq(locked(id), usd(100, 0), "Emergency money stays locked");
+    }
 }
