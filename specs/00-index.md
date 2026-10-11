@@ -9,7 +9,7 @@ These specs turn the Amplop PRD into units of work that can be built, tested and
 3. When a spec is unclear, the order of authority is: the PRD, then `01-conventions.md`, then the spec. A spec that fills a gap in the PRD says so under "Decisions made here".
 4. Commit as PRD 15 says: one finished piece per commit, `type(area): what changed`, pushed at least daily.
 
-The PRD is the "Amplop PRD" doc; `PRD.md` here is a snapshot of it from 10 Oct 2026 (revision 73). If the doc changes, re-export it. `REVIEW-NOTES.md` records how these specs were checked against the PRD. The mock-ups are the "Amplop app mock-ups" design; a copy of every board's HTML is in `design/boards/`, the mock-up design rules in `design/SPEC.md`, and the logo files in `design/logo/`. Where mock-up copy and the PRD differ (for example "Ibu" in older boards), the PRD wins: the parent is "Mama".
+The PRD is the "Amplop PRD" doc; `PRD.md` here is a snapshot of it from 11 Oct 2026 (revision 74, which adds SA-01's `requestSeq` to `approveEmergency`). If the doc changes, re-export it. `REVIEW-NOTES.md` records how these specs were checked against the PRD. The mock-ups are the "Amplop app mock-ups" design; a copy of every board's HTML is in `design/boards/`, the mock-up design rules in `design/SPEC.md`, and the logo files in `design/logo/`. Where mock-up copy and the PRD differ (for example "Ibu" in older boards), the PRD wins: the parent is "Mama".
 
 ## The specs
 
