@@ -138,4 +138,4 @@ No contract had been deployed when the review ran, so nothing was redeployed. Th
 | ----------- | -------------------------------------------- | ------------ | ----------- |
 | none        | `0x5596Bf1014EC25F760e8976f1DD8a40Ee250c56C` | 70137747     | 11 Oct 2026 |
 
-Read back on chain after the deploy: token, treasury, card service and settlement equal the inputs; `demoMode` is true; `tokenDecimals` is 6; both allowances are the maximum.
+Read back on chain after the deploy: token, treasury, card service and settlement equal the inputs; `demoMode` is true; `tokenDecimals` is 6; both allowances are the maximum. Verified on Sourcify (exact runtime match, 11 Oct 2026); every wallet passes `check-wallets.sh 10143`.
