@@ -1,1 +1,0 @@
-{"root":["./src/constants.ts","./src/enums.ts","./src/generated/amplop.ts","./test/constants.test.ts","./vitest.config.ts","./wagmi.config.ts"],"version":"6.0.3"}

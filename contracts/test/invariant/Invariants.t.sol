@@ -210,8 +210,10 @@ contract InvariantsTest is Test {
             (bool active,, bytes32 data) = amplop.pending(id, PendingKind.Recovery);
             if (!active || amplop.accountOf(address(uint160(uint256(data)))) == 0) continue;
             uint256 snap = vm.snapshotState();
-            vm.prank(amplop.accountInfo(id).owner);
+            // startPrank, not prank: a single vm.prank fails if the last handler call left a prank unused.
+            vm.startPrank(amplop.accountInfo(id).owner);
             amplop.cancelPending(PendingKind.Recovery);
+            vm.stopPrank();
             vm.revertToState(snap);
         }
     }
