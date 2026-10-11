@@ -229,7 +229,8 @@ Every read returns zero values for an unknown `accountId` and never reverts.
 | `releaseHold`                                                                                                                                    | `cardService`, or anyone once the hold period has passed | `HoldNotExpired()`     |
 | `approveEmergency`, `approveRecovery`                                                                                                            | `accounts[id].trusted` (non-zero)                        | `NotTrusted()`         |
 | `finishRemoveTrusted`, `finalizeEmergency`, `finishLockOff`                                                                    | Anyone, after the wait                                   | `WaitNotOver(readyAt)` |
-| `finishRecovery` | The new owner, after the wait (SA-04) | `NotNewOwner()`, `WaitNotOver(readyAt)` |
+| `finishRecovery` | The new owner, after the wait (SA-04) | `RecoveryPending()` | `removeTrusted` (a recovery past its wait, SA-02) |
+| `NotNewOwner()`, `WaitNotOver(readyAt)` |
 | `InviteKeyReused()` | `createInvite` (SA-06) |
 
 Treasury can only add money (R3). Card service can only spend available money of the chosen envelope into a hold, release it, collect it to `settlement`, or refund from `settlement`. No server role can touch `locked` or unreleased money.
@@ -396,7 +397,8 @@ Everyday gets 2 units more than `floor(20%)` = 14_964_448. Sum of parts = 74_822
 **S03-42 `removeTrusted()`** (R22)
 
 - Checks: `NoAccount()`; `trusted == 0` → `NoTrustedPerson()`.
-- Effects: a pending recovery is cancelled first (`recoveryAccountOf[newOwner] = 0`, pending cleared). Audit change SA-02: otherwise a trusted person could re-approve after every cancel and never be removed.
+- Checks (continued): a pending recovery past its wait whose new owner still has no account → `RecoveryPending()` (it is the new owner's to finish).
+- Effects: any other pending recovery is cancelled first (`recoveryAccountOf[newOwner] = 0`, pending cleared). Audit change SA-02: otherwise a trusted person could re-approve after every cancel and never be removed.
 - Effects: `pendings[TrustedRemoval] = {true, clock + WAIT, 0}` (restarts if already pending).
 - Event: `TrustedRemovalStarted(id, trusted, clock + WAIT)`. The trusted person keeps every power during the wait.
 
@@ -537,7 +539,7 @@ None. The contract serves boards 0.3 to 4.3 through the reads above.
 | Approve after Emergency opened by time (G10)               | `NoOpenRequest()`.                                                                                                         |
 | Lock-off while request open                                | `RequestAlreadyOpen()`; cancel the request first.                                                                          |
 | Request while lock-off pending                             | `LockOffPending()`; cancel the lock-off first.                                                                             |
-| Recovery and removal at once | `removeTrusted` cancels a pending recovery (SA-02); `approveRecovery` reverts `TrustedRemovalPending` during a removal. |
+| Recovery and removal at once | `removeTrusted` cancels a pending recovery still inside its wait (SA-02) and reverts `RecoveryPending` for one past it; `approveRecovery` reverts `TrustedRemovalPending` during a removal. |
 | Two accounts approve a recovery to the same new owner      | The second reverts `RecoveryTargetBusy()`; the new phone creates a fresh passkey.                                          |
 | New owner registers during recovery wait                   | `finishRecovery` reverts `NewOwnerHasAccount()`; the student cancels or the trusted person approves again.                 |
 | Due split never promoted                                   | Views show it as in force; `cancelPending(Split)` reverts `NothingPending()`; the next `saveSplit` or `deposit` stores it. |

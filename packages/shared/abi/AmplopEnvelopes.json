@@ -1950,6 +1950,11 @@
   },
   {
     "type": "error",
+    "name": "RecoveryPending",
+    "inputs": []
+  },
+  {
+    "type": "error",
     "name": "RecoveryTargetBusy",
     "inputs": []
   },

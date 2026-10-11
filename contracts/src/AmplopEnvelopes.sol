@@ -475,6 +475,8 @@ contract AmplopEnvelopes is EIP712, ReentrancyGuard {
     error NoTrustedPerson();
     /// @notice A trusted-person removal is pending.
     error TrustedRemovalPending();
+    /// @notice A recovery past its wait is pending; only the new owner can finish it.
+    error RecoveryPending();
     /// @notice Only the new owner can finish a recovery (SA-04).
     error NotNewOwner();
     /// @notice This address was used as an invite key before (SA-06).
@@ -588,12 +590,16 @@ contract AmplopEnvelopes is EIP712, ReentrancyGuard {
     }
 
     /// @notice Starts removing the trusted person (R22). They keep every power during the wait except
-    /// approving a recovery, and any recovery they already approved is cancelled.
+    /// approving a recovery. A recovery they approved is cancelled while the student could still cancel it.
     /// @dev Cancelling here stops a trusted person re-approving after every cancel to block removal (SA-02).
+    /// A recovery past its wait is the new owner's to finish, so it still blocks removal.
     function removeTrusted() external {
         (uint256 id, Account storage acc) = _caller();
         if (acc.trusted == address(0)) revert NoTrustedPerson();
-        _clearRecovery(acc);
+        if (acc.pendings[uint8(PendingKind.Recovery)].active) {
+            if (!_recoveryCancellable(acc)) revert RecoveryPending();
+            _clearRecovery(acc);
+        }
         uint64 readyAt = _startPending(acc, PendingKind.TrustedRemoval, bytes32(0));
         emit TrustedRemovalStarted(id, acc.trusted, readyAt);
     }
@@ -676,9 +682,7 @@ contract AmplopEnvelopes is EIP712, ReentrancyGuard {
         Pending storage p = acc.pendings[uint8(kind)];
         uint64 now_ = _clock(acc);
         if (!p.active || (kind == PendingKind.Split && now_ >= p.readyAt)) revert NothingPending();
-        // SA-03: a recovery whose new owner has since registered can never finish, so it stays cancellable.
-        bool deadRecovery = kind == PendingKind.Recovery && accountOf[address(uint160(uint256(p.data)))] != 0;
-        if (now_ >= p.readyAt && !deadRecovery) revert WaitOver();
+        if (kind == PendingKind.Recovery ? !_recoveryCancellable(acc) : now_ >= p.readyAt) revert WaitOver();
         if (kind == PendingKind.Recovery) _clearRecovery(acc);
         else delete acc.pendings[uint8(kind)];
         emit PendingCancelled(id, kind);
@@ -1223,6 +1227,13 @@ contract AmplopEnvelopes is EIP712, ReentrancyGuard {
         acc.inAmt[EVERYDAY] += amount;
         acc.em.status = EmergencyStatus.Opened;
         emit EmergencyOpened(accountId, acc.em.requestSeq, amount, by);
+    }
+
+    /// @dev A pending recovery can be cancelled before its wait ends, or at any time once it can never finish
+    /// because its new owner has since registered (SA-03).
+    function _recoveryCancellable(Account storage acc) private view returns (bool) {
+        Pending storage p = acc.pendings[uint8(PendingKind.Recovery)];
+        return _clock(acc) < p.readyAt || accountOf[address(uint160(uint256(p.data)))] != 0;
     }
 
     /// @dev Drops a pending recovery and its lookup entry, if any.

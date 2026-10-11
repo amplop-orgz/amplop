@@ -143,4 +143,18 @@ contract AuditFixesTest is AmplopBase {
         assertTrue(amplop.inviteKeyUsed(vm.addr(pk)));
         assertGt(other, 0);
     }
+
+    /// SA-02 follow-up: once a recovery's wait is over, the old key cannot kill it through removeTrusted.
+    function test_SA02_dueRecoveryNotCancelledByRemoval() public {
+        address target = makeAddr("target");
+        vm.prank(mama);
+        amplop.approveRecovery(id, target);
+        skip(2 days);
+        vm.prank(raka);
+        vm.expectRevert(AmplopEnvelopes.RecoveryPending.selector);
+        amplop.removeTrusted();
+        vm.prank(target);
+        amplop.finishRecovery(id);
+        assertEq(amplop.accountOf(target), id);
+    }
 }
