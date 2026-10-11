@@ -58,7 +58,7 @@ export default tseslint.config(
     rules: { "no-console": "off" },
   },
   {
-    files: ["packages/shared/src/money/**", "apps/web/src/lib/server/{topup,card}/**"],
+    files: ["packages/shared/src/money.ts", "apps/web/src/lib/server/{topup,card}/**"],
     rules: {
       "no-restricted-syntax": [
         "error",
