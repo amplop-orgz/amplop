@@ -234,11 +234,13 @@ contract Handler is Test {
         uint256 id = _accountId(who);
         if (id == 0) return;
         PendingKind kind = PendingKind(kindSeed % 4);
-        (bool active, uint64 readyAt,) = amplop.pending(id, kind);
+        (bool active, uint64 readyAt, bytes32 data) = amplop.pending(id, kind);
         uint64 c = amplop.clock(id);
+        // SA-03: a recovery whose new owner now owns an account stays cancellable after its wait.
+        bool dead = kind == PendingKind.Recovery && amplop.accountOf(address(uint160(uint256(data)))) != 0;
         vm.prank(_owner(id));
         try amplop.cancelPending(kind) {
-            if (!active || c >= readyAt) clockViolations++;
+            if (!active || (c >= readyAt && !dead)) clockViolations++;
         } catch {}
     }
 
