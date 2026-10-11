@@ -419,7 +419,7 @@ Everyday gets 2 units more than `floor(20%)` = 14_964_448. Sum of parts = 74_822
 
 **S03-46 `cancelPending(PendingKind kind)`** (R24, H5, B11, G17, I3)
 
-- Checks: `NoAccount()`; `!active`, or `kind == Split` and `clock >= readyAt` (already in force) → `NothingPending()`; `clock >= readyAt` → `WaitOver()`.
+- Checks: `NoAccount()`; `!active`, or `kind == Split` and `clock >= readyAt` (already in force) → `NothingPending()`; `clock >= readyAt` → `WaitOver()`, except a `Recovery` whose new owner now owns an account (it can never finish, so it stays cancellable; audit change SA-03).
 - Effects: clear `pendings[kind]`; for `Recovery`, also `recoveryAccountOf[newOwner] = 0`.
 - Event: `PendingCancelled(id, kind)`.
 

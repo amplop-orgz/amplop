@@ -203,6 +203,19 @@ contract InvariantsTest is Test {
         }
     }
 
+    // I-11 (restated after SA-03): a pending recovery whose target now owns an account can always be
+    // cancelled by the owner, so it never blocks the account. The original "target stays free" did not hold.
+    function invariant_XR_deadRecoveryCancellable() public {
+        for (uint256 id = 1; id <= amplop.accountCount(); ++id) {
+            (bool active,, bytes32 data) = amplop.pending(id, PendingKind.Recovery);
+            if (!active || amplop.accountOf(address(uint160(uint256(data)))) == 0) continue;
+            uint256 snap = vm.snapshotState();
+            vm.prank(amplop.accountInfo(id).owner);
+            amplop.cancelPending(PendingKind.Recovery);
+            vm.revertToState(snap);
+        }
+    }
+
     // I-12: the effective split and any pending split are always five multiples of 5 summing to 100.
     function invariant_XR_splitAlwaysValid() public view {
         for (uint256 id = 1; id <= amplop.accountCount(); ++id) {

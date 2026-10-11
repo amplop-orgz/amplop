@@ -188,7 +188,7 @@ Buttons:
 
 - Title: "Your account is set to move to a new passkey"
 - Body: "<trustedName> approved a recovery. Your envelopes move to the new passkey on <readyAt> (<countdown> left). If this was not you, cancel now."
-- Button (secondary, red text): "Cancel recovery" sends `cancelPending(Recovery)`. Shown while `waiting` only.
+- Button (secondary, red text): "Cancel recovery" sends `cancelPending(Recovery)`. Shown while `waiting`, and also while `ready` when the new owner address now owns an account (`accountOf(newOwner) != 0`; that recovery can never finish, audit change SA-03).
 
 **S13-22. Home banner.** While a recovery is pending, board 2.2 (spec 11 slot S11-10) shows one line in the same red tint: "Your account moves to a new passkey on <readyAt>." with a "Review" link to `/app/settings`.
 

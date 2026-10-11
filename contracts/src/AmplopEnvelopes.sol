@@ -665,9 +665,11 @@ contract AmplopEnvelopes is EIP712, ReentrancyGuard {
         Pending storage p = acc.pendings[uint8(kind)];
         uint64 now_ = _clock(acc);
         if (!p.active || (kind == PendingKind.Split && now_ >= p.readyAt)) revert NothingPending();
-        if (now_ >= p.readyAt) revert WaitOver();
-        if (kind == PendingKind.Recovery) recoveryAccountOf[address(uint160(uint256(p.data)))] = 0;
-        delete acc.pendings[uint8(kind)];
+        // SA-03: a recovery whose new owner has since registered can never finish, so it stays cancellable.
+        bool deadRecovery = kind == PendingKind.Recovery && accountOf[address(uint160(uint256(p.data)))] != 0;
+        if (now_ >= p.readyAt && !deadRecovery) revert WaitOver();
+        if (kind == PendingKind.Recovery) _clearRecovery(acc);
+        else delete acc.pendings[uint8(kind)];
         emit PendingCancelled(id, kind);
     }
 

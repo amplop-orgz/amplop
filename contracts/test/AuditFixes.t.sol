@@ -56,4 +56,33 @@ contract AuditFixesTest is AmplopBase {
         amplop.finishRemoveTrusted(id);
         assertEq(amplop.accountInfo(id).trusted, address(0));
     }
+
+    /// SA-03: a recovery that can no longer finish (its new owner registered meanwhile) can still be cancelled.
+    function test_SA03_deadRecoveryCanBeCancelled() public {
+        address target = makeAddr("target");
+        vm.prank(mama);
+        amplop.approveRecovery(id, target);
+        register(target, sampleSplit); // the target registers during the wait
+        skip(2 days);
+
+        vm.prank(target);
+        vm.expectRevert(AmplopEnvelopes.NewOwnerHasAccount.selector);
+        amplop.finishRecovery(id);
+
+        vm.prank(raka);
+        amplop.cancelPending(PendingKind.Recovery); // used to revert WaitOver
+        (bool active,,) = amplop.pending(id, PendingKind.Recovery);
+        assertFalse(active);
+        assertEq(amplop.recoveryAccountOf(target), 0);
+    }
+
+    /// SA-03: a live recovery past its wait is still not cancellable (R24 unchanged).
+    function test_SA03_liveRecoveryStillNotCancellableAfterWait() public {
+        vm.prank(mama);
+        amplop.approveRecovery(id, makeAddr("target"));
+        skip(2 days);
+        vm.prank(raka);
+        vm.expectRevert(AmplopEnvelopes.WaitOver.selector);
+        amplop.cancelPending(PendingKind.Recovery);
+    }
 }
