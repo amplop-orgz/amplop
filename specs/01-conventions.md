@@ -38,7 +38,7 @@ submission             portal texts and scripts (spec 20)
 tools, scripts         pinned tool versions, skill installer, deploy helpers
 ```
 
-Package manager: npm workspaces with one committed `package-lock.json`, installed with `npm ci`. Node 22 LTS.
+Package manager: npm workspaces with one committed `package-lock.json`, installed with `npm ci`. Node 24 LTS (Mera, PRD 6, declares Node 24 or newer, and `engine-strict` enforces it).
 
 Inside `apps/web/src`:
 

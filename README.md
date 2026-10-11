@@ -5,7 +5,7 @@ Allowance envelopes on Monad. The full README comes with spec 18; the specs are 
 ## Set up
 
 ```
-nvm use            # Node 22, see .nvmrc
+nvm use            # Node 24, see .nvmrc
 npm ci             # also installs the git hooks
 npm run generate   # forge build + ABI into packages/shared
 npm run test:contracts

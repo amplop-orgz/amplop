@@ -8,7 +8,7 @@ One repository that is always deployable. Every push runs every gate in PRD 15 "
 
 ## In scope
 
-- npm workspaces, Node 22, `packages/shared` skeleton and its generated files.
+- npm workspaces, Node 24, `packages/shared` skeleton and its generated files.
 - TypeScript, ESLint, Prettier, solhint and `forge fmt` configuration. Zero errors, zero warnings.
 - Git hooks: pre-commit (lint-staged and gitleaks), commit-msg, pre-push.
 - Commit rules, branch and repository settings.
@@ -34,10 +34,10 @@ One repository that is always deployable. Every push runs every gate in PRD 15 "
 | Field            | Value                                                         |
 | ---------------- | ------------------------------------------------------------- |
 | `workspaces`     | `["apps/web", "apps/docs", "packages/shared", "indexer"]`     |
-| `engines`        | `{ "node": ">=22.0.0 <23.0.0", "npm": ">=10.0.0" }`           |
-| `packageManager` | `npm@<exact version bundled with the pinned Node 22 release>` |
+| `engines`        | `{ "node": ">=24.0.0 <25.0.0", "npm": ">=11.0.0" }`           |
+| `packageManager` | `npm@<exact version bundled with the pinned Node 24 release>` |
 
-`.nvmrc` contains the exact Node 22 LTS version (for example `22.x.y`, chosen on setup day and never a range). `.npmrc` contains `engine-strict=true` and `save-exact=true`. One `package-lock.json` at the root is committed (01 §2). `contracts/` is not an npm workspace.
+`.nvmrc` contains the exact Node 24 LTS version (for example `24.x.y`, chosen on setup day and never a range). `.npmrc` contains `engine-strict=true` and `save-exact=true`. One `package-lock.json` at the root is committed (01 §2). `contracts/` is not an npm workspace.
 
 **S02-2. Folders.** The repository has exactly the layout in 01 §2. Each top-level folder has a one-paragraph `README.md` that says what it holds and links to the root README. Empty folders hold a `.gitkeep` until their spec lands.
 
@@ -412,7 +412,7 @@ End-to-end case IDs: none owned here. This spec runs Tier 1 (all 40 cases, liste
 
 ## Acceptance checklist
 
-- [ ] `npm ci && npm run gates` passes on a clean clone with Node 22.
+- [ ] `npm ci && npm run gates` passes on a clean clone with Node 24.
 - [ ] `tsconfig.base.json` has `strict`, `noUncheckedIndexedAccess` and `target: "ES2020"`.
 - [ ] ESLint runs `strictTypeChecked`, React Hooks and Next rules with `--max-warnings 0`.
 - [ ] Prettier, solhint and `forge fmt --check` pass.
