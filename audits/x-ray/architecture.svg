@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1130" height="490" viewBox="0 0 452 196" font-family="Arial, sans-serif">
+  <defs>
+    <marker id="ah" viewBox="0 0 8 6" refX="8" refY="3"
+      markerWidth="4" markerHeight="3" orient="auto">
+      <path d="M0.5,0.5 L7,3 L0.5,5.5" fill="none" stroke="#94A3B8"
+        stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
+    </marker>
+    <filter id="shadow" x="-6%" y="-8%" width="112%" height="128%">
+      <feDropShadow dx="0" dy="0.5" stdDeviation="0.8"
+        flood-color="#000" flood-opacity="0.05"/>
+    </filter>
+  </defs>
+  <rect width="452" height="196" fill="#F8F9FB" rx="3"/>
+  <text x="226" y="11" text-anchor="middle" font-size="6" font-weight="700" fill="#1E293B">AmplopEnvelopes Architecture</text>
+  <rect x="151" y="16" width="150" height="10" rx="3" fill="#fff" stroke="#E2E5EA" stroke-width="0.4"/>
+  <rect x="156" y="18.5" width="5" height="5" rx="2.5" fill="#fff" stroke="#E2E5EA" stroke-width="0.4"/>
+  <text x="164" y="22.5" font-size="3.5" fill="#1E293B">Actor</text>
+  <rect x="196" y="18.5" width="5" height="5" rx="1.5" fill="#fff" stroke="#E2E5EA" stroke-width="0.4"/>
+  <rect x="197" y="19.5" width="0.8" height="3" rx="0.4" fill="#3B82F6"/>
+  <text x="204" y="22.5" font-size="3.5" fill="#1E293B">Protocol</text>
+  <rect x="244" y="18.5" width="5" height="5" rx="1.5" fill="#fff" stroke="#E2E5EA" stroke-width="0.4"/>
+  <rect x="245" y="19.5" width="0.8" height="3" rx="0.4" fill="#F59E0B"/>
+  <text x="252" y="22.5" font-size="3.5" fill="#1E293B">External</text>
+  <path d="M58.0,46.0 C58.0,70.0 132.2,70.0 132.2,94.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M136.0,46.0 C136.0,70.0 132.2,70.0 132.2,94.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M214.0,46.0 C214.0,70.0 132.2,70.0 132.2,94.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M293.2,46.0 C293.2,70.0 132.2,70.0 132.2,94.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M383.2,46.0 C383.2,70.0 132.2,70.0 132.2,94.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M132.2,114.0 C132.2,135.0 98.2,135.0 98.2,156.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M132.2,114.0 C132.2,135.0 184.2,135.0 184.2,156.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <g filter="url(#shadow)">
+    <rect x="30.0" y="32.0" width="56.0" height="14" rx="7" fill="#fff" stroke="#E2E5EA" stroke-width="0.5"/>
+    <text x="58.0" y="40.8" text-anchor="middle" font-size="4.8" font-weight="600" fill="#1E293B">Student</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="108.0" y="32.0" width="56.0" height="14" rx="7" fill="#fff" stroke="#E2E5EA" stroke-width="0.5"/>
+    <text x="136.0" y="40.8" text-anchor="middle" font-size="4.8" font-weight="600" fill="#1E293B">Trusted</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="186.0" y="32.0" width="56.0" height="14" rx="7" fill="#fff" stroke="#E2E5EA" stroke-width="0.5"/>
+    <text x="214.0" y="40.8" text-anchor="middle" font-size="4.8" font-weight="600" fill="#1E293B">Anyone</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="264.0" y="32.0" width="58.4" height="14" rx="7" fill="#fff" stroke="#E2E5EA" stroke-width="0.5"/>
+    <text x="293.2" y="40.8" text-anchor="middle" font-size="4.8" font-weight="600" fill="#1E293B">Treasury</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="344.4" y="32.0" width="77.6" height="14" rx="7" fill="#fff" stroke="#E2E5EA" stroke-width="0.5"/>
+    <text x="383.2" y="40.8" text-anchor="middle" font-size="4.8" font-weight="600" fill="#1E293B">Card service</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="86.2" y="94.0" width="92.0" height="20" rx="3" fill="#fff" stroke="#E2E5EA" stroke-width="0.5"/>
+    <rect x="89.2" y="97.0" width="1.4" height="14" rx="0.6" fill="#3B82F6"/>
+    <text x="132.2" y="103.5" text-anchor="middle" font-size="4.8" font-weight="600" fill="#1E293B">AmplopEnvelopes</text>
+    <text x="132.2" y="108.5" text-anchor="middle" font-size="3.5" fill="#64748B">Custody + rules</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="68.2" y="156.0" width="60.0" height="20" rx="3" fill="#fff" stroke="#E2E5EA" stroke-width="0.5"/>
+    <rect x="71.2" y="159.0" width="1.4" height="14" rx="0.6" fill="#F59E0B"/>
+    <text x="98.2" y="165.5" text-anchor="middle" font-size="4.8" font-weight="600" fill="#1E293B">AUSD</text>
+    <text x="98.2" y="170.5" text-anchor="middle" font-size="3.5" fill="#64748B">ERC-20</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="150.2" y="156.0" width="68.0" height="20" rx="3" fill="#fff" stroke="#E2E5EA" stroke-width="0.5"/>
+    <rect x="153.2" y="159.0" width="1.4" height="14" rx="0.6" fill="#F59E0B"/>
+    <text x="184.2" y="165.5" text-anchor="middle" font-size="4.8" font-weight="600" fill="#1E293B">Settlement</text>
+    <text x="184.2" y="170.5" text-anchor="middle" font-size="3.5" fill="#64748B">Receiver</text>
+  </g>
+  <rect x="69.1" y="65.0" width="52.0" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="95.1" y="70.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">split, move, request</text>
+  <rect x="123.7" y="65.0" width="20.8" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="134.1" y="70.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">approve</text>
+  <rect x="156.7" y="65.0" width="32.8" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="173.1" y="70.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">finish waits</text>
+  <rect x="202.3" y="65.0" width="20.8" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="212.7" y="70.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">deposit</text>
+  <rect x="234.1" y="65.0" width="47.2" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="257.7" y="70.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">authorize, collect</text>
+  <rect x="95.2" y="130.0" width="40.0" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="115.2" y="135.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">transfer / pull</text>
+  <rect x="138.2" y="130.0" width="40.0" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="158.2" y="135.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">collected money</text>
+</svg>
