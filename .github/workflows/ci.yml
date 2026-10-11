@@ -27,7 +27,7 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - id: versions
-        run: cat tools/versions.env >> "$GITHUB_OUTPUT"
+        run: grep -v "^#" tools/versions.env >> "$GITHUB_OUTPUT"
       - uses: foundry-rs/foundry-toolchain@908c540300062bd5a7e473851cdb4282204cee09 # v1.9.1
         with:
           version: ${{ steps.versions.outputs.FOUNDRY }}
@@ -90,7 +90,7 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - id: versions
-        run: cat tools/versions.env >> "$GITHUB_OUTPUT"
+        run: grep -v "^#" tools/versions.env >> "$GITHUB_OUTPUT"
       - uses: foundry-rs/foundry-toolchain@908c540300062bd5a7e473851cdb4282204cee09 # v1.9.1
         with:
           version: ${{ steps.versions.outputs.FOUNDRY }}
@@ -125,7 +125,7 @@ jobs:
         with:
           submodules: recursive
       - id: versions
-        run: cat tools/versions.env >> "$GITHUB_OUTPUT"
+        run: grep -v "^#" tools/versions.env >> "$GITHUB_OUTPUT"
       - uses: foundry-rs/foundry-toolchain@908c540300062bd5a7e473851cdb4282204cee09 # v1.9.1
         with:
           version: ${{ steps.versions.outputs.FOUNDRY }}
@@ -141,7 +141,7 @@ jobs:
         with:
           node-version-file: .nvmrc
       - id: versions
-        run: cat tools/versions.env >> "$GITHUB_OUTPUT"
+        run: grep -v "^#" tools/versions.env >> "$GITHUB_OUTPUT"
       - uses: foundry-rs/foundry-toolchain@908c540300062bd5a7e473851cdb4282204cee09 # v1.9.1
         with:
           version: ${{ steps.versions.outputs.FOUNDRY }}
@@ -157,7 +157,7 @@ jobs:
         with:
           node-version-file: .nvmrc
       - id: versions
-        run: cat tools/versions.env >> "$GITHUB_OUTPUT"
+        run: grep -v "^#" tools/versions.env >> "$GITHUB_OUTPUT"
       - uses: foundry-rs/foundry-toolchain@908c540300062bd5a7e473851cdb4282204cee09 # v1.9.1
         with:
           version: ${{ steps.versions.outputs.FOUNDRY }}
@@ -180,7 +180,7 @@ jobs:
         with:
           python-version: "3.12"
       - id: versions
-        run: cat tools/versions.env >> "$GITHUB_OUTPUT"
+        run: grep -v "^#" tools/versions.env >> "$GITHUB_OUTPUT"
       - uses: foundry-rs/foundry-toolchain@908c540300062bd5a7e473851cdb4282204cee09 # v1.9.1
         with:
           version: ${{ steps.versions.outputs.FOUNDRY }}
@@ -217,7 +217,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - id: versions
-        run: cat tools/versions.env >> "$GITHUB_OUTPUT"
+        run: grep -v "^#" tools/versions.env >> "$GITHUB_OUTPUT"
       - name: Semgrep
         run: |
           docker run --rm -v "$PWD:/src" -w /src "semgrep/semgrep@${{ steps.versions.outputs.SEMGREP_IMAGE_DIGEST }}" \
@@ -254,7 +254,7 @@ jobs:
         with:
           fetch-depth: 0
       - id: versions
-        run: cat tools/versions.env >> "$GITHUB_OUTPUT"
+        run: grep -v "^#" tools/versions.env >> "$GITHUB_OUTPUT"
       - run: |
           curl -sSfL "https://github.com/gitleaks/gitleaks/releases/download/v${{ steps.versions.outputs.GITLEAKS }}/gitleaks_${{ steps.versions.outputs.GITLEAKS }}_linux_x64.tar.gz" | tar -xz -C /tmp gitleaks
           /tmp/gitleaks git --log-opts="--all" --redact --no-banner --config .gitleaks.toml .
@@ -268,7 +268,7 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - id: versions
-        run: cat tools/versions.env >> "$GITHUB_OUTPUT"
+        run: grep -v "^#" tools/versions.env >> "$GITHUB_OUTPUT"
       - run: npm ci
       - run: npm audit --omit=dev --audit-level=high
       - name: OSV-Scanner
@@ -310,4 +310,4 @@ jobs:
           RESULTS: ${{ toJSON(needs.*.result) }}
         run: |
           echo "$RESULTS"
-          echo "$RESULTS" | grep -vqE '"(failure|cancelled|skipped)"'
+          ! echo "$RESULTS" | grep -qE '"(failure|cancelled|skipped)"'
