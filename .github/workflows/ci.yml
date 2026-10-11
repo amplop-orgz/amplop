@@ -1,0 +1,272 @@
+# Every PRD 15 gate on every push (spec 02, S02-13).
+# Jobs for the web build, bundle scan, end-to-end tiers and the production deploy are added by the
+# specs that create those apps (05, 06, 17, 19); `all-green` must list them when they land.
+name: ci
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  static:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - id: versions
+        run: cat tools/versions.env >> "$GITHUB_OUTPUT"
+      - uses: foundry-rs/foundry-toolchain@908c540300062bd5a7e473851cdb4282204cee09 # v1.9.1
+        with:
+          version: ${{ steps.versions.outputs.FOUNDRY }}
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npm run lint:sol
+      - run: npm run fmt:sol:check
+      - run: npm run check:repo
+      - run: npm run check:skills
+      - run: npm run generate
+      - run: git diff --exit-code
+
+  commits:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Check every commit message in the push range
+        env:
+          BEFORE: ${{ github.event.before }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          from="${BASE:-$BEFORE}"
+          if [ -z "$from" ] || [ "$from" = "0000000000000000000000000000000000000000" ] || ! git cat-file -e "$from" 2>/dev/null; then
+            range="$HEAD_SHA"
+          else
+            range="$from..$HEAD_SHA"
+          fi
+          bad=0
+          for sha in $(git rev-list "$range"); do
+            git log -1 --format=%B "$sha" > /tmp/msg
+            node scripts/check-commit-msg.mjs /tmp/msg || { echo "  in $sha"; bad=1; }
+          done
+          exit $bad
+
+  test-ts:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run test:coverage
+
+  test-contracts:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          submodules: recursive
+      - id: versions
+        run: cat tools/versions.env >> "$GITHUB_OUTPUT"
+      - uses: foundry-rs/foundry-toolchain@908c540300062bd5a7e473851cdb4282204cee09 # v1.9.1
+        with:
+          version: ${{ steps.versions.outputs.FOUNDRY }}
+      - run: cd contracts && FOUNDRY_PROFILE=ci forge test
+
+  coverage-contracts:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+      - id: versions
+        run: cat tools/versions.env >> "$GITHUB_OUTPUT"
+      - uses: foundry-rs/foundry-toolchain@908c540300062bd5a7e473851cdb4282204cee09 # v1.9.1
+        with:
+          version: ${{ steps.versions.outputs.FOUNDRY }}
+      - run: npm run coverage:contracts
+
+  contracts-local-deploy:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+      - id: versions
+        run: cat tools/versions.env >> "$GITHUB_OUTPUT"
+      - uses: foundry-rs/foundry-toolchain@908c540300062bd5a7e473851cdb4282204cee09 # v1.9.1
+        with:
+          version: ${{ steps.versions.outputs.FOUNDRY }}
+      - run: |
+          npm run chain:up > anvil.log 2>&1 &
+          for i in $(seq 1 30); do cast block-number --rpc-url http://127.0.0.1:8545 >/dev/null 2>&1 && break; sleep 1; done
+          npm run deploy:local
+          contracts/script/check-wallets.sh 31337
+
+  contract-analysis:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - id: versions
+        run: cat tools/versions.env >> "$GITHUB_OUTPUT"
+      - uses: foundry-rs/foundry-toolchain@908c540300062bd5a7e473851cdb4282204cee09 # v1.9.1
+        with:
+          version: ${{ steps.versions.outputs.FOUNDRY }}
+      - run: |
+          pip install "slither-analyzer==${{ steps.versions.outputs.SLITHER }}" "solc-select==${{ steps.versions.outputs.SOLC_SELECT }}"
+          solc-select install 0.8.30 && solc-select use 0.8.30
+          curl -sSfL "https://github.com/Cyfrin/aderyn/releases/download/aderyn-v${{ steps.versions.outputs.ADERYN }}/aderyn-x86_64-unknown-linux-gnu.tar.xz" | tar -xJ -C /tmp
+          sudo install "$(find /tmp -maxdepth 2 -type f -name aderyn | head -1)" /usr/local/bin/aderyn
+      - run: npm run analyze:contracts
+
+  codeql:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      security-events: write
+    strategy:
+      matrix:
+        language: [javascript-typescript, actions]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: github/codeql-action/init@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-extended
+      - uses: github/codeql-action/analyze@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
+        with:
+          category: /language:${{ matrix.language }}
+
+  semgrep:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - id: versions
+        run: cat tools/versions.env >> "$GITHUB_OUTPUT"
+      - name: Semgrep
+        run: |
+          docker run --rm -v "$PWD:/src" -w /src "semgrep/semgrep@${{ steps.versions.outputs.SEMGREP_IMAGE_DIGEST }}" \
+            semgrep scan --config p/default --config p/typescript --config p/react --config p/nextjs \
+            --config p/secrets --config p/smart-contracts --severity ERROR --severity WARNING \
+            --error --sarif --output semgrep.sarif
+      - if: always()
+        uses: github/codeql-action/upload-sarif@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
+        with:
+          sarif_file: semgrep.sarif
+          category: semgrep
+
+  code-scanning-gate:
+    needs: [codeql, semgrep]
+    if: always()
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      security-events: read
+    steps:
+      - name: No open high, critical or medium alert on this ref
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          alerts=$(gh api --paginate "repos/${{ github.repository }}/code-scanning/alerts?ref=${{ github.ref }}&state=open" \
+            --jq '[.[] | select((.rule.security_severity_level // "") as $s | ($s == "critical" or $s == "high" or $s == "medium") or ((.rule.security_severity_level == null) and (.rule.severity == "error" or .rule.severity == "warning")))] | length')
+          echo "blocking alerts: $alerts"
+          [ "$alerts" = "0" ]
+
+  secrets:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - id: versions
+        run: cat tools/versions.env >> "$GITHUB_OUTPUT"
+      - run: |
+          curl -sSfL "https://github.com/gitleaks/gitleaks/releases/download/v${{ steps.versions.outputs.GITLEAKS }}/gitleaks_${{ steps.versions.outputs.GITLEAKS }}_linux_x64.tar.gz" | tar -xz -C /tmp gitleaks
+          /tmp/gitleaks git --log-opts="--all" --redact --no-banner --config .gitleaks.toml .
+
+  deps:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - id: versions
+        run: cat tools/versions.env >> "$GITHUB_OUTPUT"
+      - run: npm ci
+      - run: npm audit --omit=dev --audit-level=high
+      - name: OSV-Scanner
+        run: |
+          curl -sSfL -o /tmp/osv-scanner "https://github.com/google/osv-scanner/releases/download/v${{ steps.versions.outputs.OSV_SCANNER }}/osv-scanner_linux_amd64"
+          chmod +x /tmp/osv-scanner
+          /tmp/osv-scanner scan --lockfile package-lock.json --format json > osv.json || true
+          node scripts/check-osv.mjs osv.json
+      - name: Dependabot alerts
+        env:
+          GH_TOKEN: ${{ secrets.DEPENDABOT_READ_TOKEN }}
+        run: |
+          [ -n "$GH_TOKEN" ] || { echo "DEPENDABOT_READ_TOKEN is not set" >&2; exit 1; }
+          n=$(gh api "repos/${{ github.repository }}/dependabot/alerts?state=open&severity=high,critical" --jq length)
+          echo "open high or critical Dependabot alerts: $n"
+          [ "$n" = "0" ]
+      - run: npm run check:deps
+
+  all-green:
+    needs:
+      - static
+      - commits
+      - test-ts
+      - test-contracts
+      - coverage-contracts
+      - contracts-local-deploy
+      - contract-analysis
+      - codeql
+      - semgrep
+      - code-scanning-gate
+      - secrets
+      - deps
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Every gate succeeded
+        env:
+          RESULTS: ${{ toJSON(needs.*.result) }}
+        run: |
+          echo "$RESULTS"
+          echo "$RESULTS" | grep -vqE '"(failure|cancelled|skipped)"'
