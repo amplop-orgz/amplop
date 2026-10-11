@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Settings</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<style>
+body{margin:0}
+*{box-sizing:border-box}
+a{color:#111B33}a:hover{color:#111B33}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; background: #F2F3EE; color: #111B33; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-size: 16px; line-height: 1.4; display: flex; flex-direction: column; overflow: hidden">
+
+<div style="height: 56px; display: flex; align-items: center; gap: 4px; padding: 0 8px; flex-shrink: 0">
+<a href="Main.dc.html" aria-label="Back" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #111B33">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15,6 9,12 15,18"></polyline></svg>
+</a>
+<div style="font-size: 18px; font-weight: 700">Settings</div>
+</div>
+
+<div style="flex: 1; min-height: 0; padding: 4px 20px 12px; display: flex; flex-direction: column; gap: 12px">
+
+<div style="background: #FFFFFF; border: 1px solid #D9DCD3; border-radius: 16px; padding: 0 16px; display: flex; flex-direction: column">
+<div style="min-height: 60px; padding: 9px 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid #D9DCD3">
+<div style="display: flex; flex-direction: column; gap: 1px; min-width: 0"><div style="font-size: 16px; font-weight: 700">Trusted person</div><div style="font-size: 13px; color: #55606E; text-wrap: balance">Mama · can approve Emergency</div></div>
+<button type="button" style="height: 44px; border: 0; background: none; padding: 0; color: #2A5CA6; font-family: inherit; font-size: 15px; font-weight: 700; display: flex; align-items: center; text-decoration: none; flex-shrink: 0">Change</button>
+</div>
+<div style="min-height: 60px; padding: 9px 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid #D9DCD3">
+<div style="display: flex; flex-direction: column; gap: 1px; min-width: 0"><div style="font-size: 16px; font-weight: 700">Emergency lock</div><div style="font-size: 13px; color: #55606E; text-wrap: balance">Switching it off takes 48 hours and shows in Mama's app</div></div>
+<button type="button" role="switch" aria-checked="true" aria-label="Emergency lock" style="width: 48px; height: 28px; border-radius: 999px; border: 0; padding: 0 3px; background: #2B7A4B; display: flex; align-items: center; justify-content: flex-end; flex-shrink: 0"><span style="display: block; width: 22px; height: 22px; border-radius: 11px; background: #FFFFFF"></span></button>
+</div>
+<div style="min-height: 60px; padding: 9px 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid #D9DCD3">
+<div style="display: flex; flex-direction: column; gap: 1px; min-width: 0"><div style="font-size: 16px; font-weight: 700">Envelope split</div><div style="font-size: 13px; color: #55606E; text-wrap: balance"><span style="white-space: nowrap">Food 40</span> · <span style="white-space: nowrap">Transport 15</span> · <span style="white-space: nowrap">Study 15</span> · <span style="white-space: nowrap">Everyday 20</span> · <span style="white-space: nowrap">Emergency 10</span></div></div>
+<a href="Setup.dc.html" style="height: 44px; border: 0; background: none; padding: 0; color: #2A5CA6; font-family: inherit; font-size: 15px; font-weight: 700; display: flex; align-items: center; text-decoration: none; flex-shrink: 0">Edit</a>
+</div>
+<div style="min-height: 56px; padding: 9px 0; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 1px; min-width: 0"><div style="font-size: 16px; font-weight: 700">Blocked categories</div></div>
+<div style="font-size: 15px; color: #55606E; white-space: nowrap; flex-shrink: 0">Gambling</div>
+</div>
+</div>
+
+<div style="background: #FFFFFF; border: 1px solid #D9DCD3; border-radius: 16px; padding: 0 16px; display: flex; flex-direction: column">
+<div style="min-height: 60px; padding: 9px 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid #D9DCD3">
+<div style="display: flex; flex-direction: column; gap: 1px; min-width: 0"><div style="font-size: 16px; font-weight: 700">View as Mama</div><div style="font-size: 13px; color: #55606E; text-wrap: balance">Demo only: try both roles on one phone</div></div>
+<a href="ParentHome.dc.html" style="height: 44px; color: #2A5CA6; font-size: 15px; font-weight: 700; display: flex; align-items: center; text-decoration: none; flex-shrink: 0">Switch</a>
+</div>
+<div style="min-height: 60px; padding: 9px 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid #D9DCD3">
+<div style="display: flex; flex-direction: column; gap: 1px; min-width: 0"><div style="font-size: 16px; font-weight: 700">Skip time</div><div style="font-size: 13px; color: #55606E; text-wrap: balance">Demo only: jump to next Monday or 48 hours ahead</div></div>
+<button type="button" style="height: 44px; border: 0; background: none; padding: 0; color: #2A5CA6; font-family: inherit; font-size: 15px; font-weight: 700; flex-shrink: 0">Skip</button>
+</div>
+<div style="min-height: 56px; padding: 9px 0; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 1px; min-width: 0"><div style="font-size: 16px; font-weight: 700">Language</div></div>
+<div style="font-size: 15px; color: #55606E; white-space: nowrap; flex-shrink: 0">English</div>
+</div>
+</div>
+
+<div style="background: #FFFFFF; border: 1px solid #D9DCD3; border-radius: 16px; padding: 0 16px; display: flex; flex-direction: column">
+<div style="min-height: 60px; padding: 9px 0; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 1px; min-width: 0"><div style="font-size: 16px; font-weight: 700">Passkey</div><div style="font-size: 13px; color: #55606E; text-wrap: balance">This phone · created 28 Sep</div></div>
+
+</div>
+</div>
+
+<div style="background: #E6EAF2; color: #444D61; border-radius: 16px; padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start; font-size: 14px">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 1px"><path d="M12 4l9 16H3z"></path><path d="M12 10v4"></path><path d="M12 17h.01"></path></svg>
+<div>Keep your passkey synced with your phone's password manager. If it is lost, Mama can approve a new one for you. That takes 48 hours.</div>
+</div>
+
+<div style="flex: 1"></div>
+
+<button type="button" style="height: 48px; border: 0; background: none; color: #A51F1E; font-family: inherit; font-size: 16px; font-weight: 700; display: flex; align-items: center; justify-content: center; text-decoration: none; flex-shrink: 0">Sign out</button>
+
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>
