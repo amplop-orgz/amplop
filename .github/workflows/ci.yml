@@ -224,6 +224,11 @@ jobs:
             semgrep scan --config p/default --config p/typescript --config p/react --config p/nextjs \
             --config p/secrets --config p/smart-contracts --severity ERROR --severity WARNING \
             --error --sarif --output semgrep.sarif
+      - name: Drop results suppressed in source (nosemgrep), which GitHub would still open as alerts
+        if: always()
+        run: |
+          jq '.runs[].results |= map(select((.suppressions // []) | length == 0))' semgrep.sarif > semgrep.filtered.sarif
+          mv semgrep.filtered.sarif semgrep.sarif
       - if: always()
         uses: github/codeql-action/upload-sarif@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
         with:
