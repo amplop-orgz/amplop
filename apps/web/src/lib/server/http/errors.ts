@@ -84,6 +84,10 @@ export const CODES = {
   request_not_current: [409, "This request is no longer the current one."],
   reason_mismatch: [409, "This reason does not match the request."],
   reason_not_found: [404, "This link is not valid or not for you."],
+  // 13
+  recovery_new_owner_has_account: [409, "This passkey already belongs to an account."],
+  recovery_not_found: [404, "This link is not valid or has expired."],
+  recovery_expired: [404, "This link is not valid or has expired."],
 } as const satisfies Record<string, readonly [Status, string]>;
 
 export type Code = keyof typeof CODES;
