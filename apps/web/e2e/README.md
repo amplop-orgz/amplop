@@ -14,7 +14,7 @@ E2E_NO_INDEXER=1 npx playwright test …  # skip the indexer (cases tagged @inde
 
 Postgres must be running (`npm run db:up`) and Docker must be up for the indexer (16's `config.e2e.yaml` under `envio dev`). Ports 3000, 8545 to 8547, 8080, 4010 and 3999 must be free: the harness starts its own Anvil, indexer, app and stand-ins, and stops them at the end.
 
-Projects: `chromium-phone` and `webkit-phone` run every case except two groups that wait for them: `indexer-off` (F10 pauses the shared indexer, so it runs alone) and `after-run` (SEC3 reads the server log the other tests wrote).
+Projects: `chromium-phone` and `webkit-phone` run every case except F10, which pauses the shared indexer and so runs alone in `indexer-off`: after the rest locally, and as its own job in CI. CI splits each engine into four shards (`E2E_SPLIT=1`, `--shard=N/4`). SEC3 is the global teardown's scan of `test-results/server.log`, so every run and shard checks its own log.
 
 ## How the stack differs from production
 

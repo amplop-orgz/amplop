@@ -136,6 +136,15 @@ jobs:
 
   test-contracts:
     runs-on: ubuntu-24.04
+    # The CI-profile invariants (1000 runs, depth 50) take most of the time, so they run in three
+    # parts side by side; part 1 also runs every other test. Part 3 takes whatever 1 and 2 leave.
+    strategy:
+      fail-fast: false
+      matrix:
+        part: [1, 2, 3]
+    env:
+      GROUP_1: "invariant_[1-6]_"
+      GROUP_2: "XR_(schedule|payment|held|purchase|openEmergency|lockOff)"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -145,7 +154,24 @@ jobs:
       - uses: foundry-rs/foundry-toolchain@908c540300062bd5a7e473851cdb4282204cee09 # v1.9.1
         with:
           version: ${{ steps.versions.outputs.FOUNDRY }}
-      - run: cd contracts && FOUNDRY_PROFILE=ci forge test
+      - name: Foundry build cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            contracts/out
+            contracts/cache
+          key: forge-ci-${{ hashFiles('contracts/src/**', 'contracts/test/**', 'contracts/script/**', 'contracts/foundry.toml', 'contracts/lib/**/*.sol') }}
+      - name: Contract tests, part ${{ matrix.part }}
+        working-directory: contracts
+        env:
+          FOUNDRY_PROFILE: ci
+        run: |
+          case "${{ matrix.part }}" in
+            1) forge test --no-match-path 'test/invariant/*'
+               forge test --match-path 'test/invariant/*' --match-test "$GROUP_1" ;;
+            2) forge test --match-path 'test/invariant/*' --match-test "$GROUP_2" ;;
+            3) forge test --match-path 'test/invariant/*' --no-match-test "$GROUP_1|$GROUP_2" ;;
+          esac
 
   coverage-contracts:
     runs-on: ubuntu-24.04
@@ -334,12 +360,14 @@ jobs:
   # indexer in Docker, a production build). global-setup starts and stops all of it.
   e2e-tier1:
     runs-on: ubuntu-24.04
-    timeout-minutes: 45
-    # One job per engine, side by side (S19-17); each starts its own local stack.
+    timeout-minutes: 20
+    # Per engine, four shards and the indexer-off case (F10) side by side (S19-17, decision 23);
+    # each job starts its own local stack and scans its own server log (SEC3).
     strategy:
       fail-fast: false
       matrix:
         engine: [chromium, webkit]
+        part: [1, 2, 3, 4, indexer-off]
     services:
       db:
         image: postgres:16@sha256:2d2b8998d31037bf721cfdf764d76ba74171b4fab3431b7f72c27c56ddbdf9e3
@@ -379,13 +407,19 @@ jobs:
           path: ~/.cache/ms-playwright
           key: playwright-${{ matrix.engine }}-${{ hashFiles('package-lock.json') }}
       - run: npx -w @amplop/web playwright install --with-deps ${{ matrix.engine }}
-      - run: npm run e2e:tier1:ci
+      - run: |
+          if [ "${{ matrix.part }}" = indexer-off ]; then
+            npm run e2e:tier1:ci -- --project=indexer-off
+          else
+            npm run e2e:tier1:ci -- --project=${{ matrix.engine }}-phone --shard=${{ matrix.part }}/4
+          fi
         env:
           E2E_ENGINE: ${{ matrix.engine }}
+          E2E_SPLIT: "1"
       - if: ${{ !cancelled() }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: e2e-report-${{ matrix.engine }}
+          name: e2e-report-${{ matrix.engine }}-${{ matrix.part }}
           path: |
             apps/web/playwright-report
             apps/web/test-results

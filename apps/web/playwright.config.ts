@@ -4,7 +4,7 @@ import { defineConfig, devices } from "@playwright/test";
 const CI = Boolean(process.env.CI);
 const testnet = Boolean(process.env.E2E_TESTNET);
 
-const LATER = /@indexer-off|@after-run/;
+const LATER = /@indexer-off/;
 const PIXEL = {
   ...devices["Pixel 7"],
   viewport: { width: 390, height: 844 },
@@ -34,6 +34,8 @@ export default defineConfig({
   // Stop early in CI so a broken engine ends the job and still uploads its report and traces.
   maxFailures: CI ? 5 : undefined,
   workers: testnet ? 1 : 4,
+  // Every case makes its own accounts, so cases run (and shard) one by one, not file by file.
+  fullyParallel: !testnet,
   reporter: CI ? [["list"], ["html", { open: "never" }]] : "list",
   use: {
     baseURL: process.env.BASE_URL ?? "http://localhost:3000",
@@ -52,15 +54,15 @@ export default defineConfig({
   },
   projects: [
     ...PHONES.map(([name, use]) => ({ name, grepInvert: LATER, use })),
-    // S19-11: the indexer-off group pauses the shared indexer, so it runs alone after the rest.
+    // S19-11: the indexer-off group pauses the shared indexer, so it runs alone: after the rest
+    // locally, and as its own job in CI (E2E_SPLIT), where waiting would pull every test into
+    // one shard. SEC3 runs in the global teardown.
     {
       name: "indexer-off",
       grep: /@indexer-off/,
       fullyParallel: false,
-      dependencies: PHONES.map(([name]) => name),
+      dependencies: process.env.E2E_SPLIT ? [] : PHONES.map(([name]) => name),
       use: LAST_ENGINE,
     },
-    // SEC3 reads the server log that every other test wrote.
-    { name: "after-run", grep: /@after-run/, dependencies: ["indexer-off"], use: LAST_ENGINE },
   ],
 });

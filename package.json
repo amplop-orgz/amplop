@@ -43,7 +43,7 @@
     "check:fragments": "node scripts/check-fragments.mjs",
     "check:docs": "node scripts/check-readme-addresses.mjs && node scripts/check-docs-contract.mjs && node scripts/check-docs-api.mjs",
     "test:e2e": "npm run e2e -w @amplop/web",
-    "e2e:tier1:ci": "npm run e2e:tier1 -w @amplop/web",
+    "e2e:tier1:ci": "npm run e2e:tier1 -w @amplop/web --",
     "e2e:smoke": "npm exec -w @amplop/web -- playwright test --grep @smoke --project=chromium-phone",
     "e2e:testnet": "E2E_TESTNET=1 npm run e2e:tier1 -w @amplop/web -- --grep-invert \"@testnet-skip|@after-run\" --workers=1 --retries=0",
     "check:submission": "node scripts/check-submission.mjs"

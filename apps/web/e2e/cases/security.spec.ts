@@ -1,6 +1,5 @@
 // S19-14: browser-level security checks, run with Tier 1. The dialog and CSP guards in fixtures.ts do
 // the "no dialog, no violation" half of SEC1 in every test.
-import { readFileSync } from "node:fs";
 import { expect, test } from "../support/fixtures";
 import type { Profile } from "../support/fixtures";
 import {
@@ -11,7 +10,6 @@ import {
   sendAllowance,
   signUpStudent,
 } from "../support/helpers";
-import { KEYS, WEB } from "../support/stack";
 
 const INJECTED = ["<script>alert(1)</script>", '"><img src=x onerror=alert(1)>'];
 
@@ -55,24 +53,4 @@ test("SEC2 The invite key never leaves the browser @tier1", async ({ raka, mama 
   }
 });
 
-// Runs in the after-run project, once every other test has written to the log.
-test("SEC3 The server log holds no keys or personal text @tier1 @after-run", () => {
-  const log = readFileSync(`${WEB}test-results/server.log`, "utf8");
-  for (const secret of [...Object.values(KEYS), ...Object.values(KEYS).map((k) => k.slice(2))])
-    expect(log.includes(secret), "a private key").toBe(false);
-  expect(log).not.toMatch(/#k=|[?&]k=(?:0x)?[0-9a-f]{64}/);
-  for (const text of [
-    "Raka",
-    "Mama",
-    "Laptop charger",
-    "Train ticket home",
-    "Doctor visit",
-    "Secret reason text",
-    "Phone screen",
-    "Bike repair",
-    "Glasses",
-    "<script>",
-    "onerror",
-  ])
-    expect(log.includes(text), `"${text}" in server.log`).toBe(false);
-});
+// SEC3 runs in the global teardown (support/log-scan.ts), after every run and in every shard.
