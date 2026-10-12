@@ -391,6 +391,9 @@ The PRD wins on conflict. Never use `wallet-integration` (Para) or `wallet`. Amp
 11. **Gender-neutral copy:** "move their account", "if this was not them".
 12. **The Passkey row shows "This phone" without a date.** Local profiles hold no creation date (01 §9), so the board's "created 28 Sep" is not shown.
 13. **The trusted-person row is spec 10's `TrustedPersonRow`**, so Settings and 10 cannot drift apart.
+14. **Nothing was cut** (PRD 16 cut order): recovery screens, lock-off and the Change entry are all built.
+15. **The new phone sends `finishRecovery` only while the new passkey is signed in.** `/recover` creates and signs in with it; on a later visit the student signs in with the new passkey first (the page is open to anyone, 06 S06-8).
+16. **The split-saved toast reads the `SplitSaved` log** of the save, passed to Settings as `?saved=now` or `?saved=later&startsAt=<clock seconds>`.
 
 ## Additions to 01 (status)
 

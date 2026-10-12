@@ -22,6 +22,7 @@ export type EmergencyData = {
   locked: bigint;
   em: EmergencyInfo;
   lockOffPending: boolean;
+  lockOffReadyAt: bigint;
   clock: bigint;
   decimals: number;
   /** performance.now() at the read, so the clock can run on between reads (S12-8). */
@@ -44,6 +45,7 @@ async function load(accountId: bigint): Promise<EmergencyData> {
     locked: env[0][4]?.locked ?? 0n,
     em,
     lockOffPending: lockOff[0],
+    lockOffReadyAt: lockOff[1],
     clock,
     decimals,
     readAt: performance.now(),

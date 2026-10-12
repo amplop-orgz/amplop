@@ -5,6 +5,7 @@ import { HomeEmpty } from "@/components/onboarding/HomeEmpty";
 import { useArrivedDeposit } from "@/components/topup/Arrived";
 import { Welcome } from "@/components/onboarding/Welcome";
 import { Home } from "@/components/home/Home";
+import { RecoveryBanner } from "@/components/settings/RecoveryBanner";
 import { InlineMessage } from "@/components/ui";
 import { useSession } from "@/lib/client/account";
 import { useAccount, useProfileName, useTrustedName } from "@/lib/client/data";
@@ -55,6 +56,13 @@ function StudentHome({ accountId }: { accountId: bigint }) {
   if (!account.data || !profile.data)
     return <div className="p-5 text-muted">{t("common.loading")}</div>;
   if (account.data.info.everDeposited)
-    return <Home accountId={accountId} name={profile.data} trustedName={trustedName} />;
+    return (
+      <Home
+        accountId={accountId}
+        name={profile.data}
+        trustedName={trustedName}
+        banner={<RecoveryBanner accountId={accountId} />}
+      />
+    );
   return <HomeEmpty account={account.data} name={profile.data} trustedName={trustedName} />;
 }

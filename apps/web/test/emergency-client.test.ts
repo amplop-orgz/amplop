@@ -64,6 +64,7 @@ describe("student screen (S12-2)", () => {
     locked: usd(100),
     em: em(EmergencyStatus.None, 0n),
     lockOffPending: false,
+    lockOffReadyAt: 0n,
     clock: 0n,
     decimals: 6,
     readAt: 0,

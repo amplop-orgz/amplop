@@ -2,6 +2,7 @@
 // the editor for a split change after the first allowance.
 "use client";
 import { amplopEnvelopesAbi } from "@amplop/shared/abi";
+import { formatDayTime } from "@amplop/shared/dates";
 import { shortName } from "@amplop/shared/names";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -11,7 +12,7 @@ import { refreshRole, useSession } from "@/lib/client/account";
 import { api } from "@/lib/client/api";
 import { read } from "@/lib/client/chain/client";
 import { ChainError, sendUserTx, type TxStatus } from "@/lib/client/chain/write";
-import { useAccount } from "@/lib/client/data";
+import { useAccount, type AccountData } from "@/lib/client/data";
 import { errorKey } from "@/lib/client/errors";
 import { hasKey, useT, type Key } from "@/lib/client/i18n";
 import {
@@ -31,8 +32,13 @@ import { setProfileLabel } from "@/lib/client/profiles";
 
 const COLORS = ["bg-food", "bg-transport", "bg-study", "bg-everyday", "bg-emergency"];
 
+/** S13-5: the split that applies next: a saved split (waiting or started), else the one in force. */
+export function nextSplit(a: Pick<AccountData, "info">): readonly number[] {
+  return a.info.pendingSplitStartsAt > 0n ? a.info.pendingSplit : a.info.split;
+}
+
 export function SetupStep() {
-  const { t } = useT();
+  const { t, lang } = useT();
   const router = useRouter();
   const { session, role } = useSession();
   const accountId = typeof role === "object" ? role.studentAccountId : undefined;
@@ -55,12 +61,24 @@ export function SetupStep() {
     }
     if (draft.split) setSplit(draft.split);
     else if (!edit) setSplit(DEFAULT_SPLIT);
-    else if (account.data) setSplit([...account.data.info.split] as Split);
+    else if (account.data) setSplit([...nextSplit(account.data)] as Split);
   }, [session, edit, account.data, split, router]);
 
   if (!session || !split) return null;
   const sum = total(split);
-  const ok = splitValid(split);
+  const unchanged =
+    edit && account.data !== undefined && nextSplit(account.data).every((v, i) => v === split[i]);
+  const ok = splitValid(split) && !unchanged;
+  // S13-5: the line above "Save split".
+  const editNote = !account.data
+    ? null
+    : !account.data.info.everDeposited
+      ? t("setup.editAtOnce")
+      : account.data.info.pendingSplitStartsAt > account.data.clock
+        ? t("setup.editReplaces")
+        : t("setup.editStarts", {
+            at: formatDayTime(Number(account.data.clock + 48n * 3600n), lang),
+          });
 
   const change = (i: number, delta: 5 | -5) => {
     const next = step(split, i, delta);
@@ -113,10 +131,21 @@ export function SetupStep() {
     setBusy(t("tx.funding"));
     if (edit) {
       try {
-        await sendUserTx({ functionName: "saveSplit", args: [split] }, { onStatus });
+        const { receipt } = await sendUserTx(
+          { functionName: "saveSplit", args: [split] },
+          { onStatus },
+        );
         clearDraft(session.credentialId);
+        const [saved] = parseEventLogs({
+          abi: amplopEnvelopesAbi,
+          logs: receipt.logs,
+          eventName: "SplitSaved",
+        });
+        const a = saved?.args as { immediate?: boolean; startsAt?: bigint } | undefined;
         router.push(
-          account.data?.info.everDeposited ? "/app/settings?saved=later" : "/app/settings?saved=1",
+          a && !a.immediate
+            ? `/app/settings?saved=later&startsAt=${String(a.startsAt ?? 0n)}`
+            : "/app/settings?saved=now",
         );
       } catch (e) {
         setBusy(null);
@@ -193,20 +222,16 @@ export function SetupStep() {
           </div>
         </div>
         <ListCard>
-          <div className="flex min-h-[60px] items-center justify-between gap-3 py-2">
-            <div className="flex min-w-0 flex-col gap-px">
-              <div className="font-bold">{t("setup.lock")}</div>
-              <div className="text-[0.8125rem] text-muted">{t("setup.lockSub")}</div>
-              {!edit ? (
+          {edit ? null : (
+            <div className="flex min-h-[60px] items-center justify-between gap-3 py-2">
+              <div className="flex min-w-0 flex-col gap-px">
+                <div className="font-bold">{t("setup.lock")}</div>
+                <div className="text-[0.8125rem] text-muted">{t("setup.lockSub")}</div>
                 <div className="text-[0.8125rem] text-muted">{t("setup.lockLater")}</div>
-              ) : null}
+              </div>
+              <Switch checked disabled label={t("setup.lock")} />
             </div>
-            <Switch
-              checked={edit ? (account.data?.info.lockOn ?? true) : true}
-              disabled
-              label={t("setup.lock")}
-            />
-          </div>
+          )}
           <div className="flex min-h-14 items-center justify-between gap-3">
             <div className="font-bold">{t("setup.blocked")}</div>
             <div className="text-[0.9375rem] whitespace-nowrap text-muted">
@@ -233,8 +258,9 @@ export function SetupStep() {
           </InlineMessage>
         ) : null}
         {slowFunding ? <div className="text-[0.875rem] text-muted">{t("fund.wait")}</div> : null}
+        {edit && editNote ? <p className="m-0 text-[0.875rem] text-muted">{editNote}</p> : null}
         <Button disabled={!ok} busyLabel={busy} onClick={() => void go()}>
-          {t("common.continue")}
+          {edit ? t("setup.saveSplit") : t("common.continue")}
         </Button>
       </Page>
     </>
