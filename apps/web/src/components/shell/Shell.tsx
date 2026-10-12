@@ -7,7 +7,7 @@ import { DemoBanner, InlineMessage, Toaster } from "@/components/ui";
 import { refreshRole, useSession } from "@/lib/client/account";
 import { isChatAppBrowser } from "@/lib/client/browser";
 import { CHAIN_ID } from "@/lib/client/env";
-import { decideRoute, type Role } from "@/lib/client/guard";
+import { decideRoute, guardFor, type Role } from "@/lib/client/guard";
 import { LangProvider, useT } from "@/lib/client/i18n";
 import { listenForWrites } from "@/lib/client/query";
 import { readItem, writeItem } from "@/lib/client/storage";
@@ -77,7 +77,12 @@ function Guard({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { t } = useT();
   const { session, role } = useSession();
-  const ready = session === null || (role !== "loading" && role !== "error");
+  // A page whose guard ignores the role stays mounted while the role loads, so a sign-in made on it
+  // (Welcome, /recover) does not remount it mid-flow and lose its state.
+  const ready =
+    session === null ||
+    (role !== "loading" && role !== "error") ||
+    (role === "loading" && guardFor(path) === "none");
   const decision = ready
     ? decideRoute(path, { session: session ? { role: role as Role } : null })
     : null;
