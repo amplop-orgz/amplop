@@ -1,6 +1,6 @@
 # Every PRD 15 gate on every push (spec 02, S02-13).
-# e2e-tier1 is spec 19's; the preview smoke set runs from preview-smoke.yml. The production deploy job
-# is added by 02's deploy step when it lands; `all-green` must list it.
+# e2e-tier1 is spec 19's; the preview smoke set runs from preview-smoke.yml. deploy-production runs
+# after all-green on main (02 S02-22).
 name: ci
 
 on:
@@ -464,3 +464,56 @@ jobs:
         run: |
           echo "$RESULTS"
           ! echo "$RESULTS" | grep -qE '"(failure|cancelled|skipped)"'
+
+  # 02 S02-22: production deploys only from a green commit on main. Vercel builds remotely with its
+  # own encrypted environment, so server keys never reach the runner. Migrations run first (05 S05-35).
+  # Until the secrets exist the job says so and skips, so main stays green.
+  deploy-production:
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    needs: all-green
+    runs-on: ubuntu-24.04
+    environment:
+      name: production
+      url: ${{ steps.web.outputs.url }}
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - id: versions
+        run: grep -v "^#" tools/versions.env >> "$GITHUB_OUTPUT"
+      - id: ready
+        run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "::notice::VERCEL_TOKEN is not set yet; production deploy skipped."
+            echo "go=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "go=true" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.ready.outputs.go == 'true'
+        run: npm ci
+      - name: Migrations (05 S05-35)
+        if: steps.ready.outputs.go == 'true'
+        env:
+          DATABASE_MIGRATION_URL: ${{ secrets.DATABASE_MIGRATION_URL }}
+        run: npm run db:migrate
+      - name: Deploy the app
+        id: web
+        if: steps.ready.outputs.go == 'true'
+        env:
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_WEB_PROJECT_ID }}
+          VERCEL_VERSION: ${{ steps.versions.outputs.VERCEL }}
+        run: echo "url=$(npx --yes "vercel@$VERCEL_VERSION" deploy --prod --yes --token "$VERCEL_TOKEN")" >> "$GITHUB_OUTPUT"
+      - name: Deploy the docs
+        if: steps.ready.outputs.go == 'true'
+        env:
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_DOCS_PROJECT_ID }}
+          VERCEL_VERSION: ${{ steps.versions.outputs.VERCEL }}
+        run: npx --yes "vercel@$VERCEL_VERSION" deploy --prod --yes --token "$VERCEL_TOKEN"
