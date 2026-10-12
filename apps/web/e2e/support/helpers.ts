@@ -92,7 +92,8 @@ export async function sharedLink(p: Profile, kind: "approve" | "recover"): Promi
     )
     .toBeGreaterThan(0);
   const text = decodeURIComponent((await lastOpened(p)).split("text=")[1] ?? "");
-  const link = new RegExp(`https?://\\S+/${kind}/[^\\s"]+`).exec(text)?.[0];
+  const m = /https?:\/\/\S+\/(approve|recover)\/[^\s"]+/.exec(text);
+  const link = m?.[1] === kind ? m[0] : undefined;
   if (!link) throw new Error(`no ${kind} link in: ${text}`);
   return link.replace(/^https?:\/\/[^/]+/, BASE_URL);
 }

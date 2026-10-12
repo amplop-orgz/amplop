@@ -12,6 +12,18 @@ const PIXEL = {
   isMobile: true,
   hasTouch: true,
 };
+// Playwright's screenshot adds an inline style that WebKit reports under the page's policy, which
+// the CSP guard would count against the app. Video and traces still record WebKit failures.
+const IPHONE = { ...devices["iPhone 13"], screenshot: "off" as const };
+// E2E_ENGINE=chromium or webkit runs one engine, so CI can run the two side by side (S19-17).
+const ENGINE = process.env.E2E_ENGINE;
+const PHONES = (
+  [
+    ["chromium-phone", PIXEL],
+    ["webkit-phone", IPHONE],
+  ] as const
+).filter(([name]) => !ENGINE || name.startsWith(ENGINE));
+const LAST_ENGINE = PHONES.at(-1)?.[1] ?? PIXEL;
 
 export default defineConfig({
   testDir: "./e2e/cases",
@@ -19,7 +31,7 @@ export default defineConfig({
   timeout: testnet ? 300_000 : 120_000,
   expect: { timeout: 15_000 },
   retries: CI ? 1 : 0,
-  workers: testnet ? 1 : 2,
+  workers: testnet ? 1 : 4,
   reporter: CI ? [["list"], ["html", { open: "never" }]] : "list",
   use: {
     baseURL: process.env.BASE_URL ?? "http://localhost:3000",
@@ -37,23 +49,16 @@ export default defineConfig({
       : {}),
   },
   projects: [
-    { name: "chromium-phone", grepInvert: LATER, use: PIXEL },
-    {
-      name: "webkit-phone",
-      grepInvert: LATER,
-      // Playwright's screenshot adds an inline style that WebKit reports under the page's policy,
-      // which the CSP guard would count against the app. Video and traces still record failures.
-      use: { ...devices["iPhone 13"], screenshot: "off" },
-    },
+    ...PHONES.map(([name, use]) => ({ name, grepInvert: LATER, use })),
     // S19-11: the indexer-off group pauses the shared indexer, so it runs alone after the rest.
     {
       name: "indexer-off",
       grep: /@indexer-off/,
       fullyParallel: false,
-      dependencies: ["chromium-phone", "webkit-phone"],
-      use: PIXEL,
+      dependencies: PHONES.map(([name]) => name),
+      use: LAST_ENGINE,
     },
     // SEC3 reads the server log that every other test wrote.
-    { name: "after-run", grep: /@after-run/, dependencies: ["indexer-off"], use: PIXEL },
+    { name: "after-run", grep: /@after-run/, dependencies: ["indexer-off"], use: LAST_ENGINE },
   ],
 });

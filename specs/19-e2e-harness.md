@@ -510,6 +510,7 @@ End-to-end case owned here:
 18. **The money check taps through "Allowance arrived".** `/app` sends the student there once per new deposit, so `expectMoneyAgrees` and the home checks use a `home()` helper that taps See my envelopes when it appears. (Mon 12 Oct)
 19. **Every app table is emptied at the start of a run** (after migrations, with the migration role). Anvil starts empty, so account ids repeat across runs; old rows then belonged to new accounts, and an invite name from an earlier run showed on a new student. (Mon 12 Oct)
 20. **WebKit takes no failure screenshots.** Playwright's screenshot injects an inline style, and WebKit reports it as a policy violation of the page, which the CSP guard (S19-14) would blame on the app. Video and traces still record WebKit failures; Chromium keeps its screenshots. The guard now records each violation's document, line and element. (Mon 12 Oct)
+21. **Four workers, and one CI job per engine.** With two workers the full local run took about 20 minutes. Four workers (the CI runner has four cores) bring both engines to about 12 minutes locally, and `e2e-tier1` runs Chromium and WebKit as two matrix jobs side by side (`E2E_ENGINE`), each with its own stack; F10 and SEC3 run in each job on that engine. This replaces S19-2's `workers: 2`. (Mon 12 Oct)
 
 ## Additions to 01 (status)
 

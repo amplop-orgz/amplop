@@ -77,7 +77,7 @@ async function makeProfile(
   const context = await browser.newContext({
     ...use,
     timezoneId: ZONES[name],
-    extraHTTPHeaders: { "x-real-ip": ip },
+    extraHTTPHeaders: { ...use?.extraHTTPHeaders, "x-real-ip": ip },
   });
   const seen: string[] = [];
   violations.set(context, seen);
