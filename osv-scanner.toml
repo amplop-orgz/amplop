@@ -9,3 +9,18 @@ reason = "braces <=3.0.3 has no fixed release. It is reached only through @next/
 id = "GHSA-ph9p-34f9-6g65"
 ignoreUntil = 2026-11-15T00:00:00Z
 reason = "tmp <0.2.6 (path traversal through a caller-chosen prefix or postfix) is reached only through @lhci/cli and its prompt library, which run Lighthouse in CI with their own fixed prefixes; it is not in the app bundle or the server. npm 11 would not apply an override to tmp 0.2.7 in the lockfile."
+
+[[IgnoredVulns]]
+id = "GHSA-c475-qrg2-pj4r"
+ignoreUntil = 2026-11-15T00:00:00Z
+reason = "basic-ftp is reached only through @lhci/cli -> proxy-agent -> get-uri, for ftp:// proxy settings Lighthouse CI never uses; it runs in CI only and is not in the app bundle or the server."
+
+[[IgnoredVulns]]
+id = "GHSA-7pqw-9j4j-h8q3"
+ignoreUntil = 2026-11-15T00:00:00Z
+reason = "extract-zip is reached only through @lhci/cli -> lighthouse -> @puppeteer/browsers, which unpacks browser downloads in CI; it is not in the app bundle or the server."
+
+[[IgnoredVulns]]
+id = "GHSA-jmr9-qjv8-65gv"
+ignoreUntil = 2026-11-15T00:00:00Z
+reason = "extract-zip, as above: CI-only through @lhci/cli, never in the app bundle or the server."

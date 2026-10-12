@@ -111,8 +111,9 @@ export function explorer(): Promise<Server> {
   return listen(PORTS.explorer, async (req, res) => {
     const m = /^\/tx\/(0x[0-9a-f]{64})$/.exec(req.url ?? "");
     const tx = m?.[1] ? await rpc("eth_getTransactionByHash", [m[1]]) : null;
-    res.writeHead(tx ? 200 : 404, { "content-type": "text/html" });
-    res.end(tx && m?.[1] ? `<html><body>${m[1]}</body></html>` : "not found");
+    // Plain text: the step only needs 200 and the hash, never markup built from the address.
+    res.writeHead(tx ? 200 : 404, { "content-type": "text/plain" });
+    res.end(tx ? (m?.[1] ?? "") : "not found");
   });
 }
 

@@ -1,16 +1,16 @@
 // 18 S18-13: every API route file is documented on api.mdx as "METHOD /api/path", and every endpoint
 // documented there has a route file.
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fail, isMain } from "./lib.mjs";
 
 const ROOT = "apps/web/src/app/api";
 
 export function routes(dir = ROOT, out = []) {
-  for (const n of readdirSync(dir)) {
-    const p = join(dir, n);
-    if (statSync(p).isDirectory()) routes(p, out);
-    else if (n === "route.ts" && !p.includes("[...slug]")) {
+  for (const e of readdirSync(dir, { withFileTypes: true })) {
+    const p = join(dir, e.name);
+    if (e.isDirectory()) routes(p, out);
+    else if (e.name === "route.ts" && !p.includes("[...slug]")) {
       const path = `/api/${p.slice(ROOT.length + 1, -"/route.ts".length)}`;
       for (const m of readFileSync(p, "utf8").matchAll(/export const (GET|POST)\b/g))
         out.push(`${m[1]} ${path}`);

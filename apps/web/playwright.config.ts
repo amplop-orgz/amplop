@@ -31,6 +31,8 @@ export default defineConfig({
   timeout: testnet ? 300_000 : 120_000,
   expect: { timeout: 15_000 },
   retries: CI ? 1 : 0,
+  // Stop early in CI so a broken engine ends the job and still uploads its report and traces.
+  maxFailures: CI ? 5 : undefined,
   workers: testnet ? 1 : 4,
   reporter: CI ? [["list"], ["html", { open: "never" }]] : "list",
   use: {

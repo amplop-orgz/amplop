@@ -422,7 +422,8 @@ export async function expectTxProof(
   const n = await links.count();
   for (let i = 0; i < n; i++) {
     const href = (await links.nth(i).getAttribute("href")) ?? "";
-    expect(href).toMatch(new RegExp(`^${EXPLORER_TX.replace(/[.]/g, "\\.")}0x[0-9a-f]{64}$`));
+    expect(href.startsWith(EXPLORER_TX), `${href} starts with ${EXPLORER_TX}`).toBe(true);
+    expect(href.slice(EXPLORER_TX.length)).toMatch(/^0x[0-9a-f]{64}$/);
     const hash = href.split("/").pop() as Hash;
     const receipt = await chain.getTransactionReceipt({ hash });
     expect(receipt.status).toBe("success");
