@@ -1,7 +1,8 @@
 // 19 S19-4: a software passkey for WebKit, which has no virtual authenticator in Playwright. It answers
 // navigator.credentials.create and get for public keys with discoverable credentials and the PRF
 // extension (HMAC-SHA-256 of the salt with a per-credential secret, so one passkey always gives one
-// account). Mera reads only rawId, the PRF result and the transports. Credentials live on the Node
+// account). Mera reads only rawId, the PRF result and the transports. Where the engine has no WebAuthn
+// at all (Linux WebKit), it also supplies PublicKeyCredential and navigator.credentials. Credentials live on the Node
 // side per profile, never in page storage, so they survive reloads.
 import type { BrowserContext } from "@playwright/test";
 
@@ -70,12 +71,24 @@ export async function installSoftAuthenticator(context: BrowserContext) {
     }
     const fail = () =>
       Promise.reject(new DOMException("The operation was cancelled.", "NotAllowedError"));
-    const creds = CredentialsContainer.prototype as unknown as {
-      create: (o?: CredentialCreationOptions) => Promise<Credential | null>;
-      get: (o?: CredentialRequestOptions) => Promise<Credential | null>;
+    type Container = {
+      create?: (o?: CredentialCreationOptions) => Promise<Credential | null>;
+      get?: (o?: CredentialRequestOptions) => Promise<Credential | null>;
     };
-    const nativeCreate = creds.create;
-    const nativeGet = creds.get;
+    // Linux WebKit (CI) is built without WebAuthn: give it the API surface the app checks for.
+    let creds: Container;
+    if (typeof CredentialsContainer === "undefined") {
+      creds = {};
+      Object.defineProperty(navigator, "credentials", { value: creds, configurable: true });
+    } else creds = CredentialsContainer.prototype;
+    if (!("PublicKeyCredential" in window))
+      Object.defineProperty(window, "PublicKeyCredential", {
+        value: {}, // the app only checks it exists and calls the two methods set below
+        configurable: true,
+        writable: true,
+      });
+    const nativeCreate = creds.create ?? (() => Promise.resolve(null));
+    const nativeGet = creds.get ?? (() => Promise.resolve(null));
     Object.defineProperty(creds, "create", {
       configurable: true,
       writable: true,
