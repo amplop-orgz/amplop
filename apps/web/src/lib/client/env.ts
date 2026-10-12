@@ -10,3 +10,13 @@ export const RPC_URL_FALLBACK = process.env.NEXT_PUBLIC_MONAD_RPC_URL_FALLBACK ?
 export const EXPLORER_TX_URL = process.env.NEXT_PUBLIC_EXPLORER_TX_URL ?? "";
 export const INDEXER_URL = process.env.NEXT_PUBLIC_INDEXER_URL ?? "";
 export const DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
+
+/** The sample rates shown on screen (01 section 7); the server converts with its own copy. */
+const eur = (process.env.NEXT_PUBLIC_SAMPLE_RATE_USD_PER_EUR ?? "1.1511").split(".");
+export const RATES = {
+  idrPerUsd: BigInt(process.env.NEXT_PUBLIC_SAMPLE_RATE_IDR_PER_USD ?? "16500"),
+  usdPerEur: {
+    num: BigInt((eur[0] ?? "1") + (eur[1] ?? "")),
+    den: 10n ** BigInt((eur[1] ?? "").length),
+  },
+};

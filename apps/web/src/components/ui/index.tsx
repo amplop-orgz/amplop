@@ -485,16 +485,17 @@ export function CheckLine({ ok, children }: { ok: boolean; children: ReactNode }
 }
 
 export function ProofLink({ href, what }: { href: string; what: string }) {
+  const { t } = useT();
   return (
     <a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
       data-testid="tx-proof"
-      aria-label={`View transaction proof for ${what}`}
-      className="flex min-h-11 items-center justify-center text-[0.875rem] font-bold text-link"
+      aria-label={t("result.proofFor", { what })}
+      className="flex min-h-11 items-center text-[0.875rem] font-bold text-link"
     >
-      View transaction proof
+      {t("result.proof")}
     </a>
   );
 }
@@ -511,6 +512,75 @@ export function DemoBanner() {
     >
       <Info size={16} aria-hidden="true" className="shrink-0" />
       {t("banner.demo")}
+    </div>
+  );
+}
+
+/** A pill in the envelope's solid colour, or "Blocked" in the declined style (06 S06-39). */
+export function EnvelopeChip({ index, blocked = false }: { index: number; blocked?: boolean }) {
+  const { t } = useT();
+  if (blocked) {
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-bad-bg px-2.5 py-0.5 text-[0.8125rem] font-bold whitespace-nowrap text-bad">
+        <CircleX size={14} aria-hidden="true" />
+        {t("card.blocked")}
+      </span>
+    );
+  }
+  return (
+    <span
+      className={`rounded-full px-2.5 py-0.5 text-[0.8125rem] font-bold whitespace-nowrap text-white ${ENVELOPE_BG[index] ?? ""}`}
+    >
+      {t(`envelope.${String(index)}` as Parameters<typeof t>[0])}
+    </span>
+  );
+}
+
+const BADGE = {
+  ok: "bg-ok-bg text-ok",
+  wait: "bg-wait-bg text-wait",
+  bad: "bg-bad-bg text-bad",
+  info: "bg-info-bg text-info",
+} as const;
+
+export function StatusBadge({ kind, children }: { kind: keyof typeof BADGE; children: ReactNode }) {
+  const Icon = kind === "ok" ? Check : kind === "bad" ? CircleX : Clock;
+  return (
+    <span
+      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[0.8125rem] font-bold whitespace-nowrap ${BADGE[kind]}`}
+    >
+      <Icon size={14} aria-hidden="true" />
+      {children}
+    </span>
+  );
+}
+
+/** 72 px circle, title and amount at the top of a result screen. */
+export function ResultHeader({
+  ok,
+  title,
+  amount,
+  children,
+}: {
+  ok: boolean;
+  title: string;
+  amount?: string;
+  children?: ReactNode;
+}) {
+  return (
+    <div className="flex flex-col items-center gap-2.5 text-center">
+      <div
+        className={`flex size-[72px] items-center justify-center rounded-full ${ok ? "bg-ok-bg text-ok" : "bg-bad-bg text-bad"}`}
+      >
+        {ok ? <Check size={34} aria-hidden="true" /> : <CircleX size={34} aria-hidden="true" />}
+      </div>
+      <h1 className={`m-0 text-[1.5rem] font-bold ${ok ? "text-ok" : "text-bad"}`}>{title}</h1>
+      {amount ? (
+        <div className="amount text-[2rem] leading-tight font-bold tracking-[-0.01em]">
+          {amount}
+        </div>
+      ) : null}
+      {children}
     </div>
   );
 }
