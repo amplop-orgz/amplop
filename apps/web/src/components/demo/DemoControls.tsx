@@ -4,16 +4,16 @@
 import { formatDay, formatDayTime } from "@amplop/shared/dates";
 import { dayOf, daysToNextMonday } from "@amplop/shared/schedule";
 import { useEffect, useRef, useState } from "react";
-import { Button, InfoBox, InlineMessage, Sheet } from "@/components/ui";
+import { Button, InfoBox, InlineMessage, ProofLink, Sheet } from "@/components/ui";
 import { switchProfile, useSession } from "@/lib/client/account";
 import { api, ApiError } from "@/lib/client/api";
 import { read } from "@/lib/client/chain/client";
-import { sendUserTx } from "@/lib/client/chain/write";
+import { proofUrl, sendUserTx } from "@/lib/client/chain/write";
 import { DEMO } from "@/lib/client/env";
 import { errorKey } from "@/lib/client/errors";
 import { hasKey, useT, type Key } from "@/lib/client/i18n";
 import { listProfiles, type Profile } from "@/lib/client/profiles";
-import { useRead } from "@/lib/client/query";
+import { invalidateAll, useRead } from "@/lib/client/query";
 import type { OrderView } from "@/lib/client/topup";
 
 export type SkipKind = "monday" | "48h";
@@ -206,8 +206,8 @@ export function ViewAsRow({ name }: { name: string }) {
   );
 }
 
-/** "Demo only: view as Raka" under parent home's actions (15 S15-6). */
-export function ViewAsLink({ name }: { name: string }) {
+/** "Demo only: view as Raka" under parent home's actions, or "View as Mama" on the approval page (15 S15-6). */
+export function ViewAsLink({ name, onApproval = false }: { name: string; onApproval?: boolean }) {
   const { t } = useT();
   const other = useOtherProfile();
   const [error, setError] = useState<Key | null>(null);
@@ -215,16 +215,18 @@ export function ViewAsLink({ name }: { name: string }) {
   return (
     <>
       <Button
-        variant="text"
+        variant={onApproval ? "secondary" : "text"}
         parent
         onClick={() => {
           setError(null);
-          switchProfile(other.credentialId).catch((e: unknown) => {
+          switchProfile(other.credentialId, { stay: onApproval }).catch((e: unknown) => {
             setError(errorKey(e, hasKey) as Key);
           });
         }}
       >
-        <span className="user-text">{t("parent.viewAs", { name })}</span>
+        <span className="user-text">
+          {onApproval ? t("settings.viewAs", { name }) : t("parent.viewAs", { name })}
+        </span>
       </Button>
       {error ? <InlineMessage kind="error">{t(error)}</InlineMessage> : null}
     </>
@@ -280,5 +282,62 @@ export function SimulatePaymentButton({
         </InlineMessage>
       ) : null}
     </div>
+  );
+}
+
+/** "Demo only: collect now" on boards 2.6 and 2.10 (15 S15-13), for a held purchase in its hold period. */
+export function CollectNowButton({
+  purchaseId,
+  accountId,
+  show,
+  className = "",
+}: {
+  purchaseId: string;
+  accountId: bigint;
+  show: boolean;
+  className?: string;
+}) {
+  const { t } = useT();
+  const [busy, setBusy] = useState(false);
+  const [tx, setTx] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  if (!DEMO || (!show && !tx)) return null;
+  const collect = () => {
+    if (busy) return;
+    setBusy(true);
+    setError(null);
+    api
+      .post<{ state: string; txHash: string }>(
+        "/api/card/collect",
+        { purchaseId },
+        { auth: { action: "card.collect", accountId } },
+      )
+      .then((r) => {
+        setTx(r.txHash);
+        invalidateAll();
+      })
+      .catch((e: unknown) => {
+        setError(e instanceof ApiError ? e.message : t("error.generic"));
+        invalidateAll();
+      })
+      .finally(() => {
+        setBusy(false);
+      });
+  };
+  return (
+    <>
+      {show ? (
+        <Button
+          variant="text"
+          className={`text-[0.875rem] ${className}`}
+          busyLabel={busy ? t("result.collecting") : null}
+          onClick={collect}
+        >
+          {t("result.collectNow")}
+        </Button>
+      ) : null}
+      {error ? <InlineMessage kind="error">{error}</InlineMessage> : null}
+      {tx ? <ProofLink href={proofUrl(tx)} what={t("result.collected")} /> : null}
+    </>
   );
 }

@@ -499,6 +499,13 @@ describe("POST /api/topup/[orderId]/simulate", () => {
     try {
       const off = await simulate(orderId);
       expect([off.status, errCode(off.json)]).toEqual([404, "not_found"]);
+      // 15 PRD 15 security test: unsigned too.
+      const unsigned = await call(simulateRoute, {
+        method: "POST",
+        body: "{}",
+        params: { orderId },
+      });
+      expect(unsigned.status).toBe(404);
     } finally {
       process.env.DEMO_MODE = "true";
     }

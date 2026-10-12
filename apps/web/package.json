@@ -5,6 +5,7 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
+    "prebuild": "node scripts/check-demo-flags.mjs",
     "dev": "next dev",
     "build": "next build && node scripts/bundle-scan.mjs",
     "start": "next start",
@@ -13,7 +14,8 @@
     "test:coverage": "vitest run --coverage",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "card:refund": "node --env-file-if-exists=.env.local --conditions=react-server --import tsx scripts/card-refund.ts"
+    "card:refund": "node --env-file-if-exists=.env.local --conditions=react-server --import tsx scripts/card-refund.ts",
+    "check:demo-off": "node scripts/check-demo-off-bundle.mjs"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "4.3.3",

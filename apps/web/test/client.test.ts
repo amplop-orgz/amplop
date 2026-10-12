@@ -39,6 +39,8 @@ import { lastProfileId, listProfiles, saveProfile, setProfileLabel } from "@/lib
 import { whatsappUrl } from "@/lib/client/share";
 import en from "../messages/en.json";
 import id from "../messages/id.json";
+import demoEn from "../messages/demo.en.json";
+import demoId from "../messages/demo.id.json";
 
 describe("key derivation (S06-14)", () => {
   it("pins a fixed PRF output to one address, the BIP-44 path of its mnemonic", () => {
@@ -98,7 +100,9 @@ describe("error sentences (S06-35, S06-34)", () => {
   });
   it("keeps both languages in step, with no empty value", () => {
     expect(Object.keys(id).sort()).toEqual(Object.keys(en).sort());
-    for (const v of [...Object.values(en), ...Object.values(id)]) expect(v.trim()).not.toBe("");
+    expect(Object.keys(demoId).sort()).toEqual(Object.keys(demoEn).sort());
+    for (const v of [en, id, demoEn, demoId].flatMap((m) => Object.values(m)))
+      expect(v.trim()).not.toBe("");
     expect(format("id", "home.hi", { name: "Raka" })).toBe("Hai, Raka");
     expect(format("en", "setup.mustAdd", { sum: 95 })).toBe("Must add up to 100%. Now 95%.");
   });

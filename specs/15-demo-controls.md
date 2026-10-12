@@ -249,6 +249,9 @@ The PRD wins on conflict. Never use `wallet-integration` (Para) or `wallet`. Amp
 6. **Collect now also shows on board 2.6.** The board draws it there as well as on purchase detail (PRD 12).
 7. **View as with no second profile** shows a hint row in Settings instead of a dead button.
 8. **Demo-off Collect now** returns 404 only for the signed owner call. The cron call keeps working, because it is the real collection timer.
+9. **The demo controls' copy lives in `messages/demo.en.json` and `messages/demo.id.json`**, required only inside a `process.env.NEXT_PUBLIC_DEMO_MODE === "true"` branch. A static import kept the strings in the demo-off bundle even when unused; the guarded `require` lets the bundler drop them, so S15-15's search passes.
+10. **CI runs the demo-off build and S15-15's search in the `build` job**, ahead of 19's K4 deployment, so a regression shows on every push.
+11. **Collect now is one shared `CollectNowButton`** used by boards 2.6 and 2.10.
 
 ## Additions to 01 (status)
 

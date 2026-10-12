@@ -173,7 +173,10 @@ export function signOut(): void {
 }
 
 /** S06-19, the View as mechanism: prompt first, and only on success leave the current account. */
-export async function switchProfile(credentialId: string): Promise<Session> {
+export async function switchProfile(
+  credentialId: string,
+  opts: { stay?: boolean } = {},
+): Promise<Session> {
   if (!DEMO) throw new Error("View as is only available in the demo");
   const known = profileFor(credentialId);
   let r;
@@ -191,6 +194,11 @@ export async function switchProfile(credentialId: string): Promise<Session> {
   saveProfile(known ?? { credentialId: r.credentialId, label: "Amplop" });
   const session = start(deriveSigner(r.prfOutput), r.credentialId);
   const role = await refreshRole();
+  // 15 S15-7: the approval page reloads on the same address as the other profile.
+  if (opts.stay) {
+    location.reload();
+    return session;
+  }
   location.replace(
     role.trustedAccountId !== undefined && role.studentAccountId === undefined
       ? "/app/parent"

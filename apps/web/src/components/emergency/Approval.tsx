@@ -9,6 +9,7 @@ import { Check, Fingerprint, Lock } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useCallback, useState } from "react";
 import { parseEventLogs, type Hash } from "viem";
+import { ViewAsLink } from "@/components/demo/DemoControls";
 import { Button, ButtonLink, InfoBox, InlineMessage, ProofLink } from "@/components/ui";
 import { useSession } from "@/lib/client/account";
 import { api, ApiError } from "@/lib/client/api";
@@ -251,9 +252,12 @@ export function Approval() {
       </InfoBox>
       <div className="flex-1" />
       {state === "ownerView" ? (
-        <InfoBox>
-          {t("approve.ownerOnly", { trusted: trustedName ?? t("common.yourTrustedPerson") })}
-        </InfoBox>
+        <>
+          <InfoBox>
+            {t("approve.ownerOnly", { trusted: trustedName ?? t("common.yourTrustedPerson") })}
+          </InfoBox>
+          <ViewAsLink name={trustedName ?? t("common.yourTrustedPerson")} onApproval />
+        </>
       ) : (
         <>
           {error ? <InlineMessage kind="error">{t(error)}</InlineMessage> : null}

@@ -15,9 +15,25 @@ import id from "../../../messages/id.json";
 import { readItem, writeItem } from "./storage";
 
 export type Lang = "en" | "id";
-export type Key = keyof typeof en;
+export type Key = keyof typeof en | keyof typeof import("../../../messages/demo.en.json");
 
-const MESSAGES: Record<Lang, Record<string, string>> = { en, id };
+type Messages = Record<string, string>;
+// 15 S15-15: the demo controls' copy is bundled only when NEXT_PUBLIC_DEMO_MODE is "true" at build
+// time; otherwise this branch, and the files it requires, are dropped from the bundle.
+const DEMO_MESSAGES: { en: Messages; id: Messages } =
+  process.env.NEXT_PUBLIC_DEMO_MODE === "true"
+    ? {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports -- a static import is always bundled
+        en: require("../../../messages/demo.en.json") as Messages,
+        // eslint-disable-next-line @typescript-eslint/no-require-imports -- a static import is always bundled
+        id: require("../../../messages/demo.id.json") as Messages,
+      }
+    : { en: {}, id: {} };
+
+const MESSAGES: Record<Lang, Messages> = {
+  en: { ...en, ...DEMO_MESSAGES.en },
+  id: { ...id, ...DEMO_MESSAGES.id },
+};
 
 export function format(
   lang: Lang,

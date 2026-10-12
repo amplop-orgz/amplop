@@ -18,6 +18,7 @@ import {
   StatusBadge,
   TopBar,
 } from "@/components/ui";
+import { CollectNowButton } from "@/components/demo/DemoControls";
 import { useSession } from "@/lib/client/account";
 import { ENVELOPE_NAMES, envelopeIndex, usePurchaseNames } from "@/lib/client/activity";
 import { read } from "@/lib/client/chain/client";
@@ -32,6 +33,7 @@ import { purchaseBadge } from "./Activity";
 
 const MINUS = "−";
 const MOVE_PERIOD = 7n * 86_400n;
+const HOLD_PERIOD = 7n * 86_400n;
 const STATE = ["Declined", "Held", "Collected", "Released", "Refunded"] as const;
 
 type OnChain = {
@@ -196,6 +198,12 @@ export function PurchaseDetail() {
             </p>
           ) : null}
         </div>
+        {/* 15 S15-13: the Collect now slot, held purchases in their hold period only. */}
+        <CollectNowButton
+          purchaseId={id}
+          accountId={accountId}
+          show={c.state === 1 && h.clock < c.createdAt + HOLD_PERIOD}
+        />
         {ix?.txHash ? <ProofLink href={proofUrl(ix.txHash)} what={t("purchase.title")} /> : null}
 
         {moved ? (

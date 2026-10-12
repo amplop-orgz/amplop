@@ -7,10 +7,10 @@ import { formatShopAmount, formatUsd } from "@amplop/shared/money";
 import { dayOf, nextRelease, type Schedule } from "@amplop/shared/schedule";
 import { CircleX, Info } from "lucide-react";
 import { useParams, useSearchParams } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
+import { CollectNowButton } from "@/components/demo/DemoControls";
 import { pad, parseEventLogs, type Hash } from "viem";
 import {
-  Button,
   ButtonLink,
   EnvelopeChip,
   InlineMessage,
@@ -19,7 +19,7 @@ import {
   StatusBadge,
 } from "@/components/ui";
 import { useSession } from "@/lib/client/account";
-import { api, ApiError } from "@/lib/client/api";
+import { api } from "@/lib/client/api";
 import { blockedCategory } from "@/lib/client/card/shops";
 import { ENVELOPE_INDEX, takeHandOff, type ShopLine } from "@/lib/client/card/result";
 import { publicClient, read } from "@/lib/client/chain/client";
@@ -27,7 +27,7 @@ import { proofUrl } from "@/lib/client/chain/write";
 import { useTrustedName } from "@/lib/client/data";
 import { DEMO } from "@/lib/client/env";
 import { useT, type Key } from "@/lib/client/i18n";
-import { invalidateAll, useRead } from "@/lib/client/query";
+import { useRead } from "@/lib/client/query";
 
 type Outcome = {
   result: "approved" | "declined";
@@ -169,10 +169,6 @@ export function Result() {
   }, [idBytes, accountId]);
   const live = useRead(accountId === undefined || !idBytes ? null : `live:${id}`, loadLive);
 
-  const [collecting, setCollecting] = useState(false);
-  const [collectTx, setCollectTx] = useState<string | null>(null);
-  const [collectError, setCollectError] = useState<string | null>(null);
-
   if (accountId === undefined) return null;
   if ((!outcome.loading && outcome.data === null) || !idBytes) {
     return (
@@ -215,27 +211,6 @@ export function Result() {
   if (o.result === "approved") {
     const held = l.p.state === 1;
     const canCollect = DEMO && held && l.clock < l.p.createdAt + HOLD_PERIOD;
-    const collect = () => {
-      setCollecting(true);
-      setCollectError(null);
-      api
-        .post<{ state: string; txHash: string }>(
-          "/api/card/collect",
-          { purchaseId: id },
-          { auth: { action: "card.collect", accountId } },
-        )
-        .then((r) => {
-          setCollectTx(r.txHash);
-          invalidateAll();
-        })
-        .catch((e: unknown) => {
-          setCollectError(e instanceof ApiError ? e.message : t("error.generic"));
-          invalidateAll();
-        })
-        .finally(() => {
-          setCollecting(false);
-        });
-    };
     return (
       <div className="flex min-h-dvh flex-1 flex-col gap-5 px-5 pt-12 pb-6">
         <ResultHeader ok title={t("result.approved")} amount={usd}>
@@ -270,18 +245,12 @@ export function Result() {
               {t("result.holdInfo", { amount: usd })}
             </div>
           ) : null}
-          {canCollect ? (
-            <Button
-              variant="text"
-              className="mt-1 text-[0.875rem]"
-              busyLabel={collecting ? t("result.collecting") : null}
-              onClick={collect}
-            >
-              {t("result.collectNow")}
-            </Button>
-          ) : null}
-          {collectError ? <InlineMessage kind="error">{collectError}</InlineMessage> : null}
-          {collectTx ? <ProofLink href={proofUrl(collectTx)} what={t("result.collected")} /> : null}
+          <CollectNowButton
+            purchaseId={id}
+            accountId={accountId}
+            show={canCollect}
+            className="mt-1"
+          />
         </div>
         <div className="flex flex-col gap-2 rounded-[16px] bg-quiet px-4 pt-3.5 pb-1">
           <div className="text-[0.875rem] font-bold text-muted">{t("result.detail")}</div>
