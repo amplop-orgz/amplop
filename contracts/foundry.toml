@@ -12,7 +12,10 @@ remappings = [
     "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
     "forge-std/=lib/forge-std/src/",
 ]
-fs_permissions = [{ access = "read-write", path = "../deployments" }]
+fs_permissions = [
+    { access = "read-write", path = "../deployments" },
+    { access = "read", path = "../packages/shared/test/vectors" },
+]
 
 # fuzz.seed is passed by `npm run test:contracts` (--fuzz-seed), so the ci profile, which inherits
 # from default, stays unseeded.

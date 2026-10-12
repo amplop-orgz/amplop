@@ -150,3 +150,16 @@ export function formatShopAmount(currency: ShopCurrency, minor: bigint): string 
   if (currency === "IDR") return formatRupiah(minor);
   return formatUsd(minor, 2);
 }
+
+/** R4, exactly as the contract's `deposit`: floor each part, every leftover unit goes to Everyday. */
+export function splitParts(units: bigint, split: readonly number[]): bigint[] {
+  const parts = split.map((p, i) => (i === 3 ? 0n : (units * BigInt(p)) / 100n));
+  parts[3] = units - parts.reduce((a, b) => a + b, 0n);
+  return parts;
+}
+
+/** R5: three shares of `part / 4` rounded down; the last share takes the rest. */
+export function weeklyShares(part: bigint): [bigint, bigint, bigint, bigint] {
+  const q = part / 4n;
+  return [q, q, q, part - 3n * q];
+}
