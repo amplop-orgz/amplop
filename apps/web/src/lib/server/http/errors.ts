@@ -78,6 +78,12 @@ export const CODES = {
     "You've started many payments today. Please use one of them or try again tomorrow.",
   ],
   midtrans_unavailable: [502, "The bank service is not answering. Please try again."],
+  // 12
+  reason_invalid: [400, "The reason must be 1 to 280 characters."],
+  request_not_found: [409, "We could not find this request yet. Try again."],
+  request_not_current: [409, "This request is no longer the current one."],
+  reason_mismatch: [409, "This reason does not match the request."],
+  reason_not_found: [404, "This link is not valid or not for you."],
 } as const satisfies Record<string, readonly [Status, string]>;
 
 export type Code = keyof typeof CODES;
