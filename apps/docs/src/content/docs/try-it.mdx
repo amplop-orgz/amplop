@@ -1,0 +1,35 @@
+---
+title: Try it
+description: One person, one phone, about five minutes, following the demo video.
+---
+
+import DemoTime from "../../fragments/demo-time.md";
+import AppLink from "../../components/AppLink.astro";
+
+Open <AppLink path="/app" /> on your phone. Use your phone's normal browser (Chrome on Android, Safari on iPhone). Takes about 5 minutes.
+
+You play both people: Raka, the student, and Mama, his trusted person. Each is a real, separate passkey account on the same phone, and **View as** switches between them.
+
+1. Open the app and tap **Open the app**. Tap **Create a passkey** and type the name Raka.
+2. Keep the five envelopes as they are (Food 40%, Transport 15%, Study 15%, Everyday 20%, Emergency 10%) and continue.
+3. Invite Mama: type her name and make the invite link. Tap **Copy invite link**, paste it into the address bar of the same browser, and tap **Accept and create a passkey**. That makes Mama's own passkey and links her to Raka.
+4. As Mama, tap **Send allowance**, enter Rp16.500.000, and tap **Simulate payment**. You see Allowance sent, with its transaction proof.
+5. Tap **Demo only: view as Raka**. The allowance has arrived as $1.000,00, already split; this week's shares are available now.
+6. Open **Card**. Pay at the Supermarket: approved from Food in about a second. Then try the Gambling site: declined. Open **Settings** and tap **Switch** next to View as Mama: her alert shows the category, never the shop.
+7. As Raka, open **Settings**, tap **Skip**, then **Skip to next Monday**. The next weekly share is released.
+8. Open **Emergency**, ask for $70,00 and write a reason. Switch to Mama, open the approval link from her home screen, and tap **Approve with passkey**. Back as Raka, the $70,00 is in Everyday.
+
+Every step above wrote to Monad testnet; each money screen has a View transaction proof link.
+
+## Time in the demo
+
+<DemoTime />
+
+| Control                     | Where                                | What it does                                                                                                                     |
+| --------------------------- | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| Simulate payment            | Waiting for payment (1.3)            | Stands in for the parent's banking app.                                                                                          |
+| View as Mama / View as Raka | Settings (4.1) and Parent home (1.1) | Switches between two passkey profiles on one phone, so one person can play both roles. Each profile is a real, separate account. |
+| Skip time                   | Settings (4.1), demo section         | "Skip to next Monday" and "Skip 48 hours". Moves that one account's clock forward.                                               |
+| Collect now                 | Purchase detail, for a held purchase | Stands in for the shop collecting its money.                                                                                     |
+
+None of these controls exist in a real deployment: their server routes answer "not found" and the contract refuses to skip.

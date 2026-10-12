@@ -1,0 +1,104 @@
+---
+title: Contracts
+description: The AmplopEnvelopes contract on Monad testnet, every function, event and rule.
+---
+
+import R27 from "../../fragments/r27.md";
+
+One contract, `AmplopEnvelopes`, holds all AUSD and enforces rules R1 to R24. Source: [`contracts/src/AmplopEnvelopes.sol`](https://github.com/amplop-orgz/amplop/blob/main/contracts/src/AmplopEnvelopes.sol). It is self-reviewed, findings published: see the [self-review report](https://github.com/amplop-orgz/amplop/blob/main/audits/2026-10-self-review.md).
+
+## Addresses (Monad testnet, chain 10143)
+
+| Name                       | Address                                                                                                                                                                         |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AmplopEnvelopes`          | [`0x5596Bf1014EC25F760e8976f1DD8a40Ee250c56C`](https://testnet.monadvision.com/address/0x5596Bf1014EC25F760e8976f1DD8a40Ee250c56C), deploy block 70137747, verified on Sourcify |
+| AUSD (testnet, 6 decimals) | [`0xa9012a055bd4e0eDfF8Ce09f960291C09D5322dC`](https://testnet.monadvision.com/address/0xa9012a055bd4e0eDfF8Ce09f960291C09D5322dC)                                              |
+| Settlement wallet          | `0xc22A14fB5166A595B887EeA1A8744A1Ec1B5A28F`                                                                                                                                    |
+| Treasury wallet            | `0xAA56c1D96160D3d290204C1B156B857CAa198bc5`                                                                                                                                    |
+| Card service wallet        | `0x4C1ce63Dfa4036970CC26B0d9caFcF6821EB2eB6`                                                                                                                                    |
+
+## Constructor and roles
+
+The constructor takes the token, the settlement address, the treasury, the card service and the demo switch. It reads the token's decimals once. There is no owner, admin, pause or upgrade: the deployer keeps no power after deployment. Roles are fixed: the **owner** of an account (the student's passkey address), its **trusted person**, the **treasury** and the **card service**.
+
+## Writes
+
+| Function                                                                            | Caller                        | Rule                                                                      |
+| ----------------------------------------------------------------------------------- | ----------------------------- | ------------------------------------------------------------------------- |
+| `register(uint8[5] split)`                                                          | Anyone without an account     | R1, R4                                                                    |
+| `saveSplit(uint8[5] split)`                                                         | Owner                         | R21: immediate before the first allowance, else after 48 hours            |
+| `createInvite(address inviteKey)`                                                   | Owner                         | R22                                                                       |
+| `acceptInvite(uint256 accountId, bytes signature)`                                  | The new trusted person        | R2, R22: an EIP-712 signature by the invite key                           |
+| `removeTrusted()`                                                                   | Owner                         | R22: takes 48 hours                                                       |
+| `finishRemoveTrusted(uint256 accountId)`                                            | Anyone, after the wait        | R22                                                                       |
+| `deposit(uint256 accountId, uint256 amount, bytes32 paymentId)`                     | Treasury                      | R3 to R8: splits, schedules four shares, each payment id once             |
+| `authorize(uint256 accountId, bytes32 purchaseId, uint16 shopType, uint256 amount)` | Card service                  | R9 to R12: holds in one envelope or declines; never reverts for a decline |
+| `collect(bytes32 purchaseId, uint256 amount)`                                       | Card service                  | R13: up to the held amount, within 7 days                                 |
+| `releaseHold(bytes32 purchaseId)`                                                   | Card service                  | R13: after 7 days the hold returns to its envelope                        |
+| `refund(bytes32 purchaseId, uint256 amount)`                                        | Card service                  | R13: back to the envelope that paid                                       |
+| `movePurchase(bytes32 purchaseId, uint8 to)`                                        | Owner                         | R15: from Everyday, once, within 7 days                                   |
+| `requestEmergency(uint256 amount, bytes32 reasonHash)`                              | Owner                         | R16                                                                       |
+| `cancelEmergency()`                                                                 | Owner                         | R16                                                                       |
+| `approveEmergency(uint256 accountId, uint64 requestSeq)`                            | Trusted person                | R17, R18                                                                  |
+| `finalizeEmergency(uint256 accountId)`                                              | Anyone, after 48 hours        | R17, R19                                                                  |
+| `startLockOff()`                                                                    | Owner                         | R20                                                                       |
+| `finishLockOff(uint256 accountId)`                                                  | Anyone, after the wait        | R20                                                                       |
+| `approveRecovery(uint256 accountId, address newOwner)`                              | Trusted person                | R23                                                                       |
+| `finishRecovery(uint256 accountId)`                                                 | The new owner, after the wait | R23                                                                       |
+| `cancelPending(uint8 kind)`                                                         | Owner                         | R24                                                                       |
+| `skipDays(uint16 numDays)`                                                          | Owner, demo deployments only  | PRD 12: 1 to 14 days per call                                             |
+
+## Reads
+
+| Function                                                                                                                      | Returns                                                                                             |
+| ----------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `accountInfo(uint256 accountId)`                                                                                              | Owner, trusted person, split, pending split, lock, `everDeposited`, request number, skipped seconds |
+| `accountOf(address owner)`, `trustedAccountOf(address trusted)`, `recoveryAccountOf(address newOwner)`                        | The account an address owns, trusts, or is waiting to recover                                       |
+| `envelopes(uint256 accountId)`                                                                                                | Per envelope: available, not yet released, held, locked; and the next release day                   |
+| `totals(uint256 accountId)`                                                                                                   | Per envelope: available plus not yet released (Emergency: locked plus available), R25               |
+| `schedules(uint256 accountId)`                                                                                                | The live release records, at most three                                                             |
+| `clock(uint256 accountId)`                                                                                                    | The account clock: block time plus skipped days                                                     |
+| `emergency(uint256 accountId)`                                                                                                | The latest Emergency request                                                                        |
+| `pending(uint256 accountId, uint8 kind)`                                                                                      | A waiting change: active, ready time and data                                                       |
+| `inviteOf(uint256 accountId)`, `inviteKeyUsed(uint256 accountId, address inviteKey)`                                          | The current invite, and whether an invite key was used                                              |
+| `purchase(bytes32 purchaseId)`, `purchaseUsed(bytes32 purchaseId)`                                                            | A purchase, and whether its id was used                                                             |
+| `paymentUsed(bytes32 paymentId)`                                                                                              | Whether a deposit's payment id was used                                                             |
+| `shopEnvelope(uint256 accountId, uint16 shopType)`                                                                            | The envelope a shop type uses for this account, or blocked                                          |
+| `accountCount()`, `token()`, `tokenDecimals()`, `treasury()`, `cardService()`, `settlement()`, `demoMode()`, `eip712Domain()` | Set-up values                                                                                       |
+| `HOLD_PERIOD`, `MOVE_PERIOD`, `WAIT`, `INVITE_LIFE`, `MAX_SCHEDULES`, `MAX_SKIP_DAYS_PER_CALL`                                | Constants: 7 days, 7 days, 48 hours, 7 days, 3 records, 14 days                                     |
+
+## Events
+
+Every write emits exactly one event, with `accountId` indexed wherever it applies: `AccountCreated`, `SplitSaved`, `InviteCreated`, `TrustedLinked`, `TrustedRemovalStarted`, `TrustedRemoved`, `Deposited`, `PurchaseApproved`, `PurchaseDeclined`, `PurchaseCollected`, `HoldReleased`, `PurchaseRefunded`, `PurchaseMoved`, `EmergencyRequested`, `EmergencyOpened`, `EmergencyCancelled`, `LockOffStarted`, `LockOffDone`, `RecoveryApproved`, `RecoveryDone`, `PendingCancelled`, `DaysSkipped`.
+
+## Enums
+
+- `Envelope`: Food, Transport, Study, Everyday, Emergency.
+- `PurchaseState`: None, Held, Collected, Released, Refunded.
+- `DeclineReason`: None, Blocked, NotEnough.
+- `PendingKind`: Split, TrustedRemoval, LockOff, Recovery.
+- `EmergencyStatus`: None, Open, Opened, Cancelled.
+- `OpenedBy`: Approval, Time.
+
+## Always true
+
+These six statements hold after every call, and invariant tests check them with random sequences of calls:
+
+1. The contract's AUSD balance equals all the money it accounts for.
+2. Locked Emergency money leaves only through R17 to R20.
+3. A purchase lowers exactly one envelope.
+4. Collected money goes only to the settlement address.
+5. Only the allowed caller can make each call.
+6. Every wait reads the account clock.
+
+## Weeks and the account clock
+
+Days are counted from the Unix epoch on the account clock. A week starts on Monday at 00:00 UTC; a share is released when the account clock passes that Monday. Balances are computed on read from a few counters and at most three live release records, so no weekly transaction is needed.
+
+## Invite binding
+
+An invite is accepted with an EIP-712 signature by the invite's one-time key over `AcceptInvite(accountId, trusted)`. The domain names chain 10143 and this contract's address, and each invite key works once per account, so a signature cannot be reused on another chain, another contract or another account.
+
+## What the chain shows
+
+<R27 />

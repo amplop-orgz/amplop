@@ -1,0 +1,103 @@
+---
+title: API
+description: The server API, its signed requests, and every endpoint.
+---
+
+Base path `/api`. JSON in and out, UTF-8, a 10 KB body limit. Every body and query is parsed with a strict schema: an unknown field answers 400. Every response is `Cache-Control: no-store`. Any other path or method answers 404.
+
+## Errors
+
+Every error has one shape:
+
+```json
+{ "error": { "code": "not_trusted", "message": "Only the trusted person can do this." } }
+```
+
+| Status | When                                                                                             |
+| ------ | ------------------------------------------------------------------------------------------------ |
+| 400    | Bad input: malformed JSON, wrong content type, unknown or invalid fields, an amount out of range |
+| 401    | A missing or invalid signature, or a wrong cron secret                                           |
+| 403    | The signer has the wrong role for the account, or a request from another site                    |
+| 404    | Not found, a demo route on a real deployment, or an id that belongs to another account           |
+| 409    | A used or expired nonce, or a conflict such as a request that is not current yet                 |
+| 429    | A rate limit; `Retry-After` says when to try again                                               |
+| 500    | An unexpected error; the message never carries details                                           |
+| 502    | The chain or Midtrans could not be reached; nothing was charged                                  |
+
+## Signed requests
+
+Every action on someone's account is signed by that person's passkey account. The browser asks `GET /api/auth/nonce` for a single-use nonce, then sends two headers:
+
+- `Amplop-Auth-Message`: base64url of the message below.
+- `Amplop-Auth-Signature`: the account's signature over the message (EIP-191).
+
+```text
+Amplop request
+Site: amplop.example
+Chain: 10143
+Action: card.authorize
+Account: 12
+Address: 0x…
+Nonce: 3f9c…
+Issued: 2026-10-12T09:12:00.000Z
+Body: <sha-256 of the exact body bytes>
+```
+
+The server checks the site, the chain, the action, the time (within 5 minutes), the body hash and the signature, then uses the nonce once. A replayed or expired nonce answers 409.
+
+### Auth kinds
+
+| Kind           | Who may call                                                                 |
+| -------------- | ---------------------------------------------------------------------------- |
+| public         | Anyone                                                                       |
+| signed:owner   | The account's owner, read from the contract on every request                 |
+| signed:trusted | The account's current trusted person                                         |
+| signed:either  | The owner or the current trusted person                                      |
+| signed:address | Any address that signs; the body must name that same address                 |
+| demo           | Signed as stated, and only when the server's demo flag is on (404 otherwise) |
+| cron           | The scheduled job, with `Authorization: Bearer <CRON_SECRET>`                |
+| midtrans       | Midtrans payment notifications, checked by signature                         |
+
+### Rate limits
+
+60 POST and 120 GET requests a minute per IP address; 30 signed POST requests a minute per account; 10 card authorisations a minute per card; 10 rupiah orders a day per account; 3 recovery links a day per new passkey. Getting an account ready for fees has its own daily limits per address, device and IP address, and a daily cap in total.
+
+## Endpoints
+
+| Endpoint                              | Auth                        | Action             | Does                                                                                                   |
+| ------------------------------------- | --------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------ |
+| `GET /api/auth/nonce`                 | public                      |                    | A single-use nonce, valid for 5 minutes                                                                |
+| `POST /api/fund`                      | signed:address              | `fund`             | Sends test MON to the signing address when it is low, so it can pay fees                               |
+| `POST /api/profile`                   | signed:owner                | `profile.save`     | Saves the student's name                                                                               |
+| `GET /api/profile/[accountId]`        | signed:either               | `profile.read`     | The student's name                                                                                     |
+| `POST /api/invite`                    | signed:owner                | `invite.create`    | Saves the invited person's name for an on-chain invite; returns the invite id                          |
+| `GET /api/invite/[inviteId]`          | public                      |                    | The invite's student name and state, for the accept screen                                             |
+| `GET /api/invite/latest`              | signed:either               | `invite.latest`    | The account's latest invite and the trusted person's name                                              |
+| `POST /api/topup`                     | signed:trusted              | `topup.create`     | Starts a rupiah payment: a BCA virtual account number, at the sample rate locked on the order          |
+| `GET /api/topup/[orderId]`            | signed:trusted              | `topup.read`       | The order's status; also checks Midtrans and retries a due deposit                                     |
+| `POST /api/topup/[orderId]/simulate`  | demo (signed:trusted)       | `topup.simulate`   | Pretends the transfer arrived; deposits once                                                           |
+| `POST /api/midtrans/webhook`          | midtrans                    |                    | A Midtrans payment notification                                                                        |
+| `POST /api/card/issue`                | signed:owner                | `card.issue`       | The account's demo card (a random card token and last four digits)                                     |
+| `POST /api/card/authorize`            | signed:owner                | `card.authorize`   | Converts the shop price, asks the contract, and answers approved or declined, once per idempotency key |
+| `POST /api/card/collect`              | demo (signed:owner) or cron | `card.collect`     | The shop collects a held purchase                                                                      |
+| `GET /api/purchases`                  | signed:owner                | `purchases.read`   | Shop names, cities and amounts, for the owner only                                                     |
+| `POST /api/reason`                    | signed:owner                | `reason.save`      | Saves an Emergency reason when its hash matches the request on the contract                            |
+| `GET /api/reason/[linkId]`            | signed:either               | `reason.read`      | The reason behind an approval link                                                                     |
+| `GET /api/reason/current`             | signed:either               | `reason.current`   | The latest request's link and reason                                                                   |
+| `POST /api/recovery`                  | signed:address              | `recovery.create`  | A recovery link for a new passkey that has no account                                                  |
+| `GET /api/recovery/[linkId]`          | signed:trusted              | `recovery.read`    | The new passkey's address behind a recovery link                                                       |
+| `POST /api/recovery/[linkId]/dismiss` | signed:trusted              | `recovery.dismiss` | "This was not them": drops the request                                                                 |
+| `GET /api/cron/deposits`              | cron                        |                    | Daily backstop: retries paid orders and re-checks old ones                                             |
+| `GET /api/cron/collect`               | cron                        |                    | Daily backstop: collects or releases card holds                                                        |
+
+Ids in paths are random 128-bit values as 32 lowercase hex characters; an id that belongs to another account answers 404, the same as an unknown one.
+
+## Payment notifications
+
+`POST /api/midtrans/webhook` trusts nothing in the notification on its own:
+
+1. The body must match the documented fields exactly.
+2. `signature_key` must equal SHA-512 of order id + status code + gross amount + the server key, compared in constant time. Otherwise 401.
+3. The amount must equal the order's.
+4. The server then fetches the order's status from the Midtrans API and acts only on that answer.
+5. A deposit happens only on `settlement`, only for the right amount, and once per order: the order row, a lock and the contract's single-use payment id all stop a second one.

@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 520" width="840" height="520" role="img" aria-labelledby="t d">
+  <title id="t">Amplop architecture</title>
+  <desc id="d">Five pieces: web app, server, contract, indexer and docs site. The web app sends user transactions and reads to the contract and calls the server API. The server makes treasury deposits and card service decisions on the contract and sends test MON to passkey accounts for fees. Midtrans sends payment notifications to the server. The contract's events feed the indexer, which serves activity and alerts to the web app.</desc>
+  <style>
+    .box { fill: #ffffff; stroke: #111b33; stroke-width: 2; }
+    .ext { fill: #f2f3ee; stroke: #55606e; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .name { font: 700 17px "Plus Jakarta Sans", system-ui, sans-serif; fill: #111b33; }
+    .sub { font: 400 13px "Plus Jakarta Sans", system-ui, sans-serif; fill: #55606e; }
+    .label { font: 600 13px "Plus Jakarta Sans", system-ui, sans-serif; fill: #2a5ca6; }
+    .edge { fill: none; stroke: #2a5ca6; stroke-width: 2; }
+    .head { fill: #2a5ca6; }
+    @media (prefers-color-scheme: dark) {
+      .box { fill: #1b2540; stroke: #e6eaf2; }
+      .ext { fill: #111b33; stroke: #9aa3b2; }
+      .name { fill: #f2f3ee; }
+      .sub { fill: #c9d0de; }
+      .label { fill: #9ab8e6; }
+      .edge { stroke: #9ab8e6; }
+      .head { fill: #9ab8e6; }
+    }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="head" d="M0 0 L10 5 L0 10 z" />
+    </marker>
+  </defs>
+
+  <!-- pieces -->
+  <rect class="box" x="40" y="30" width="180" height="70" rx="12" />
+  <text class="name" x="130" y="60" text-anchor="middle">Docs site</text>
+  <text class="sub" x="130" y="80" text-anchor="middle">Astro Starlight</text>
+
+  <rect class="ext" x="340" y="30" width="180" height="70" rx="12" />
+  <text class="name" x="430" y="60" text-anchor="middle">Midtrans</text>
+  <text class="sub" x="430" y="80" text-anchor="middle">sandbox payments</text>
+
+  <rect class="box" x="40" y="190" width="180" height="70" rx="12" />
+  <text class="name" x="130" y="220" text-anchor="middle">Web app</text>
+  <text class="sub" x="130" y="240" text-anchor="middle">Next.js, passkeys</text>
+
+  <rect class="box" x="340" y="190" width="180" height="70" rx="12" />
+  <text class="name" x="430" y="220" text-anchor="middle">Server</text>
+  <text class="sub" x="430" y="240" text-anchor="middle">route handlers, Postgres</text>
+
+  <rect class="box" x="640" y="190" width="180" height="70" rx="12" />
+  <text class="name" x="730" y="220" text-anchor="middle">Contract</text>
+  <text class="sub" x="730" y="240" text-anchor="middle">AmplopEnvelopes</text>
+
+  <rect class="ext" x="340" y="380" width="180" height="70" rx="12" />
+  <text class="name" x="430" y="410" text-anchor="middle">Passkey accounts</text>
+  <text class="sub" x="430" y="430" text-anchor="middle">student, trusted person</text>
+
+  <rect class="box" x="640" y="380" width="180" height="70" rx="12" />
+  <text class="name" x="730" y="410" text-anchor="middle">Indexer</text>
+  <text class="sub" x="730" y="430" text-anchor="middle">Envio HyperIndex</text>
+
+  <!-- 1. Web app to Contract -->
+  <path class="edge" marker-end="url(#a)" d="M180 190 V155 H700 V188" />
+  <text class="label" x="560" y="147" text-anchor="middle">user transactions and reads</text>
+  <!-- 2. Web app to Server -->
+  <path class="edge" marker-end="url(#a)" d="M220 225 H338" />
+  <text class="label" x="279" y="217" text-anchor="middle">API</text>
+  <!-- 3. Server to Contract -->
+  <path class="edge" marker-end="url(#a)" d="M520 225 H638" />
+  <text class="label" x="579" y="282" text-anchor="middle">deposits,</text>
+  <text class="label" x="579" y="298" text-anchor="middle">card decisions</text>
+  <!-- 4. Server to passkey accounts -->
+  <path class="edge" marker-end="url(#a)" d="M400 260 V378" />
+  <text class="label" x="392" y="325" text-anchor="end">test MON for fees</text>
+  <!-- 5. Midtrans to Server -->
+  <path class="edge" marker-end="url(#a)" d="M460 100 V188" />
+  <text class="label" x="468" y="125">payment notifications</text>
+  <!-- 6. Contract to Indexer -->
+  <path class="edge" marker-end="url(#a)" d="M760 260 V378" />
+  <text class="label" x="752" y="325" text-anchor="end">events</text>
+  <!-- 7. Indexer to Web app -->
+  <path class="edge" marker-end="url(#a)" d="M730 450 V485 H130 V262" />
+  <text class="label" x="430" y="478" text-anchor="middle">activity and alerts</text>
+</svg>

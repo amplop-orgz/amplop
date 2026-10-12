@@ -353,6 +353,13 @@ End-to-end case IDs: none owned here.
 6. **A "Proof" column** is added to the threat table in SECURITY.md; the three PRD columns stay unchanged.
 7. **No personal email** in SECURITY.md; reports go through GitHub private reporting.
 8. **The README's three sentences** are taken from PRD 1, adjusted only to fit three sentences.
+9. **Try it step 3 follows the built app:** Raka taps **Copy invite link**, pastes it into the same browser and taps **Accept and create a passkey**. View as switches only between profiles that already exist on the phone (15 S15-6), so it cannot create Mama's passkey. Steps 5, 6 and 8 name the built controls ("Demo only: view as Raka", Settings **Switch**, the approval link on Mama's home).
+10. **Live links that do not exist yet say so.** The app and docs addresses come from the first Vercel production deploy, and the two videos from 20; the README names where each comes from instead of a guessed address. The docs site's live-app link renders from `NEXT_PUBLIC_SITE_URL` at build time.
+11. **"How Amplop differs" is a `.md` page,** because MDX does not allow the HTML-comment markers S18-3 and S18-15 use.
+12. **The docs site's packages are devDependencies** (the site is static), and it pins `cookie@2.0.1` so Astro's prerenderer does not pick up the older copy hoisted for Lighthouse CI's Express.
+13. **The fee sponsor's address is in `deployments/monad-testnet.json`** (`feeSponsor`), so the README address check covers all six addresses from one record.
+14. **Explorer links use MonadVision** (`testnet.monadvision.com`), one of the two testnet explorers in Monad's docs; the contract is verified on Sourcify, which MonadVision reads.
+15. **SECURITY.md's server and app review section is pending** until the Mon 12 Oct review pass is run; the accepted risks found in the self-review are listed below the five PRD ones, as S18-22 allows.
 
 ## Additions to 01 (status)
 

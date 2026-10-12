@@ -1,0 +1,53 @@
+---
+title: Architecture
+description: The five pieces, how they connect, and what each server key can do.
+---
+
+import { Image } from "astro:assets";
+import diagram from "../../assets/architecture.svg";
+
+One contract holds the money and the rules. Everything else is a way to reach it or to read from it.
+
+<Image
+  src={diagram}
+  alt="Amplop architecture: web app, server, contract, indexer and docs site, with the seven connections between them."
+/>
+
+| Piece     | Built with                                                      | Job                                                                                                  |
+| --------- | --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Web app   | Next.js 16, Tailwind v4, shadcn/ui, viem, `@category-labs/mera` | Landing page and the phone app. Signs the user's own transactions with their passkey account.        |
+| Server    | Next.js route handlers on Vercel, a small Postgres database     | Fee top-up, rupiah payments, the card service, server-held text (shop names, reasons, invite names). |
+| Contract  | Solidity, Foundry, deployed on Monad testnet (chain 10143)      | Holds AUSD. Splits, releases, approves or declines purchases, runs every 48-hour wait.               |
+| Indexer   | Envio HyperIndex                                                | Turns contract events into the activity list and the parent's alerts.                                |
+| Docs site | Astro Starlight                                                 | Architecture, contract and API reference, trust and security, try-it guide.                          |
+
+## People sign their own transactions
+
+A passkey is turned into a normal account by Mera (`@category-labs/mera`): the phone's fingerprint, face or screen lock unlocks a key that lives only in memory, never in storage or logs. The student's and the trusted person's actions (saving a split, asking for Emergency, approving it, moving a purchase) are transactions they sign themselves and send straight to the contract. The server never signs for them.
+
+## Three server keys
+
+| Key          | Can                                                        | Cannot                                                                                   |
+| ------------ | ---------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Treasury     | `deposit` into an account, once per payment id             | Take money out, decide purchases, change any rule                                        |
+| Card service | `authorize`, `collect`, `releaseHold`, `refund` a purchase | Spend locked or unreleased money, pay a blocked shop, send money anywhere but settlement |
+| Fee sponsor  | Send a little test MON to a passkey account for its fees   | Call the contract at all                                                                 |
+
+Each key sits in Vercel's encrypted settings, never in a browser variable, and each wallet holds only a few days' budget. Monad's reserve balance rule makes a transfer that would leave a wallet under 10 MON revert, so each wallet stays above 10 MON plus its daily budget.
+
+## Fees
+
+Fees are sponsored in this version: the server tops up a passkey account with test MON before its first transactions, with limits per address, per device and per day. A real launch replaces the top-up with a relayer, so accounts never hold MON.
+
+## The indexer
+
+The [indexer](https://github.com/amplop-orgz/amplop/tree/main/indexer) turns every contract event into accounts, deposits, purchases, Emergency requests and the parent's alerts, and serves them through a public GraphQL endpoint. Nothing core depends on it: balances, totals, the release schedule, the open Emergency request, card results and account lookup all come from the contract. When the indexer is down or more than 30 blocks behind, Activity says "History is catching up" and everything else keeps working.
+
+## Demo controls and the account clock
+
+The contract is deployed with a demo switch. When it is on, an account owner can add whole days to their own account's clock with `skipDays`. Every rule reads that clock, so releases, the 48-hour waits and the 7-day hold all behave as they would in real time. Skipping affects only that account; with the switch off, the function always fails. See [Try it](/try-it/) for the four demo controls.
+
+## Two Monad points
+
+- A card decision is one transaction that is final in about a second, so the Approved screen waits for the chain instead of guessing.
+- Every screen with money links to its transaction on the explorer.

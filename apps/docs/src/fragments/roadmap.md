@@ -1,0 +1,12 @@
+- An external audit or audit contest of the contract before any real money.
+- A real card through a licensed issuer, using the same authorisation message.
+- Real rupiah in and a licensed conversion partner; IDRX if it reaches Monad.
+- A relayer in place of the fee top-up, so accounts never hold MON.
+- Push notifications for the trusted person.
+- More than one trusted person, and a separate role for someone who only sends money.
+- A parent with several children.
+- Envelopes the student names, and more or fewer than five.
+- A release rhythm other than four weekly shares.
+- Identity checks and spending limits required by regulation.
+- Sending leftover money back, and cash-out.
+- Purchase amounts hidden on the chain.

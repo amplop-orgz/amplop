@@ -1,0 +1,5 @@
+- Testnet only; no real money moves.
+- Purchase amounts are public on the chain (R27).
+- Someone with many addresses can still get some test MON, within the caps.
+- One deployer address sets the contract up.
+- No external audit; the contract has a self-audit only. A launch with real money needs an external audit first.

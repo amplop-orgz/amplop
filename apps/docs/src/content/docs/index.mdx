@@ -1,0 +1,34 @@
+---
+title: Overview
+description: What Amplop is, what is new, and what is real or simulated in this preview.
+---
+
+import RealSimulated from "../../fragments/real-simulated.md";
+import AppLink from "../../components/AppLink.astro";
+
+Amplop is an allowance wallet for Indonesian students studying far from home. A parent pays rupiah once; the money arrives as digital dollars (AUSD on Monad testnet), splits into five envelopes, and is released one weekly share at a time. A card pays from the envelope that matches the kind of shop, and the Emergency envelope opens when a trusted person approves, or by itself after 48 hours.
+
+Open the app at <AppLink path="/app" />, or follow the five-minute [Try it](/try-it/) guide.
+
+## What is new
+
+1. Money split into envelopes on arrival.
+2. Weekly release.
+3. The contract itself deciding each card payment.
+4. A trusted person who can open Emergency but cannot block it.
+5. A parent who sees totals, not shops.
+
+In short, the parent sees totals, not shops: each envelope's total and a few alerts, never where the money was spent.
+
+## What is real, simulated, and not built
+
+<RealSimulated />
+
+The demo controls in section 12 are described on [Try it](/try-it/); the list in section 18 is on the [Roadmap](/roadmap/).
+
+## Where to go next
+
+- [User guide](/user-guide/): every screen, for the student and for the parent.
+- [Architecture](/architecture/): the five pieces and how they connect.
+- [Contracts](/contracts/) and [API](/api/): the reference.
+- [Trust and security](/trust-and-security/): threats, fixes and accepted risks.

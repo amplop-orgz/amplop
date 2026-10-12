@@ -1,0 +1,54 @@
+---
+title: Issuer integration
+description: How a real card issuer would plug in, and what changes.
+---
+
+In this preview a checkout screen stands in for the shop's card machine. It sends the same authorisation message a real issuer sends, so swapping in a real issuer is a server change only: the contract, the envelopes and the app stay as they are.
+
+## The authorisation message
+
+`POST /api/card/authorize` takes:
+
+| Field                          | Meaning                                                         |
+| ------------------------------ | --------------------------------------------------------------- |
+| `cardToken`                    | The card, as a random 128-bit token (never the account address) |
+| `amount`                       | The price in the shop currency's minor units                    |
+| `currency`                     | `EUR`, `USD` or `IDR`                                           |
+| `merchantName`, `merchantCity` | The shop, kept on the server and shown only to the student      |
+| `mcc`                          | The merchant category code, four digits                         |
+| `idempotencyKey`               | One key per checkout, so a retry never pays twice               |
+
+The server converts the price to dollars at the sample rate (1 euro = $1,1511; R14), asks the contract to `authorize`, and answers from the receipt: approved from an envelope, or declined with a reason.
+
+## Decline reasons
+
+| Reason    | When                                                                                                             |
+| --------- | ---------------------------------------------------------------------------------------------------------------- |
+| Blocked   | The shop's category is never allowed (gambling, R12). No money moves; the trusted person sees the category only. |
+| NotEnough | Neither the matching envelope nor Everyday has the whole amount (R10).                                           |
+
+## Category codes to envelopes
+
+| Envelope  | Codes                                                                  |
+| --------- | ---------------------------------------------------------------------- |
+| Food      | 5411 groceries, 5812 restaurants, 5814 fast food and canteens          |
+| Transport | 4111 public transport, 4121 taxis and ride-hailing, 5541 and 5542 fuel |
+| Study     | 5943 stationery, 7338 printing and copying, 8299 schools and courses   |
+| Blocked   | 7995 gambling                                                          |
+| Everyday  | 5942 bookshops, 7832 cinemas, and every other code                     |
+
+A student can move one Everyday purchase to the right envelope; that kind of shop then uses it for this account (R15).
+
+## Holds
+
+An approved purchase is held in its envelope. The shop collects up to the held amount within 7 days; a hold that is not collected by then is released back to its envelope (R13).
+
+## What a real issuer changes
+
+| In this preview                                    | With a real issuer                                      |
+| -------------------------------------------------- | ------------------------------------------------------- |
+| The owner's passkey signature on the authorisation | The issuer's HMAC on the request                        |
+| Collect now (demo) or the daily job                | The issuer's clearing calls `collect`                   |
+| A hold released after 7 days                       | A reversal calls `releaseHold`                          |
+| `npm run card:refund` by hand                      | A refund calls `refund`, back to the envelope that paid |
+| The sample rate                                    | The issuer's or a licensed partner's rate               |

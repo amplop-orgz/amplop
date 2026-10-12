@@ -1,0 +1,17 @@
+/* Theme A accents (18 S18-12): ink, ground and link, with Plus Jakarta Sans for body text. */
+:root {
+  --sl-font: "Plus Jakarta Sans Variable", system-ui, sans-serif;
+  --sl-color-accent-low: #e6eaf2;
+  --sl-color-accent: #2a5ca6;
+  --sl-color-accent-high: #111b33;
+}
+:root[data-theme="light"] {
+  --sl-color-bg: #f2f3ee;
+  --sl-color-bg-nav: #f2f3ee;
+  --sl-color-bg-sidebar: #f2f3ee;
+  --sl-color-text: #111b33;
+}
+:root[data-theme="dark"] {
+  --sl-color-accent: #9ab8e6;
+  --sl-color-accent-high: #e6eaf2;
+}

@@ -1,0 +1,8 @@
+---
+// The live app's address from NEXT_PUBLIC_SITE_URL at build time; plain text when it is not set.
+interface Props { path?: string }
+const { path = "" } = Astro.props;
+const site = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
+const href = site ? `${site}${path}` : null;
+---
+{href ? <a href={href}>{href}</a> : <span>the app's address (set when it is deployed)</span>}

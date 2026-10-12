@@ -19,3 +19,5 @@ coverage
 indexer/abis
 indexer/pnpm-lock.yaml
 indexer/config.e2e.yaml
+*.astro
+apps/docs/dist

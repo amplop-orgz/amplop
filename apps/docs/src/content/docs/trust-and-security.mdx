@@ -1,0 +1,32 @@
+---
+title: Trust and security
+description: Threats and their fixes, accepted risks, and how to report a problem.
+---
+
+import Threats from "../../fragments/threats.md";
+import AcceptedRisks from "../../fragments/accepted-risks.md";
+import R27 from "../../fragments/r27.md";
+
+This is a testnet preview: payments are sandbox payments and AUSD is a testnet token. The contract is self-reviewed, findings published: read the [self-review report](https://github.com/amplop-orgz/amplop/blob/main/audits/2026-10-self-review.md) and [SECURITY.md](https://github.com/amplop-orgz/amplop/blob/main/SECURITY.md).
+
+To report a problem, use GitHub's private vulnerability reporting: open the repository's Security tab and choose Report a vulnerability.
+
+## Threats and the required fix
+
+<Threats />
+
+## What the server keys can and cannot do
+
+Three wallets, each allowed only what R3 gives it. The treasury can only deposit into an account. The card service can only ask the contract to approve, collect, release or refund a purchase; it cannot spend locked or unreleased money or pay a blocked shop. The fee sponsor sends small amounts of test MON for fees and cannot call the contract. Each wallet holds only a few days' budget.
+
+## What the chain shows
+
+<R27 />
+
+## Fees
+
+Fees are sponsored in this version. A real launch replaces the fee top-up with a relayer, so accounts never hold MON.
+
+## Accepted risks
+
+<AcceptedRisks />

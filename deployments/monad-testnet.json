@@ -12,6 +12,7 @@
   "settlement": "0xc22A14fB5166A595B887EeA1A8744A1Ec1B5A28F",
   "treasury": "0xAA56c1D96160D3d290204C1B156B857CAa198bc5",
   "cardService": "0x4C1ce63Dfa4036970CC26B0d9caFcF6821EB2eB6",
+  "feeSponsor": "0x1b074eFDDbdB5E75368340a1dbb23f9535cC3D93",
   "demoMode": true,
   "verified": true,
   "deployedAt": "2026-10-11T14:41:06.310Z"

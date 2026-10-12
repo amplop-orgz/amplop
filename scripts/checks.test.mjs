@@ -173,3 +173,77 @@ describe("check-install-scripts and framework patch", () => {
       patch.newestPatch("16.0.1", ["16.0.0", "16.0.1", "16.0.10", "16.1.0", "16.0.11-canary.1"]),
     ).toBe("16.0.10"));
 });
+
+describe("docs checks (18)", async () => {
+  const wording = await import("./check-wording.mjs");
+  const fragments = await import("./check-fragments.mjs");
+  const addresses = await import("./check-readme-addresses.mjs");
+  const contract = await import("./check-docs-contract.mjs");
+  const api = await import("./check-docs-api.mjs");
+  const files = (map) => (f) => map[f] ?? "";
+  const cards = { "apps/docs/src/fragments/reviewed-cards.txt": "Solid\nBix\n" };
+
+  it("check-wording catches each planted word", () => {
+    const read = files({
+      ...cards,
+      "CONTRIBUTING.md":
+        "An innovative, audited app with private data and privacy. Use your private key. Solid.",
+    });
+    const hits = wording.check(["CONTRIBUTING.md"], read).join("\n");
+    for (const rule of [
+      "innovation",
+      "audited",
+      "privacy",
+      'only "private key"',
+      'reviewed card "Solid"',
+    ])
+      expect(hits).toContain(rule);
+    expect(
+      wording.check(
+        ["CONTRIBUTING.md"],
+        files({
+          ...cards,
+          "CONTRIBUTING.md": "Use GitHub's Private vulnerability reporting with your private key.",
+        }),
+      ),
+    ).toEqual([]);
+  });
+  it("check-wording allows names only inside the footnote, and the claim only once", () => {
+    const page = "apps/docs/src/content/docs/how-amplop-differs.md";
+    const ok = `<!-- principle:crypto-free -->\n${wording.CLAIM}\n<!-- footnote:reviewed-cards:start -->Solid, Bix<!-- footnote:reviewed-cards:end -->`;
+    expect(wording.check([page], files({ ...cards, [page]: ok }))).toEqual([]);
+    const twice = wording.check([page], files({ ...cards, [page]: ok + wording.CLAIM })).join("\n");
+    expect(twice).toContain("2 times");
+  });
+  it("check-fragments compares copies after dropping links and whitespace", () => {
+    expect(fragments.normalise("| [a](x) |\n| --- |")).toBe(
+      fragments.normalise("|  a  |\n| ------ |"),
+    );
+    const doc = "<!-- fragment:r27:start -->\nOld text.\n<!-- fragment:r27:end -->";
+    expect(fragments.copyOf(doc, "r27")?.trim()).toBe("Old text.");
+  });
+  it("check-readme-addresses flags unknown and missing addresses", () => {
+    const deploy = {
+      address: `0x${"1".repeat(40)}`,
+      token: `0x${"2".repeat(40)}`,
+      settlement: `0x${"3".repeat(40)}`,
+      treasury: `0x${"4".repeat(40)}`,
+      cardService: `0x${"5".repeat(40)}`,
+    };
+    const all = Object.values(deploy).join(" ");
+    expect(addresses.check(all, deploy)).toEqual([]);
+    expect(addresses.check(`${all} 0x${"9".repeat(40)}`, deploy)).toHaveLength(1);
+    expect(addresses.check(deploy.address, deploy)).toHaveLength(4);
+  });
+  it("the docs checks find undocumented functions and routes", () => {
+    const abi = [
+      { type: "function", name: "deposit" },
+      { type: "event", name: "Deposited" },
+    ];
+    expect(contract.check(abi, "deposit and Deposited")).toEqual([]);
+    expect(contract.check(abi, "deposit")).toHaveLength(1);
+    expect(api.check(["GET /api/purchases"], "`GET /api/purchases` and `POST /api/gone`")).toEqual([
+      "api.mdx: POST /api/gone has no route file",
+    ]);
+  });
+});
