@@ -2,14 +2,16 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import { SkipTimeRow, ViewAsRow } from "@/components/demo/DemoControls";
 import { TrustedPersonRow } from "@/components/trusted/TrustedPersonRow";
 import { Button, InfoBox, ListCard, Page, TopBar } from "@/components/ui";
 import { signOut, useSession } from "@/lib/client/account";
-import { useAccount } from "@/lib/client/data";
+import { useAccount, useTrustedName } from "@/lib/client/data";
+import { DEMO } from "@/lib/client/env";
 import { useT, type Key } from "@/lib/client/i18n";
 
-// The parts of board 4.1 this batch needs: the trusted-person row (10), split editing before the
-// first allowance (07) and sign out (07 A2). Spec 13 builds the full Settings screen.
+// The parts of board 4.1 built so far: the trusted-person row (10), split editing before the first
+// allowance (07), View as and Skip time (15) and sign out (07 A2). Spec 13 builds the full screen.
 export default function SettingsPage() {
   return (
     <Suspense>
@@ -25,6 +27,7 @@ function Settings() {
   const { role } = useSession();
   const accountId = typeof role === "object" ? role.studentAccountId : undefined;
   const account = useAccount(accountId);
+  const trustedName = useTrustedName(accountId) ?? t("common.yourTrustedPerson");
   if (accountId === undefined) return null;
   const split = account.data?.info.split ?? [];
   return (
@@ -56,6 +59,12 @@ function Settings() {
             </Link>
           </div>
         </ListCard>
+        {DEMO ? (
+          <ListCard>
+            <ViewAsRow name={trustedName} />
+            <SkipTimeRow accountId={accountId} />
+          </ListCard>
+        ) : null}
         <div className="flex-1" />
         <Button
           variant="danger"
