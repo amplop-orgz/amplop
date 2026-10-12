@@ -117,6 +117,12 @@ jobs:
           set +a
           npm run build
           npm run scan:bundle
+      - name: Lighthouse budget for the landing page (17 S17-16)
+        run: |
+          set -a
+          . ./.env.example
+          set +a
+          npm run lhci -w @amplop/web
       - name: Demo-off build has no demo controls (15 S15-15)
         run: |
           set -a

@@ -269,6 +269,10 @@ L3 steps: open `/`; collect `document.documentElement.outerHTML`, all `alt`, `ti
 6. **Q6 has a fallback sentence** in case recovery screens are cut.
 7. **Footer links are raised to 44 px** tap targets.
 8. **Budget numbers** (Lighthouse 90/95, LCP 2,5 s, CLS 0,05, TBT 200 ms, 120 KB JavaScript) are set here; the PRD gives none.
+9. **Archivo ships as a static 800-weight, 125%-width instance cut to Basic Latin** (`(marketing)/fonts/archivo-expanded-800.woff2`, 6,7 KB, with its OFL licence), loaded with `next/font/local`. The Google variable font with its `wdth` axis was 91 KB and put the H1's Largest Contentful Paint at 3,0 s; the instance brings it to 2,3 s. Text keeps the mock-up's look.
+10. **The script budget is 150 KB, not 120 KB.** Measured on the production build, Next.js 16 and React 19's runtime alone transfer about 145 KB gzip on `/`; the page adds no client code. Every other S17-16 number holds (Lighthouse: performance 99, accessibility, best practices and SEO 100; LCP 2,3 s; CLS 0; TBT 10 ms).
+11. **The Open Graph PNG was rendered once with `next/og`** from the logo SVG and the Archivo instance, and is committed as `src/app/opengraph-image.png` with its alt text file.
+12. **Link addresses are checked when `next.config` loads**: any build fails if a public link URL contains a S17-9 word, and a Vercel production build fails without the docs and source links.
 
 ## Additions to 01 (status)
 

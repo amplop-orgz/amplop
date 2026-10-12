@@ -25,6 +25,7 @@
   --color-info: #444d61;
   --color-info-bg: #e6eaf2;
   --font-sans: var(--font-jakarta), system-ui, sans-serif;
+  --font-display: var(--font-archivo), var(--font-jakarta), sans-serif;
   --radius-tile: 16px;
 }
 
@@ -64,4 +65,17 @@ body {
 
 dialog::backdrop {
   background: rgb(17 27 51 / 0.4);
+}
+
+/* 17 S17-4, S17-12: smooth in-page scrolling unless reduced motion; no sideways scroll. */
+html {
+  scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+body {
+  overflow-x: clip;
 }

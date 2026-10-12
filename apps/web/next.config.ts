@@ -15,6 +15,23 @@ export const SECURITY_HEADERS = [
   },
 ];
 
+// 17 S17-9, edge cases: public link addresses never carry a banned word, and a production deploy needs the
+// docs and source links (a missing one is hidden on other builds).
+const LINKS = [
+  "NEXT_PUBLIC_SITE_URL",
+  "NEXT_PUBLIC_DOCS_URL",
+  "NEXT_PUBLIC_REPO_URL",
+  "NEXT_PUBLIC_DEMO_VIDEO_URL",
+];
+for (const name of LINKS) {
+  if (/crypto|blockchain|hackathon|monad/i.test(process.env[name] ?? ""))
+    throw new Error(`${name} contains a word the landing page may not show (17 S17-9).`);
+}
+if (process.env.VERCEL_ENV === "production") {
+  for (const name of ["NEXT_PUBLIC_DOCS_URL", "NEXT_PUBLIC_REPO_URL"])
+    if (!process.env[name]) throw new Error(`${name} must be set for a production build (17).`);
+}
+
 const config: NextConfig = {
   poweredByHeader: false,
   productionBrowserSourceMaps: false,
