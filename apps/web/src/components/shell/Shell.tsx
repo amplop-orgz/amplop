@@ -3,7 +3,7 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
-import { DemoBanner, InlineMessage } from "@/components/ui";
+import { DemoBanner, InlineMessage, Toaster } from "@/components/ui";
 import { refreshRole, useSession } from "@/lib/client/account";
 import { isChatAppBrowser } from "@/lib/client/browser";
 import { CHAIN_ID } from "@/lib/client/env";
@@ -67,6 +67,7 @@ function Frame({ children }: { children: ReactNode }) {
       <DemoBanner />
       <TestHooks />
       <Guard>{children}</Guard>
+      <Toaster />
     </>
   );
 }

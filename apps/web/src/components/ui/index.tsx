@@ -6,6 +6,7 @@ import {
   useEffect,
   useId,
   useRef,
+  useState,
   type AnchorHTMLAttributes,
   type ButtonHTMLAttributes,
   type InputHTMLAttributes,
@@ -581,6 +582,45 @@ export function ResultHeader({
         </div>
       ) : null}
       {children}
+    </div>
+  );
+}
+
+const toastListeners = new Set<(text: string) => void>();
+
+/** A short confirmation at the bottom of the screen, from any component (12 S12-9, S12-12). */
+export function showToast(text: string): void {
+  for (const l of toastListeners) l(text);
+}
+
+export function Toaster() {
+  const [text, setText] = useState<string | null>(null);
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const l = (s: string) => {
+      setText(s);
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        setText(null);
+      }, 4_000);
+    };
+    toastListeners.add(l);
+    return () => {
+      toastListeners.delete(l);
+      clearTimeout(timer);
+    };
+  }, []);
+  return (
+    <div
+      role="status"
+      aria-live="polite"
+      className="pointer-events-none fixed inset-x-0 bottom-24 z-50 flex justify-center px-5"
+    >
+      {text ? (
+        <div className="max-w-[440px] rounded-[12px] bg-ink px-4 py-3 text-[0.9375rem] text-white shadow-lg">
+          {text}
+        </div>
+      ) : null}
     </div>
   );
 }

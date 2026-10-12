@@ -1,7 +1,6 @@
 // Unit tests for the browser side of spec 08: amount rules, the split in force, the open orders kept
 // on the device, and the student's rupiah figure.
 import { describe, expect, it } from "vitest";
-import { rupiahOf } from "@/components/topup/Arrived";
 import type { AccountInfo } from "@/lib/client/chain/client";
 import {
   amountProblem,
@@ -11,6 +10,7 @@ import {
   lastAmount,
   readEntries,
   rememberOrder,
+  rupiahOf,
   shownStatus,
   splitInForce,
   type OrderView,

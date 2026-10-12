@@ -362,6 +362,9 @@ The PRD wins on conflict. Never use `wallet-integration` (Para) or `wallet`. Amp
 7. **"Message Raka first"** uses `wa.me/?text=` because no phone numbers are stored. Mama picks Raka in WhatsApp.
 8. **Gender-neutral copy:** "<Name> will see it in the app" in place of "in his app".
 9. **Body ids are decimal strings** (`accountId`, `requestSeq`), like other uint values in JSON (01 section 9).
+10. **Signing in on `/approve/[linkId]` uses the shell's unlock sheet** (06 S06-10), as every other signed-in route does, in place of S12-17 step 1's own copy.
+11. **A signer whose own account is a different one gets "This link is not valid or not for you."** The server answers 404 for a link of another account (S12-14 step 3), so the page cannot tell it apart from an unknown link. No reason, amount or name is shown either way.
+12. **A small shared toast** (`showToast`, `Toaster` in the shell) carries "Request cancelled. Nothing was moved." and "Your Emergency money is in Everyday now."
 
 ## Additions to 01 (status)
 

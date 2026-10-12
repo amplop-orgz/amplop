@@ -7,7 +7,7 @@ import { parseEventLogs, type Hash, type Log } from "viem";
 import { useSession } from "./account";
 import { api } from "./api";
 import { publicClient, type AccountInfo } from "./chain/client";
-import { CONTRACT } from "./env";
+import { CONTRACT, RATES } from "./env";
 import { useRead } from "./query";
 import { readJson, writeItem } from "./storage";
 
@@ -28,6 +28,12 @@ export type OrderView = {
   lastCheckedAt: string | null;
   confirmMs?: number;
 };
+
+/** `round(amount × rate / 10^decimals)`: gives back the exact rupiah of an order at this rate (S08-12). */
+export function rupiahOf(amount: bigint, decimals: number, rate = RATES.idrPerUsd): bigint {
+  const unit = 10n ** BigInt(decimals);
+  return (amount * rate + unit / 2n) / unit;
+}
 
 /** S08-3: digits only, as typed or pasted. */
 export function digitsOnly(text: string): string {

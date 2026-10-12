@@ -10,19 +10,12 @@ import { ButtonLink, InlineMessage, ResultHeader } from "@/components/ui";
 import { useSession } from "@/lib/client/account";
 import { useTokenDecimals } from "@/lib/client/card/hooks";
 import { useTrustedName } from "@/lib/client/data";
-import { RATES } from "@/lib/client/env";
 import { useT, type Key } from "@/lib/client/i18n";
 import { useRead } from "@/lib/client/query";
 import { readJson, writeItem } from "@/lib/client/storage";
-import { depositFromTx, recentDeposits, type Deposit } from "@/lib/client/topup";
+import { depositFromTx, recentDeposits, rupiahOf, type Deposit } from "@/lib/client/topup";
 
 const SEEN_KEY = "amplop.seenDeposit";
-
-/** `round(amount × rate / 10^decimals)`: gives back the exact rupiah of an order at this rate. */
-export function rupiahOf(amount: bigint, decimals: number, rate = RATES.idrPerUsd): bigint {
-  const unit = 10n ** BigInt(decimals);
-  return (amount * rate + unit / 2n) / unit;
-}
 
 function seen(): Record<string, string> {
   const raw = readJson("local", SEEN_KEY);
