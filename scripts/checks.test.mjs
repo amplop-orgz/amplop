@@ -174,6 +174,20 @@ describe("check-install-scripts and framework patch", () => {
     ).toBe("16.0.10"));
 });
 
+describe("check-submission (20)", async () => {
+  const submission = await import("./check-submission.mjs");
+  const docs = "apps/docs/src/content/docs/try-it.mdx";
+  const page = "Intro.\n\n1. Open the app.\n2. Pay.\n";
+  const portal = (body) => `x\n<!-- try-it:start -->\n${body}\n<!-- try-it:end -->\n`;
+  const read = (p) => (f) => ({ [docs]: page, "submission/portal.md": p })[f] ?? "";
+  it("passes when the steps match", () =>
+    expect(submission.check(read(portal("1. Open the app.\n2. Pay.")))).toEqual([]));
+  it("fails when a step differs", () =>
+    expect(submission.check(read(portal("1. Open the app.\n2. Pay now.")))).toHaveLength(1));
+  it("fails without the block", () =>
+    expect(submission.check(read("1. Open the app."))).toHaveLength(1));
+});
+
 describe("docs checks (18)", async () => {
   const wording = await import("./check-wording.mjs");
   const fragments = await import("./check-fragments.mjs");

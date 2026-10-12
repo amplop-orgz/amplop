@@ -268,6 +268,8 @@ End-to-end case IDs: none owned here. This spec requires all 40 Tier 1 cases gre
 4. **Buffer-day edits** are limited to fixing errors in links, videos and documentation text, with nothing after 10:00 WIB.
 5. **A submission tag** marks the frozen commit; production can be redeployed only from it.
 6. **Services stay up through judging**, with daily balance and indexer checks.
+7. **`npm run check:submission`** (part of `check:repo`) compares the judge access steps in `submission/portal.md` with the docs Try it page, so the "identical" test in this spec is checked on every push. (Mon 12 Oct)
+8. **Values that do not exist yet are marked "To fill"** in `submission/`: deployed URLs, video links, the Envio endpoint and screenshot, the Discord answer on native apps, and the whole interview summary. Nothing is guessed; the builder fills them on Tue 13 Oct. (Mon 12 Oct)
 
 ## Additions to 01 (status)
 
