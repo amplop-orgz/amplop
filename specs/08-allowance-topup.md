@@ -299,6 +299,8 @@ The contract also refuses a repeated `paymentId` (PRD 10 step 6), so even a bug 
 
 **Day-one check:** confirm how the Agora faucet is called (PRD 17: `requestFunds`, 10 000 per request, once a minute, from other teams' notes) and record it here. If it is a contract function, `requestFaucet` sends it from the treasury key with `sendContractTx`. If it needs a browser or captcha, `requestFaucet` returns `{ ok: false, reason: "manual" }` and the alert asks for a refill by hand. Either way C9 still completes, because deposits retry until the balance is back.
 
+**Day-one result (12 Oct 2026):** the Agora testnet faucet (`0xd236c18D274E54FAccC3dd9DDA4b27965a73ee6C`, a proxy) is a contract. `requestFunds(address recipient)` sends 10 000 AUSD to `recipient`, at most once a minute; a call from the treasury simulates cleanly. `requestFaucet` sends it from the treasury key when `AUSD_FAUCET_ADDRESS` (01 §7) is set; unset, it returns `manual`.
+
 **S08-34. Cron backstop: `GET /api/cron/deposits`.** Auth `cron`. In one run, at most 50 items, oldest first, stopping new work after 50 s:
 
 1. Every `received` order: `runDeposit(orderId, { force: true })`.
@@ -492,3 +494,4 @@ From MONSKILLS pinned to `3f8efd2`, starting with `monskill`. PRD and this spec 
 6. `/app/arrived/[deposit]` as the transaction hash: Not merged. 01 section 9 settled it as the `paymentId` with `?tx=`, and S08-11 follows that.
 7. `NEXT_PUBLIC_SAMPLE_RATE_IDR_PER_USD` and decimal-string JSON: Merged into 01 (sections 7 and 9).
 8. `localStorage` keys `amplop.openOrders` and `amplop.seenDeposit`: Merged into 01 (section 9).
+9. Env `AUSD_FAUCET_ADDRESS` (server, optional) for S08-33: Merged into 01 (section 7).

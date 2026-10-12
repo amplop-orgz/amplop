@@ -68,6 +68,16 @@ export const CODES = {
     502,
     "We couldn't confirm this payment yet. Try again in a moment; you won't be charged twice.",
   ],
+  // 08
+  amount_out_of_range: [400, "Send between Rp100.000 and Rp50.000.000."],
+  amount_mismatch: [400, "The payment amount does not match the order."],
+  bad_signature: [401, "Not allowed."],
+  order_closed: [409, "This payment can no longer be used. Start again."],
+  too_many_orders: [
+    429,
+    "You've started many payments today. Please use one of them or try again tomorrow.",
+  ],
+  midtrans_unavailable: [502, "The bank service is not answering. Please try again."],
 } as const satisfies Record<string, readonly [Status, string]>;
 
 export type Code = keyof typeof CODES;

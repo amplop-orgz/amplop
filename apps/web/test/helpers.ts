@@ -6,6 +6,8 @@ import {
   decodeFunctionData,
   encodeAbiParameters,
   encodeEventTopics,
+  erc20Abi,
+  parseAbi,
   keccak256,
   parseTransaction,
   type Address,
@@ -19,6 +21,13 @@ import { issueNonce } from "@/lib/server/auth/verify";
 import { Chain, setChain } from "@/lib/server/chain/chain";
 import type { ContractTx, Fees, Rpc } from "@/lib/server/chain/types";
 import { db } from "@/lib/server/db";
+
+// Contract calls the fake can decode: AmplopEnvelopes, AUSD (approve) and the faucet.
+const SEND_ABI = [
+  ...amplopEnvelopesAbi,
+  ...erc20Abi,
+  ...parseAbi(["function requestFunds(address recipient)"]),
+];
 
 export const newAccount = (): PrivateKeyAccount => privateKeyToAccount(generatePrivateKey());
 
@@ -184,7 +193,8 @@ export class FakeRpc implements Rpc {
   }
   /** Builds the receipt logs for a sent contract call (by function name and args); none by default. */
   onSend: ((functionName: string, args: readonly unknown[]) => Log[]) | null = null;
-  private logsByHash = new Map<string, Log[]>();
+  /** Receipt logs by hash; a test may set one directly. */
+  receiptLogs = new Map<string, Log[]>();
   sendRaw(serialized: Hex): Promise<Hex> {
     this.calls.push("sendRaw");
     if (this.sendError) return Promise.reject(this.sendError);
@@ -192,8 +202,8 @@ export class FakeRpc implements Rpc {
     this.txCount++;
     const tx = parseTransaction(serialized);
     if (this.onSend && tx.data) {
-      const call = decodeFunctionData({ abi: amplopEnvelopesAbi, data: tx.data });
-      this.logsByHash.set(keccak256(serialized), this.onSend(call.functionName, call.args));
+      const call = decodeFunctionData({ abi: SEND_ABI, data: tx.data });
+      this.receiptLogs.set(keccak256(serialized), this.onSend(call.functionName, call.args));
     }
     return Promise.resolve(keccak256(serialized));
   }
@@ -221,7 +231,7 @@ export class FakeRpc implements Rpc {
       status: this.receiptStatus,
       blockNumber: 5n,
       blockHash: `0x${"ab".repeat(32)}`,
-      logs: this.logsByHash.get(hash) ?? [],
+      logs: this.receiptLogs.get(hash) ?? [],
     } as unknown as TransactionReceipt;
   }
 }

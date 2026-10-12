@@ -31,10 +31,10 @@ function artifact(file: string, name: string): { abi: Abi; bytecode: Hex } {
 
 export type AnvilStack = { url: string; contract: Address; token: Address; stop(): void };
 
-export async function startAnvil(port: number): Promise<AnvilStack> {
+export async function startAnvil(port: number, extraArgs: string[] = []): Promise<AnvilStack> {
   const proc: ChildProcess = spawn(
     "anvil",
-    ["--port", String(port), "--chain-id", "31337", "--silent"],
+    ["--port", String(port), "--chain-id", "31337", "--silent", ...extraArgs],
     { stdio: "ignore" },
   );
   const url = `http://127.0.0.1:${String(port)}`;

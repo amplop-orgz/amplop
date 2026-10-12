@@ -276,7 +276,10 @@ function errorText(e: unknown): string {
   return s;
 }
 
-async function waitFinalized(rpc: Rpc, receipt: TransactionReceipt): Promise<TransactionReceipt> {
+export async function waitFinalized(
+  rpc: Rpc,
+  receipt: TransactionReceipt,
+): Promise<TransactionReceipt> {
   const deadline = Date.now() + RECEIPT_TIMEOUT_MS;
   while (Date.now() < deadline) {
     if ((await rpc.finalizedBlockNumber()) >= receipt.blockNumber) {

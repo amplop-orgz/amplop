@@ -37,6 +37,7 @@ const schema = z.object({
   // S05-47: shorter than 32 characters means cron is switched off (every call 401), not a failed start.
   CRON_SECRET: z.string().optional(),
   ALERT_WEBHOOK_URL: z.union([z.literal(""), url]).optional(),
+  AUSD_FAUCET_ADDRESS: z.union([z.literal(""), address]).optional(),
   SITE_HOSTS: z.string().default(""),
   NODE_ENV: z.string().optional(),
   VERCEL_PROJECT_PRODUCTION_URL: z.string().optional(),
