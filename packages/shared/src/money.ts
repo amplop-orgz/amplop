@@ -117,3 +117,36 @@ export function parseDecimalInput(text: string, decimals: number): ParsedDecimal
     BigInt((fracPart || "0").padEnd(decimals, "0"));
   return { ok: true, minor };
 }
+
+/** `floor(cents × 10^decimals / 100)`: a shop priced in dollars is not converted (09 S09-11, E20). */
+export function usdCentsToUnits(cents: bigint, decimals: number): bigint {
+  return (cents * pow10(decimals)) / 100n;
+}
+
+export type ShopCurrency = "EUR" | "USD" | "IDR";
+
+export type Rates = { idrPerUsd: bigint; usdPerEur: { num: bigint; den: bigint } };
+
+export const SAMPLE_RATES: Rates = {
+  idrPerUsd: SAMPLE_RATE_IDR_PER_USD,
+  usdPerEur: SAMPLE_RATE_USD_PER_EUR,
+};
+
+/** A shop amount in its currency's minor units (IDR: whole rupiah) to token units, rounding down (R14). */
+export function shopAmountToUnits(
+  currency: ShopCurrency,
+  minor: bigint,
+  decimals: number,
+  rates: Rates = SAMPLE_RATES,
+): bigint {
+  if (currency === "EUR") return eurMinorToUnits(minor, decimals, rates.usdPerEur);
+  if (currency === "USD") return usdCentsToUnits(minor, decimals);
+  return rupiahToUnits(minor, decimals, rates.idrPerUsd);
+}
+
+/** `€12,50`, `$5,00`, `Rp16.500`: a shop's own price. */
+export function formatShopAmount(currency: ShopCurrency, minor: bigint): string {
+  if (currency === "EUR") return formatEur(minor);
+  if (currency === "IDR") return formatRupiah(minor);
+  return formatUsd(minor, 2);
+}
