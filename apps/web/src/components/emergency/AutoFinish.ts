@@ -4,7 +4,7 @@
 import { EmergencyStatus } from "@amplop/shared/enums";
 import { useEffect, useRef } from "react";
 import { showToast } from "@/components/ui";
-import { sendUserTx } from "@/lib/client/chain/write";
+import { ChainError, sendUserTx } from "@/lib/client/chain/write";
 import { clockNow, useEmergency } from "@/lib/client/emergency";
 import { useT } from "@/lib/client/i18n";
 import { invalidateAll } from "@/lib/client/query";
@@ -32,7 +32,10 @@ export function useStudentAutoFinish(accountId: bigint | undefined): void {
         finalizeTx.set(key, r.hash);
         showToast(t("emergency.autoOpened"));
       })
-      .catch(() => {
+      .catch((e: unknown) => {
+        // Refused in simulation, so nothing was sent (WaitNotOver while the clock estimate runs ahead):
+        // try again on a later read. A timeout or a mined revert keeps the one send.
+        if (e instanceof ChainError && !e.reverted) sentFor.delete(key);
         invalidateAll();
       })
       .finally(() => {
