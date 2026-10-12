@@ -45,6 +45,10 @@
     "./indexer": {
       "types": "./dist/indexer/queries.d.ts",
       "default": "./dist/indexer/queries.js"
+    },
+    "./mcc": {
+      "types": "./dist/mcc.d.ts",
+      "default": "./dist/mcc.js"
     }
   },
   "scripts": {

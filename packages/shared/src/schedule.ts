@@ -62,3 +62,56 @@ export function nextRelease(
 export function daysToNextMonday(today: number): number {
   return 7 - weekdayIndex(today);
 }
+
+/** S11-1: share 1 shows the Monday of the arrival week (the record keeps no arrival day). */
+export function releaseDay(r: Schedule, k: number): number {
+  return mondayDay(Number(r.startMonday) + k - 1);
+}
+
+/** S11-1: the newest allowance's week, 1 to 4, or null before or after it (D6). */
+export function weekCounter(schedules: readonly Schedule[], today: number): number | null {
+  if (schedules.length === 0) return null;
+  const newest = Math.max(...schedules.map((r) => Number(r.startMonday)));
+  const w = 1 + mondayNumber(today) - newest;
+  return w >= 1 && w <= 4 ? w : null;
+}
+
+/** S11-2: every share of envelope `e` released during the current Monday week. */
+export function thisWeekShare(schedules: readonly Schedule[], today: number, e: number): bigint {
+  let sum = 0n;
+  for (const r of schedules) {
+    const k = 1 + mondayNumber(today) - Number(r.startMonday);
+    if (k >= 1 && k <= 4) sum += shareAmount(r, e, k);
+  }
+  return sum;
+}
+
+export type Pace = { periodStart: number; periodEnd: number };
+
+/** S11-3: the whole Monday week, or null when no weekly envelope got a share this week. */
+export function pace(schedules: readonly Schedule[], today: number): Pace | null {
+  if ([0, 1, 2, 3].every((e) => thisWeekShare(schedules, today, e) === 0n)) return null;
+  const m = mondayNumber(today);
+  return { periodStart: mondayDay(m), periodEnd: mondayDay(m + 1) };
+}
+
+/** Where the pace tick sits, 0 to 1: the share of the week left after today. */
+export function paceTick(p: Pace, today: number): number {
+  return (p.periodEnd - today - 1) / 7;
+}
+
+export function barPercent(available: bigint, share: bigint): number | null {
+  if (share === 0n) return null;
+  const pct = (available * 100n) / share;
+  return Number(pct > 100n ? 100n : pct);
+}
+
+/** Below the tick: `available × 7 < share × (periodEnd − today − 1)`, integers only. */
+export function isSpendingFast(
+  available: bigint,
+  share: bigint,
+  p: Pace | null,
+  today: number,
+): boolean {
+  return share > 0n && p !== null && available * 7n < share * BigInt(p.periodEnd - today - 1);
+}
