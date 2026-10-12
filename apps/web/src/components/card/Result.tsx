@@ -287,7 +287,7 @@ export function Result() {
           <div className="text-[0.875rem] font-bold text-muted">{t("result.detail")}</div>
           <div className="flex justify-between text-[0.875rem]">
             <span className="text-muted">{t("result.value")}</span>
-            <span className="amount">{usd.replace("$", "").replace("−", "-")} AUSD</span>
+            <span className="amount">{usd.slice(1)} AUSD</span>
           </div>
           {ms ? (
             <div className="flex justify-between text-[0.875rem]">
