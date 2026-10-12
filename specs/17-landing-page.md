@@ -273,6 +273,7 @@ L3 steps: open `/`; collect `document.documentElement.outerHTML`, all `alt`, `ti
 10. **The script budget is 150 KB, not 120 KB.** Measured on the production build, Next.js 16 and React 19's runtime alone transfer about 145 KB gzip on `/`; the page adds no client code. Every other S17-16 number holds (Lighthouse: performance 99, accessibility, best practices and SEO 100; LCP 2,3 s; CLS 0; TBT 10 ms).
 11. **The Open Graph PNG was rendered once with `next/og`** from the logo SVG and the Archivo instance, and is committed as `src/app/opengraph-image.png` with its alt text file.
 12. **Link addresses are checked when `next.config` loads**: any build fails if a public link URL contains a S17-9 word, and a Vercel production build fails without the docs and source links.
+13. **Lighthouse CI takes the median of three runs.** One run on a shared CI machine missed the budget now and then with no change to the page; three runs judged on the median run keep every threshold as set. (Mon 12 Oct)
 
 ## Additions to 01 (status)
 
