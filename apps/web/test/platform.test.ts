@@ -326,13 +326,16 @@ describe("T05-9 rate limits", () => {
     expect((await call(route, { method: "POST", body: "{}" })).status).toBe(200);
   });
   it("refuses the 31st signed POST for one account", async () => {
+    // Limits count per clock minute: start early in one, or a minute boundary resets the count.
+    const second = new Date().getUTCSeconds();
+    if (second > 40) await new Promise((r) => setTimeout(r, (61 - second) * 1000));
     const r1 = echo("signed:owner");
     for (let i = 0; i < 30; i++) {
       const r = await signedPost(r1, owner, 7n, '{"accountId":"7"}');
       expect(r.status).toBe(200);
     }
     expect(errCode((await signedPost(r1)).json)).toBe("rate_limited");
-  });
+  }, 30_000);
   it("puts two IPv6 addresses in one /64 in the same bucket", () => {
     const k = (ip: string) => ipKey(new Headers({ "x-real-ip": ip }));
     expect(k("2001:db8:1:2:aaaa::1")).toBe(k("2001:0db8:0001:0002:ffff:1:2:3"));
