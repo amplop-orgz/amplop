@@ -1,0 +1,37 @@
+# 19 S19-17: Tier 1 against a deployment on Monad testnet, serial and with no retries. Run by hand
+# before recording and in the final gate run. Treasury and fee sponsor must be funded first.
+name: e2e-testnet
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: Deployment to test (production or a preview)
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  e2e-testnet:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build -w @amplop/shared
+      - run: npx -w @amplop/web playwright install --with-deps chromium webkit
+      - run: npm run e2e:testnet
+        env:
+          BASE_URL: ${{ inputs.base_url }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+      - if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: e2e-testnet-report
+          path: apps/web/playwright-report
+          retention-days: 14

@@ -1,0 +1,26 @@
+# 19 S19-18: the smoke set (no transactions) against every successful Vercel preview deployment.
+name: preview-smoke
+
+on:
+  deployment_status:
+
+permissions:
+  contents: read
+
+jobs:
+  preview-smoke:
+    if: github.event.deployment_status.state == 'success' && github.event.deployment.environment != 'Production'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npx -w @amplop/web playwright install --with-deps chromium
+      - run: npm run e2e:smoke
+        env:
+          BASE_URL: ${{ github.event.deployment_status.environment_url }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
