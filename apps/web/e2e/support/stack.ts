@@ -1,7 +1,7 @@
 // The local stack (19 S19-7, S19-8): Anvil at Mon 28 Sep 2026 09:00 UTC with the real contract in demo
 // mode, Postgres migrations, the stand-ins, and a production build of the app on port 3000.
 import { spawn, spawnSync, type ChildProcess } from "node:child_process";
-import { createWriteStream, existsSync, mkdirSync, readFileSync } from "node:fs";
+import { createWriteStream, existsSync, mkdirSync, openSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import postgres from "postgres";
 import { PORTS } from "./stand-ins";
@@ -182,27 +182,33 @@ export async function indexerMeta(): Promise<{ progressBlock: number; isReady: b
   }
 }
 
-/** S19-11: 16's config.e2e.yaml under `envio dev --restart` (Docker), so each run starts empty. */
-export async function startIndexer(): Promise<ChildProcess> {
+/**
+ * S19-11: 16's config.e2e.yaml under `envio dev --restart` (Docker), so each run starts empty. It
+ * starts now and `ready` waits for it, so the app can build while the indexer comes up. Output goes
+ * straight to a file, so a blocked event loop (the synchronous build) never stalls it.
+ */
+export function startIndexer(): { process: ChildProcess; ready: () => Promise<void> } {
   run("node", ["scripts/write-e2e-config.mjs"], {}, INDEXER_DIR);
   // envio creates its network from two tasks at once and can end up with duplicates it then rejects.
   spawnSync("docker", ["network", "create", "envio-network"], { stdio: "ignore" });
   mkdirSync(`${WEB}test-results`, { recursive: true });
-  const log = createWriteStream(`${WEB}test-results/indexer.log`);
+  const log = openSync(`${WEB}test-results/indexer.log`, "w");
   const ix = spawn("pnpm", ["envio", "--config", "config.e2e.yaml", "dev", "--restart"], {
     cwd: INDEXER_DIR,
     env: { ...process.env, TUI_OFF: "true" },
+    stdio: ["ignore", log, log],
   });
-  ix.stdout.pipe(log);
-  ix.stderr.pipe(log);
-  const until = Date.now() + 300_000;
-  while (Date.now() < until) {
-    if ((await indexerMeta())?.isReady) return ix;
-    if (ix.exitCode !== null) break;
-    await new Promise((r) => setTimeout(r, 1_000));
-  }
-  ix.kill();
-  throw new Error("the indexer did not start; see test-results/indexer.log");
+  const ready = async () => {
+    const until = Date.now() + 300_000;
+    while (Date.now() < until) {
+      if ((await indexerMeta())?.isReady) return;
+      if (ix.exitCode !== null) break;
+      await new Promise((r) => setTimeout(r, 1_000));
+    }
+    ix.kill();
+    throw new Error("the indexer did not start; see test-results/indexer.log");
+  };
+  return { process: ix, ready };
 }
 
 /** Stops the indexer and removes its containers and database. */

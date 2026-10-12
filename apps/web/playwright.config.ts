@@ -33,7 +33,8 @@ export default defineConfig({
   retries: CI ? 1 : 0,
   // Stop early in CI so a broken engine ends the job and still uploads its report and traces.
   maxFailures: CI ? 5 : undefined,
-  workers: testnet ? 1 : 4,
+  // Cases mostly wait on the chain, so a CI shard runs six at once on its four cores.
+  workers: testnet ? 1 : process.env.E2E_SPLIT ? 6 : 4,
   // Every case makes its own accounts, so cases run (and shard) one by one, not file by file.
   fullyParallel: !testnet,
   reporter: CI ? [["list"], ["html", { open: "never" }]] : "list",

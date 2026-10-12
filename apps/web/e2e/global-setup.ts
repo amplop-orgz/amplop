@@ -24,8 +24,11 @@ export default async function globalSetup(): Promise<() => Promise<void>> {
     rpcProxy(PORTS.serverRpc),
     rpcProxy(PORTS.browserRpc),
   ]);
-  const indexer = process.env.E2E_NO_INDEXER ? null : await startIndexer();
+  // The indexer comes up while the app builds.
+  const ix = process.env.E2E_NO_INDEXER ? null : startIndexer();
   const app = await startApp(appEnv(deployment()));
+  await ix?.ready();
+  const indexer = ix?.process ?? null;
   return async () => {
     app.kill();
     if (indexer) stopIndexer(indexer);
