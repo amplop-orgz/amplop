@@ -4,9 +4,11 @@ import { sql } from "drizzle-orm";
 import {
   createTestClient,
   createWalletClient,
+  decodeFunctionData,
   http,
   pad,
   parseEther,
+  parseTransaction,
   publicActions,
   type Address,
   type Hex,
@@ -343,7 +345,15 @@ describe("card endpoints with the fake chain", () => {
     rpc.getReceipt = realReceipt;
     expect(r.json).toMatchObject({ result: "approved" });
     expect(rpc.sent).toHaveLength(2);
-    const ids = rpc.sent.map((s) => s.slice(0, 10));
+    // Compare the decoded purchase id: raw bytes differ, and even their length moves with the signature.
+    const ids = rpc.sent.map(
+      (raw) =>
+        decodeFunctionData({
+          abi: amplopEnvelopesAbi,
+          data: parseTransaction(raw).data ?? "0x",
+        }).args[1],
+    );
+    expect(ids[0]).toBeDefined();
     expect(ids[0]).toBe(ids[1]);
   });
 
