@@ -1,6 +1,6 @@
 // The chain seam (05 S05-44). Feature logic takes a Chain, so unit tests pass a fake RPC.
 import "server-only";
-import type { Abi, Address, Hex, TransactionReceipt } from "viem";
+import type { Abi, Address, Hex, Log, TransactionReceipt } from "viem";
 
 export type Role = "treasury" | "cardService" | "feeSponsor";
 
@@ -28,6 +28,14 @@ export interface Rpc {
   getReceipt(hash: Hex): Promise<TransactionReceipt | null>;
   finalizedBlockNumber(): Promise<bigint>;
   getBlockNumber(): Promise<bigint>;
+  /** Raw logs of one contract event matching indexed `args`, from `fromBlock` to the latest block. */
+  getLogs(req: {
+    address: Address;
+    abi: Abi;
+    eventName: string;
+    args: Record<string, unknown>;
+    fromBlock: bigint;
+  }): Promise<Log[]>;
 }
 
 export type SendResult = {

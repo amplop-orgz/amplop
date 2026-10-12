@@ -1,7 +1,19 @@
 // Test helpers: signed requests, a fake RPC behind the chain seam, and a database reset.
 import { buildAuthMessage, sha256Hex, toBase64Url, type ActionName } from "@amplop/shared/auth";
 import { sql } from "drizzle-orm";
-import { type Address, type Hex, type TransactionReceipt, zeroAddress } from "viem";
+import { amplopEnvelopesAbi } from "@amplop/shared/abi";
+import {
+  decodeFunctionData,
+  encodeAbiParameters,
+  encodeEventTopics,
+  keccak256,
+  parseTransaction,
+  type Address,
+  type Hex,
+  type Log,
+  type TransactionReceipt,
+  zeroAddress,
+} from "viem";
 import { generatePrivateKey, privateKeyToAccount, type PrivateKeyAccount } from "viem/accounts";
 import { issueNonce } from "@/lib/server/auth/verify";
 import { Chain, setChain } from "@/lib/server/chain/chain";
@@ -170,18 +182,27 @@ export class FakeRpc implements Rpc {
   getTransactionCount(): Promise<number> {
     return Promise.resolve(this.txCount);
   }
+  /** Builds the receipt logs for a sent contract call (by function name and args); none by default. */
+  onSend: ((functionName: string, args: readonly unknown[]) => Log[]) | null = null;
+  private logsByHash = new Map<string, Log[]>();
   sendRaw(serialized: Hex): Promise<Hex> {
     this.calls.push("sendRaw");
     if (this.sendError) return Promise.reject(this.sendError);
     this.sent.push(serialized);
     this.txCount++;
-    return Promise.resolve("0x" as Hex);
+    const tx = parseTransaction(serialized);
+    if (this.onSend && tx.data) {
+      const call = decodeFunctionData({ abi: amplopEnvelopesAbi, data: tx.data });
+      this.logsByHash.set(keccak256(serialized), this.onSend(call.functionName, call.args));
+    }
+    return Promise.resolve(keccak256(serialized));
   }
   waitForReceipt(hash: Hex): Promise<TransactionReceipt | null> {
     if (this.receiptTimeout) return Promise.resolve(null);
     return Promise.resolve(this.receipt(hash));
   }
   getReceipt(hash: Hex): Promise<TransactionReceipt | null> {
+    if (this.receiptTimeout) return Promise.resolve(null);
     return Promise.resolve(this.receipt(hash));
   }
   finalizedBlockNumber(): Promise<bigint> {
@@ -190,13 +211,17 @@ export class FakeRpc implements Rpc {
   getBlockNumber(): Promise<bigint> {
     return Promise.resolve(10n);
   }
+  logs: Log[] = [];
+  getLogs(): Promise<Log[]> {
+    return Promise.resolve(this.logs);
+  }
   private receipt(hash: Hex): TransactionReceipt {
     return {
       transactionHash: hash,
       status: this.receiptStatus,
       blockNumber: 5n,
       blockHash: `0x${"ab".repeat(32)}`,
-      logs: [],
+      logs: this.logsByHash.get(hash) ?? [],
     } as unknown as TransactionReceipt;
   }
 }
@@ -222,4 +247,24 @@ export function fakeChain(rpc = new FakeRpc()): { rpc: FakeRpc; chain: Chain } {
   });
   setChain(chain);
   return { rpc, chain };
+}
+
+/** A contract event as it appears in a receipt (for the fake RPC). */
+export function eventLog(
+  eventName: string,
+  args: Record<string, unknown>,
+  address: Address = CONTRACT,
+): Log {
+  const ev = amplopEnvelopesAbi.find((x) => x.type === "event" && x.name === eventName);
+  if (!ev || ev.type !== "event") throw new Error(`no event ${eventName}`);
+  const topics = encodeEventTopics({ abi: [ev], eventName: ev.name, args }) as Hex[];
+  const plain = ev.inputs.filter((i) => !i.indexed);
+  const data = encodeAbiParameters(plain, plain.map((i) => args[i.name]) as never);
+  return {
+    address,
+    topics,
+    data,
+    blockNumber: 5n,
+    transactionHash: `0x${"cd".repeat(32)}`,
+  } as unknown as Log;
 }

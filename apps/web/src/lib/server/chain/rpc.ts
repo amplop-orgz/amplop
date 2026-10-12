@@ -9,6 +9,7 @@ import {
   http,
   type Address,
   type Hex,
+  type Log,
   type PublicClient,
   WaitForTransactionReceiptTimeoutError,
 } from "viem";
@@ -97,6 +98,8 @@ export function viemRpc(client: PublicClient): Rpc {
     finalizedBlockNumber: async () =>
       (await wrap(client.getBlock({ blockTag: "finalized" }))).number,
     getBlockNumber: () => wrap(client.getBlockNumber({ cacheTime: 0 })),
+    getLogs: (req) =>
+      wrap(client.getContractEvents({ ...req, toBlock: "latest" }) as Promise<Log[]>),
   };
 }
 

@@ -6,6 +6,8 @@ import {
   createPublicClient,
   createWalletClient,
   http,
+  maxUint256,
+  parseAbi,
   type Abi,
   type Address,
   type Hex,
@@ -63,5 +65,53 @@ export async function startAnvil(port: number): Promise<AnvilStack> {
     args: [token, addr(3), addr(1), addr(2), true],
   });
   const contract = (await pub.waitForTransactionReceipt({ hash: tx })).contractAddress as Address;
+  // As the real deployment: test AUSD for Treasury and Settlement, and both approvals (spec 04 S04-9).
+  const erc20 = parseAbi([
+    "function mint(address to, uint256 amount)",
+    "function approve(address spender, uint256 amount) returns (bool)",
+  ]);
+  for (const i of [1, 3]) {
+    await pub.waitForTransactionReceipt({
+      hash: await deployer.writeContract({
+        address: token,
+        abi: erc20,
+        functionName: "mint",
+        args: [addr(i), 1_000_000n * 10n ** 6n],
+      }),
+    });
+    const owner = createWalletClient({
+      chain: foundry,
+      transport: http(url),
+      account: mnemonicToAccount(MNEMONIC, { addressIndex: i }),
+    });
+    await pub.waitForTransactionReceipt({
+      hash: await owner.writeContract({
+        address: token,
+        abi: erc20,
+        functionName: "approve",
+        args: [contract, maxUint256],
+      }),
+    });
+  }
   return { url, contract, token, stop: () => proc.kill() };
+}
+
+/** A server Chain over the stack, with Anvil's accounts 1, 2 and 4 as the three server keys. */
+export async function anvilChain(stack: AnvilStack) {
+  const { Chain } = await import("@/lib/server/chain/chain");
+  const { createServerRpc } = await import("@/lib/server/chain/rpc");
+  const { privateKeyToAccount } = await import("viem/accounts");
+  return new Chain({
+    rpc: createServerRpc(31337, stack.url, stack.url),
+    chainId: 31337,
+    contract: stack.contract,
+    token: stack.token,
+    settlement: privateKeyToAccount(anvilKey(3)).address,
+    accounts: {
+      treasury: privateKeyToAccount(anvilKey(1)),
+      cardService: privateKeyToAccount(anvilKey(2)),
+      feeSponsor: privateKeyToAccount(anvilKey(4)),
+    },
+    demo: true,
+  });
 }

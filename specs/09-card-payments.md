@@ -470,6 +470,10 @@ From MONSKILLS pinned to `3f8efd2`, starting with `monskill`. PRD and this spec 
 9. **The matched envelope for a not-enough decline** is `shopEnvelope` at the receipt's block, so 2.8 can name it (the event has no envelope).
 10. **The card token lives in memory on the client** and is fetched again from the idempotent `card.issue`.
 11. **Refunds have no HTTP route;** a CLI runs the server function for tests and E18.
+12. **The trusted-person lines use no pronoun.** The board says "Mama sees … in her app", but the trusted person can be anyone, so the screens say "{name} sees blocked purchases, without the shop name." and "{name} will see that a gambling purchase was declined. The shop name is not shown."
+13. **`GET /api/purchases` (11 S11-27) is built with this spec,** because the result screens rebuild from it on reload (S09-21).
+14. **`amount_too_small` cannot happen with 6 decimals:** the smallest amounts are €0,01 = 11 511 units and Rp1 = 60 units. The check stays as a guard for a token with fewer decimals; T09-4's "IDR 1 gives `amount_too_small`" holds only below 5 decimals.
+15. **The fund and card sends run inside the caller's transaction** (05 `sendContractTx` `opts.tx`), so a request holding the purchase lock never needs a second pooled connection.
 
 ## Additions to 01 (status)
 

@@ -55,6 +55,19 @@ export const CODES = {
   invite_not_found: [404, "This invite is not valid."],
   invite_not_on_chain: [409, "This invite isn't on record yet. Try again."],
   invite_used: [409, "This invite has already been used."],
+  // 09
+  card_not_found: [404, "This card is not active."],
+  amount_too_small: [400, "This amount is too small."],
+  amount_too_large: [400, "This is above the demo card's limit of $10.000,00."],
+  amount_above_hold: [400, "The shop can't collect more than the hold."],
+  idempotency_conflict: [409, "This payment was already sent with different details."],
+  purchase_in_progress: [409, "This payment is still being checked. Please wait a moment."],
+  not_held: [409, "This purchase is no longer on hold."],
+  authorize_failed: [500, "Nothing was charged. Please try again later."],
+  payment_unconfirmed: [
+    502,
+    "We couldn't confirm this payment yet. Try again in a moment; you won't be charged twice.",
+  ],
 } as const satisfies Record<string, readonly [Status, string]>;
 
 export type Code = keyof typeof CODES;
