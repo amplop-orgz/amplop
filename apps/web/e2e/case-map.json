@@ -1,0 +1,987 @@
+[
+  {
+    "id": "A1",
+    "kind": "Normal",
+    "tier": 1,
+    "owner": "07",
+    "automated": true
+  },
+  {
+    "id": "A2",
+    "kind": "Normal",
+    "tier": 1,
+    "owner": "07",
+    "automated": true
+  },
+  {
+    "id": "A3",
+    "kind": "Normal",
+    "tier": 1,
+    "owner": "07",
+    "automated": true
+  },
+  {
+    "id": "A4",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "07",
+    "automated": false
+  },
+  {
+    "id": "A5",
+    "kind": "Edge",
+    "tier": 3,
+    "owner": "07",
+    "automated": false
+  },
+  {
+    "id": "A6",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "07",
+    "automated": false
+  },
+  {
+    "id": "A7",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "07",
+    "automated": false
+  },
+  {
+    "id": "A8",
+    "kind": "Edge",
+    "tier": 1,
+    "owner": "07",
+    "automated": true
+  },
+  {
+    "id": "A9",
+    "kind": "Edge",
+    "tier": 3,
+    "owner": "07",
+    "automated": false
+  },
+  {
+    "id": "A10",
+    "kind": "Edge",
+    "tier": 1,
+    "owner": "07",
+    "automated": true
+  },
+  {
+    "id": "A11",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "07",
+    "automated": false
+  },
+  {
+    "id": "A12",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "07",
+    "automated": false
+  },
+  {
+    "id": "A13",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "07",
+    "automated": false
+  },
+  {
+    "id": "A14",
+    "kind": "Edge",
+    "tier": 3,
+    "owner": "07",
+    "automated": false
+  },
+  {
+    "id": "A15",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "07",
+    "automated": false
+  },
+  {
+    "id": "A16",
+    "kind": "Edge",
+    "tier": 3,
+    "owner": "07",
+    "automated": false
+  },
+  {
+    "id": "A17",
+    "kind": "Edge",
+    "tier": 3,
+    "owner": "07",
+    "automated": false
+  },
+  {
+    "id": "B1",
+    "kind": "Normal",
+    "tier": 1,
+    "owner": "10",
+    "automated": true
+  },
+  {
+    "id": "B2",
+    "kind": "Normal",
+    "tier": 3,
+    "owner": "10",
+    "automated": false
+  },
+  {
+    "id": "B3",
+    "kind": "Edge",
+    "tier": 1,
+    "owner": "10",
+    "automated": true
+  },
+  {
+    "id": "B4",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "10",
+    "automated": false
+  },
+  {
+    "id": "B5",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "10",
+    "automated": false
+  },
+  {
+    "id": "B6",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "10",
+    "automated": false
+  },
+  {
+    "id": "B7",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "10",
+    "automated": false
+  },
+  {
+    "id": "B8",
+    "kind": "Edge",
+    "tier": 3,
+    "owner": "10",
+    "automated": false
+  },
+  {
+    "id": "B9",
+    "kind": "Edge",
+    "tier": 3,
+    "owner": "10",
+    "automated": false
+  },
+  {
+    "id": "B10",
+    "kind": "Normal",
+    "tier": 2,
+    "owner": "10",
+    "automated": false
+  },
+  {
+    "id": "B11",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "10",
+    "automated": false
+  },
+  {
+    "id": "C1",
+    "kind": "Normal",
+    "tier": 1,
+    "owner": "08",
+    "automated": true
+  },
+  {
+    "id": "C2",
+    "kind": "Normal",
+    "tier": 1,
+    "owner": "08",
+    "automated": true,
+    "testnetSkip": "Midtrans sandbox status API would not confirm a self-signed payment"
+  },
+  {
+    "id": "C3",
+    "kind": "Normal",
+    "tier": 2,
+    "owner": "08",
+    "automated": false
+  },
+  {
+    "id": "C4",
+    "kind": "Edge",
+    "tier": 1,
+    "owner": "08",
+    "automated": true
+  },
+  {
+    "id": "C5",
+    "kind": "Edge",
+    "tier": 1,
+    "owner": "08",
+    "automated": true,
+    "testnetSkip": "Midtrans sandbox status API would not confirm a self-signed payment"
+  },
+  {
+    "id": "C6",
+    "kind": "Edge",
+    "tier": 1,
+    "owner": "08",
+    "automated": true
+  },
+  {
+    "id": "C7",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "08",
+    "automated": false
+  },
+  {
+    "id": "C8",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "08",
+    "automated": false
+  },
+  {
+    "id": "C9",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "08",
+    "automated": false
+  },
+  {
+    "id": "C10",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "08",
+    "automated": false
+  },
+  {
+    "id": "C11",
+    "kind": "Edge",
+    "tier": 3,
+    "owner": "08",
+    "automated": false
+  },
+  {
+    "id": "C12",
+    "kind": "Edge",
+    "tier": 1,
+    "owner": "08",
+    "automated": true
+  },
+  {
+    "id": "C13",
+    "kind": "Edge",
+    "tier": 3,
+    "owner": "08",
+    "automated": false
+  },
+  {
+    "id": "C14",
+    "kind": "Normal",
+    "tier": 1,
+    "owner": "08",
+    "automated": true
+  },
+  {
+    "id": "C15",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "08",
+    "automated": false
+  },
+  {
+    "id": "C16",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "08",
+    "automated": false
+  },
+  {
+    "id": "C17",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "08",
+    "automated": false
+  },
+  {
+    "id": "D1",
+    "kind": "Normal",
+    "tier": 1,
+    "owner": "11",
+    "automated": true
+  },
+  {
+    "id": "D2",
+    "kind": "Normal",
+    "tier": 1,
+    "owner": "11",
+    "automated": true
+  },
+  {
+    "id": "D3",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "11",
+    "automated": false
+  },
+  {
+    "id": "D4",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "11",
+    "automated": false
+  },
+  {
+    "id": "D5",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "11",
+    "automated": false
+  },
+  {
+    "id": "D6",
+    "kind": "Edge",
+    "tier": 3,
+    "owner": "11",
+    "automated": false
+  },
+  {
+    "id": "D7",
+    "kind": "Edge",
+    "tier": 3,
+    "owner": "11",
+    "automated": false
+  },
+  {
+    "id": "E1",
+    "kind": "Normal",
+    "tier": 1,
+    "owner": "09",
+    "automated": true
+  },
+  {
+    "id": "E2",
+    "kind": "Normal",
+    "tier": 1,
+    "owner": "09",
+    "automated": true
+  },
+  {
+    "id": "E3",
+    "kind": "Normal",
+    "tier": 1,
+    "owner": "09",
+    "automated": true
+  },
+  {
+    "id": "E4",
+    "kind": "Normal",
+    "tier": 1,
+    "owner": "09",
+    "automated": true
+  },
+  {
+    "id": "E5",
+    "kind": "Edge",
+    "tier": 1,
+    "owner": "09",
+    "automated": true
+  },
+  {
+    "id": "E6",
+    "kind": "Edge",
+    "tier": 1,
+    "owner": "09",
+    "automated": true
+  },
+  {
+    "id": "E7",
+    "kind": "Edge",
+    "tier": 1,
+    "owner": "09",
+    "automated": true
+  },
+  {
+    "id": "E8",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "09",
+    "automated": false
+  },
+  {
+    "id": "E9",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "09",
+    "automated": false
+  },
+  {
+    "id": "E10",
+    "kind": "Edge",
+    "tier": 1,
+    "owner": "09",
+    "automated": true
+  },
+  {
+    "id": "E11",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "09",
+    "automated": false
+  },
+  {
+    "id": "E12",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "09",
+    "automated": false
+  },
+  {
+    "id": "E13",
+    "kind": "Edge",
+    "tier": 1,
+    "owner": "09",
+    "automated": true
+  },
+  {
+    "id": "E14",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "09",
+    "automated": false
+  },
+  {
+    "id": "E15",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "09",
+    "automated": false
+  },
+  {
+    "id": "E16",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "09",
+    "automated": false
+  },
+  {
+    "id": "E17",
+    "kind": "Edge",
+    "tier": 3,
+    "owner": "09",
+    "automated": false
+  },
+  {
+    "id": "E18",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "09",
+    "automated": false
+  },
+  {
+    "id": "E19",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "09",
+    "automated": false
+  },
+  {
+    "id": "E20",
+    "kind": "Edge",
+    "tier": 3,
+    "owner": "09",
+    "automated": false
+  },
+  {
+    "id": "E21",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "09",
+    "automated": false
+  },
+  {
+    "id": "E22",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "09",
+    "automated": false
+  },
+  {
+    "id": "F1",
+    "kind": "Normal",
+    "tier": 1,
+    "owner": "11",
+    "automated": true
+  },
+  {
+    "id": "F2",
+    "kind": "Normal",
+    "tier": 1,
+    "owner": "11",
+    "automated": true
+  },
+  {
+    "id": "F3",
+    "kind": "Normal",
+    "tier": 2,
+    "owner": "11",
+    "automated": false
+  },
+  {
+    "id": "F4",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "11",
+    "automated": false
+  },
+  {
+    "id": "F5",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "11",
+    "automated": false
+  },
+  {
+    "id": "F6",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "11",
+    "automated": false
+  },
+  {
+    "id": "F7",
+    "kind": "Edge",
+    "tier": 3,
+    "owner": "11",
+    "automated": false
+  },
+  {
+    "id": "F8",
+    "kind": "Edge",
+    "tier": 3,
+    "owner": "11",
+    "automated": false
+  },
+  {
+    "id": "F9",
+    "kind": "Edge",
+    "tier": 3,
+    "owner": "11",
+    "automated": false
+  },
+  {
+    "id": "F10",
+    "kind": "Edge",
+    "tier": 1,
+    "owner": "11",
+    "automated": true,
+    "testnetSkip": "the hosted indexer cannot be switched off from a test"
+  },
+  {
+    "id": "F11",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "11",
+    "automated": false
+  },
+  {
+    "id": "G1",
+    "kind": "Normal",
+    "tier": 1,
+    "owner": "12",
+    "automated": true
+  },
+  {
+    "id": "G2",
+    "kind": "Normal",
+    "tier": 1,
+    "owner": "12",
+    "automated": true
+  },
+  {
+    "id": "G3",
+    "kind": "Normal",
+    "tier": 2,
+    "owner": "12",
+    "automated": false
+  },
+  {
+    "id": "G4",
+    "kind": "Normal",
+    "tier": 2,
+    "owner": "12",
+    "automated": false
+  },
+  {
+    "id": "G5",
+    "kind": "Normal",
+    "tier": 1,
+    "owner": "12",
+    "automated": true
+  },
+  {
+    "id": "G6",
+    "kind": "Edge",
+    "tier": 1,
+    "owner": "12",
+    "automated": true
+  },
+  {
+    "id": "G7",
+    "kind": "Edge",
+    "tier": 3,
+    "owner": "12",
+    "automated": false
+  },
+  {
+    "id": "G8",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "12",
+    "automated": false
+  },
+  {
+    "id": "G9",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "12",
+    "automated": false
+  },
+  {
+    "id": "G10",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "12",
+    "automated": false
+  },
+  {
+    "id": "G11",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "12",
+    "automated": false
+  },
+  {
+    "id": "G12",
+    "kind": "Edge",
+    "tier": 1,
+    "owner": "12",
+    "automated": true
+  },
+  {
+    "id": "G13",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "12",
+    "automated": false
+  },
+  {
+    "id": "G14",
+    "kind": "Edge",
+    "tier": 3,
+    "owner": "12",
+    "automated": false
+  },
+  {
+    "id": "G15",
+    "kind": "Edge",
+    "tier": 3,
+    "owner": "12",
+    "automated": false
+  },
+  {
+    "id": "G16",
+    "kind": "Normal",
+    "tier": 2,
+    "owner": "13",
+    "automated": false
+  },
+  {
+    "id": "G17",
+    "kind": "Edge",
+    "tier": 3,
+    "owner": "13",
+    "automated": false
+  },
+  {
+    "id": "G18",
+    "kind": "Edge",
+    "tier": 3,
+    "owner": "12",
+    "automated": false
+  },
+  {
+    "id": "H1",
+    "kind": "Normal",
+    "tier": 2,
+    "owner": "13",
+    "automated": false
+  },
+  {
+    "id": "H2",
+    "kind": "Normal",
+    "tier": 1,
+    "owner": "13",
+    "automated": true
+  },
+  {
+    "id": "H3",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "13",
+    "automated": false
+  },
+  {
+    "id": "H4",
+    "kind": "Edge",
+    "tier": 3,
+    "owner": "13",
+    "automated": false
+  },
+  {
+    "id": "H5",
+    "kind": "Edge",
+    "tier": 3,
+    "owner": "13",
+    "automated": false
+  },
+  {
+    "id": "H6",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "13",
+    "automated": false
+  },
+  {
+    "id": "I1",
+    "kind": "Normal",
+    "tier": 1,
+    "owner": "13",
+    "automated": true
+  },
+  {
+    "id": "I2",
+    "kind": "Normal",
+    "tier": 3,
+    "owner": "13",
+    "automated": false
+  },
+  {
+    "id": "I3",
+    "kind": "Edge",
+    "tier": 1,
+    "owner": "13",
+    "automated": true
+  },
+  {
+    "id": "I4",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "13",
+    "automated": false
+  },
+  {
+    "id": "I5",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "13",
+    "automated": false
+  },
+  {
+    "id": "I6",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "13",
+    "automated": false
+  },
+  {
+    "id": "I7",
+    "kind": "Edge",
+    "tier": 3,
+    "owner": "13",
+    "automated": false
+  },
+  {
+    "id": "I8",
+    "kind": "Edge",
+    "tier": 3,
+    "owner": "13",
+    "automated": false
+  },
+  {
+    "id": "I9",
+    "kind": "Edge",
+    "tier": 3,
+    "owner": "13",
+    "automated": false
+  },
+  {
+    "id": "J1",
+    "kind": "Normal",
+    "tier": 1,
+    "owner": "14",
+    "automated": true
+  },
+  {
+    "id": "J2",
+    "kind": "Normal",
+    "tier": 2,
+    "owner": "14",
+    "automated": false
+  },
+  {
+    "id": "J3",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "14",
+    "automated": false
+  },
+  {
+    "id": "J4",
+    "kind": "Edge",
+    "tier": 1,
+    "owner": "14",
+    "automated": true,
+    "testnetSkip": "calls the API through the test hook, which only the local chain build has"
+  },
+  {
+    "id": "J5",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "14",
+    "automated": false
+  },
+  {
+    "id": "J6",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "14",
+    "automated": false
+  },
+  {
+    "id": "J7",
+    "kind": "Edge",
+    "tier": 3,
+    "owner": "14",
+    "automated": false
+  },
+  {
+    "id": "K1",
+    "kind": "Normal",
+    "tier": 1,
+    "owner": "15",
+    "automated": true,
+    "testnetSkip": "tells the two passkeys apart by the test hook address, local chain only"
+  },
+  {
+    "id": "K2",
+    "kind": "Normal",
+    "tier": 3,
+    "owner": "15",
+    "automated": false
+  },
+  {
+    "id": "K3",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "15",
+    "automated": false
+  },
+  {
+    "id": "K4",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "15",
+    "automated": false
+  },
+  {
+    "id": "L1",
+    "kind": "Normal",
+    "tier": 2,
+    "owner": "17",
+    "automated": true
+  },
+  {
+    "id": "L2",
+    "kind": "Normal",
+    "tier": 1,
+    "owner": "19",
+    "automated": true
+  },
+  {
+    "id": "L3",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "17",
+    "automated": true
+  },
+  {
+    "id": "L4",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "06",
+    "automated": false
+  },
+  {
+    "id": "L5",
+    "kind": "Edge",
+    "tier": 3,
+    "owner": "06",
+    "automated": false
+  },
+  {
+    "id": "L6",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "06",
+    "automated": false
+  },
+  {
+    "id": "L7",
+    "kind": "Edge",
+    "tier": 2,
+    "owner": "06",
+    "automated": false
+  },
+  {
+    "id": "L8",
+    "kind": "Edge",
+    "tier": 3,
+    "owner": "06",
+    "automated": false
+  },
+  {
+    "id": "L9",
+    "kind": "Edge",
+    "tier": 3,
+    "owner": "06",
+    "automated": false
+  },
+  {
+    "id": "L10",
+    "kind": "Edge",
+    "tier": 3,
+    "owner": "06",
+    "automated": false
+  },
+  {
+    "id": "L11",
+    "kind": "Edge",
+    "tier": 3,
+    "owner": "06",
+    "automated": false
+  }
+]

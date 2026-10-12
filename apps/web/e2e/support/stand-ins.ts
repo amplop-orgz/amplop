@@ -121,7 +121,8 @@ export function rpcProxy(port: number): Promise<Server> {
   return listen(port, async (req, res) => {
     const cors = {
       "access-control-allow-origin": "*",
-      "access-control-allow-headers": "content-type",
+      // Each profile sends its own x-real-ip on every request (fixtures.ts).
+      "access-control-allow-headers": "content-type, x-real-ip",
     };
     if (req.method === "OPTIONS") {
       res.writeHead(204, cors);
@@ -144,7 +145,8 @@ export function rpcProxy(port: number): Promise<Server> {
     const r = await fetch(ANVIL, {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: text,
+      // Anvil puts "finalized" 64 blocks back and automine adds none, so treat latest as final like Monad.
+      body: text.replaceAll('"finalized"', '"latest"'),
     });
     res.writeHead(r.status, { "content-type": "application/json", ...cors });
     res.end(await r.text());
@@ -153,8 +155,9 @@ export function rpcProxy(port: number): Promise<Server> {
 
 /** Steer a stand-in from a test. */
 export async function control(port: number, value: unknown): Promise<void> {
+  // No stand-in on testnet: the real service answers instead.
   await fetch(`http://127.0.0.1:${String(port)}/__control`, {
     method: "POST",
     body: JSON.stringify(value),
-  });
+  }).catch(() => undefined);
 }

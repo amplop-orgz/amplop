@@ -2,7 +2,14 @@
 // set to a deployed app (smoke and testnet runs), nothing local is started.
 import type { Server } from "node:http";
 import { explorer, midtrans, PORTS, rpcProxy } from "./support/stand-ins";
-import { appEnv, deployment, startAnvil, startApp } from "./support/stack";
+import {
+  appEnv,
+  deployment,
+  startAnvil,
+  startApp,
+  startIndexer,
+  stopIndexer,
+} from "./support/stack";
 
 export default async function globalSetup(): Promise<() => Promise<void>> {
   if (process.env.BASE_URL && !process.env.BASE_URL.includes("localhost"))
@@ -14,9 +21,11 @@ export default async function globalSetup(): Promise<() => Promise<void>> {
     rpcProxy(PORTS.serverRpc),
     rpcProxy(PORTS.browserRpc),
   ]);
+  const indexer = process.env.E2E_NO_INDEXER ? null : await startIndexer();
   const app = await startApp(appEnv(deployment()));
   return async () => {
     app.kill();
+    if (indexer) stopIndexer(indexer);
     anvil.kill();
     await Promise.all(servers.map((s) => new Promise((r) => s.close(r))));
   };

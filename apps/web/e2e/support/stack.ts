@@ -3,6 +3,7 @@
 import { spawn, spawnSync, type ChildProcess } from "node:child_process";
 import { createWriteStream, existsSync, mkdirSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import postgres from "postgres";
 import { PORTS } from "./stand-ins";
 
 export const ROOT = fileURLToPath(new URL("../../../../", import.meta.url));
@@ -10,7 +11,7 @@ export const WEB = fileURLToPath(new URL("../../", import.meta.url));
 export const BASE_URL = process.env.BASE_URL ?? "http://localhost:3000";
 
 // Anvil's public test keys (accounts 1, 2 and 4); allowlisted in gitleaks and never used elsewhere.
-const KEYS = {
+export const KEYS = {
   treasury: "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d",
   cardService: "0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a",
   feeSponsor: "0x47e179ec197488593b187f80a00eb0da91f1b9d0b13f8733639f19c30a34926a",
@@ -20,8 +21,12 @@ export const CRON_SECRET = "e2e-cron-secret-00000000000000000000";
 
 export type Deployment = { address: string; token: string; settlement: string };
 
+/** S19-17: the testnet run targets the real deployment; everything else runs on Anvil. */
+export const TESTNET = Boolean(process.env.E2E_TESTNET);
+
 export function deployment(): Deployment {
-  return JSON.parse(readFileSync(`${ROOT}deployments/anvil.json`, "utf8")) as Deployment;
+  const file = TESTNET ? "monad-testnet" : "anvil";
+  return JSON.parse(readFileSync(`${ROOT}deployments/${file}.json`, "utf8")) as Deployment;
 }
 
 /** S19-8: every variable the app and server read in the harness. */
@@ -109,6 +114,9 @@ export async function startAnvil(): Promise<ChildProcess> {
       "10000",
       "--timestamp",
       "1790586000",
+      // A block every half second like Monad, so the app's "wait a few blocks" ends without new txs.
+      "--block-time",
+      "0.5",
       "--silent",
     ],
     { stdio: "ignore" },
@@ -118,9 +126,27 @@ export async function startAnvil(): Promise<ChildProcess> {
   return anvil;
 }
 
+/**
+ * Anvil starts empty each run, so account ids repeat; rows from an earlier run would then belong to a
+ * new account (a stale invite name on the wrong student). Every app table starts empty too; Drizzle's
+ * own record of applied migrations is kept.
+ */
+async function resetDatabase(url: string): Promise<void> {
+  const sql = postgres(url, { max: 1, onnotice: () => undefined });
+  try {
+    const rows = await sql<
+      { t: string }[]
+    >`SELECT tablename AS t FROM pg_tables WHERE schemaname = 'public' AND tablename <> '__drizzle_migrations'`;
+    if (rows.length) await sql.unsafe(`TRUNCATE ${rows.map((r) => `"${r.t}"`).join(", ")} CASCADE`);
+  } finally {
+    await sql.end();
+  }
+}
+
 /** Migrations, then (unless E2E_SKIP_BUILD) a production build, then `next start`. */
 export async function startApp(env: Record<string, string>): Promise<ChildProcess> {
   run("npm", ["run", "db:migrate"], env, WEB);
+  await resetDatabase(env.DATABASE_MIGRATION_URL ?? "");
   if (!process.env.E2E_SKIP_BUILD || !existsSync(`${WEB}.next/BUILD_ID`))
     run("npx", ["next", "build"], env, WEB);
   mkdirSync(`${WEB}test-results`, { recursive: true });
@@ -133,4 +159,56 @@ export async function startApp(env: Record<string, string>): Promise<ChildProces
   app.stderr.pipe(log);
   await waitFor(`${BASE_URL}/api/auth/nonce`, (r) => r.status < 500, "the app", 120_000);
   return app;
+}
+
+const INDEXER_DIR = `${ROOT}indexer`;
+export const INDEXER_URL = "http://127.0.0.1:8080/v1/graphql";
+
+/** The indexer's `_meta` row, or null while it is down (S19-11). */
+export async function indexerMeta(): Promise<{ progressBlock: number; isReady: boolean } | null> {
+  try {
+    const r = await fetch(INDEXER_URL, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ query: "{ _meta { progressBlock isReady } }" }),
+    });
+    const j = (await r.json()) as {
+      data?: { _meta: { progressBlock: number; isReady: boolean }[] };
+    };
+    return j.data?._meta[0] ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/** S19-11: 16's config.e2e.yaml under `envio dev --restart` (Docker), so each run starts empty. */
+export async function startIndexer(): Promise<ChildProcess> {
+  run("node", ["scripts/write-e2e-config.mjs"], {}, INDEXER_DIR);
+  // envio creates its network from two tasks at once and can end up with duplicates it then rejects.
+  spawnSync("docker", ["network", "create", "envio-network"], { stdio: "ignore" });
+  mkdirSync(`${WEB}test-results`, { recursive: true });
+  const log = createWriteStream(`${WEB}test-results/indexer.log`);
+  const ix = spawn("pnpm", ["envio", "--config", "config.e2e.yaml", "dev", "--restart"], {
+    cwd: INDEXER_DIR,
+    env: { ...process.env, TUI_OFF: "true" },
+  });
+  ix.stdout.pipe(log);
+  ix.stderr.pipe(log);
+  const until = Date.now() + 300_000;
+  while (Date.now() < until) {
+    if ((await indexerMeta())?.isReady) return ix;
+    if (ix.exitCode !== null) break;
+    await new Promise((r) => setTimeout(r, 1_000));
+  }
+  ix.kill();
+  throw new Error("the indexer did not start; see test-results/indexer.log");
+}
+
+/** Stops the indexer and removes its containers and database. */
+export function stopIndexer(ix: ChildProcess): void {
+  ix.kill();
+  spawnSync("pnpm", ["envio", "--config", "config.e2e.yaml", "stop"], {
+    cwd: INDEXER_DIR,
+    stdio: "ignore",
+  });
 }

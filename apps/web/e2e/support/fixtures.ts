@@ -20,6 +20,8 @@ export type Profile = {
   /** The signed-in address from the app's test hook (chain 31337 only). */
   address: () => Promise<string | null>;
   accountId: () => Promise<bigint | null>;
+  /** What the testnet run learned from the chain, used when the test hook is absent. */
+  known: { accountId?: bigint; address?: string };
 };
 
 export type Authenticator = {
@@ -53,24 +55,40 @@ async function chromiumAuthenticator(page: Page): Promise<Authenticator> {
   };
 }
 
+// S19-14: every policy violation and every console line about the policy, across all page loads.
 const GUARD = () => {
-  const w = window as unknown as { __cspViolations: string[] };
-  w.__cspViolations = [];
+  const report = (window as unknown as { __amplopCsp?: (s: string) => void }).__amplopCsp;
   document.addEventListener("securitypolicyviolation", (e) => {
-    w.__cspViolations.push(`${e.violatedDirective} ${e.blockedURI}`);
+    report?.(
+      `${e.violatedDirective} ${e.blockedURI} in ${e.documentURI} at ${e.sourceFile}:${String(e.lineNumber)} ${e.sample} <${(e.target as Node).nodeName}>`,
+    );
   });
 };
+const violations = new WeakMap<BrowserContext, string[]>();
 
 async function makeProfile(
   browser: Browser,
   name: Profile["name"],
   use: Parameters<Browser["newContext"]>[0],
 ): Promise<Profile> {
-  const context = await browser.newContext({ ...use, timezoneId: ZONES[name] });
+  // Each person is on their own phone, so per-IP limits (07 S07-27) count them apart.
+  const ip = `10.${[0, 0, 0].map(() => String(Math.floor(Math.random() * 256))).join(".")}`;
+  // Set on the context, not by route(): WebKit drops headers that route() adds.
+  const context = await browser.newContext({
+    ...use,
+    timezoneId: ZONES[name],
+    extraHTTPHeaders: { "x-real-ip": ip },
+  });
+  const seen: string[] = [];
+  violations.set(context, seen);
+  await context.exposeFunction("__amplopCsp", (v: string) => seen.push(v));
   await context.addInitScript(GUARD);
   const soft =
     browser.browserType().name() === "chromium" ? null : await installSoftAuthenticator(context);
   const page = await context.newPage();
+  page.on("console", (m) => {
+    if (/Content.Security.Policy/i.test(m.text())) seen.push(m.text());
+  });
   page.on("dialog", (d) => {
     throw new Error(`a dialog opened: ${d.message()}`);
   });
@@ -84,25 +102,24 @@ async function makeProfile(
           }
         ).__amplopTest ?? null,
     );
+  const known: Profile["known"] = {};
   return {
     name,
     context,
     page,
     authenticator,
-    address: async () => (await hook())?.address ?? null,
+    known,
+    address: async () => (await hook())?.address ?? known.address ?? null,
     accountId: async () => {
       const id = (await hook())?.accountId;
-      return id ? BigInt(id) : null;
+      return id ? BigInt(id) : (known.accountId ?? null);
     },
   };
 }
 
 async function closeChecked(p: Profile): Promise<void> {
-  const violations = await p.page
-    .evaluate(() => (window as unknown as { __cspViolations?: string[] }).__cspViolations ?? [])
-    .catch(() => []);
   await p.context.close();
-  expect(violations, `${p.name}: Content-Security-Policy violations`).toEqual([]);
+  expect(violations.get(p.context), `${p.name}: Content-Security-Policy violations`).toEqual([]);
 }
 
 export const test = base.extend<{ raka: Profile; mama: Profile; stranger: Profile }>({

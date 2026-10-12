@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import { DemoBanner, InlineMessage, Toaster } from "@/components/ui";
 import { refreshRole, useSession } from "@/lib/client/account";
+import { api, ApiError, type CallOpts } from "@/lib/client/api";
 import { isChatAppBrowser } from "@/lib/client/browser";
 import { CHAIN_ID } from "@/lib/client/env";
 import { decideRoute, guardFor, type Role } from "@/lib/client/guard";
@@ -110,7 +111,9 @@ function Guard({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
-/** S06-51: read-only test hooks, only on the local test chain. */
+type CallAction = NonNullable<CallOpts["auth"]>["action"];
+
+/** S06-51: test hooks, only on the local test chain. `signedGet` lets 14's J4 call the API as this profile. */
 function TestHooks() {
   const { session, role } = useSession();
   useEffect(() => {
@@ -121,6 +124,16 @@ function TestHooks() {
       value: Object.freeze({
         address: session?.address ?? null,
         accountId: accountId?.toString() ?? null,
+        signedGet: async (path: string, action: string, forAccount: string) => {
+          try {
+            const body = await api.get<unknown>(path, {
+              auth: { action: action as CallAction, accountId: BigInt(forAccount) },
+            });
+            return { status: 200, body };
+          } catch (e) {
+            return { status: e instanceof ApiError ? e.status : 0, body: null };
+          }
+        },
       }),
       configurable: true,
       writable: false,
