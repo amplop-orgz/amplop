@@ -372,6 +372,12 @@ jobs:
       - run: cd indexer && pnpm install --frozen-lockfile
       - name: Database roles (05 S05-36)
         run: psql "postgres://amplop:amplop@127.0.0.1:5432/amplop" -v ON_ERROR_STOP=1 -v migrator_pw=amplop_migrator -v app_pw=amplop_app -f apps/web/drizzle/roles.sql
+      # Once in a while the browser download takes most of half an hour; keep it between runs.
+      - name: Playwright browser cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ matrix.engine }}-${{ hashFiles('package-lock.json') }}
       - run: npx -w @amplop/web playwright install --with-deps ${{ matrix.engine }}
       - run: npm run e2e:tier1:ci
         env:
