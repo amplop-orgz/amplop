@@ -482,7 +482,8 @@ From MONSKILLS pinned to `3f8efd2`, starting with `monskill`. PRD and this spec 
 10. **Open orders remembered on the device** (`localStorage` `amplop.openOrders`, 5 entries) for C3 and C13, since 01 has no "list my orders" endpoint.
 11. **2.1's route parameter is the deposit's `paymentId`** (with `?tx=`), and its rupiah figure is recomputed from the amount at the sample rate, so the student never needs the parent's order.
 12. **Faucet once a minute through a `faucet` rate-limit bucket;** a faucet that cannot be called by a server falls back to an alert and a manual refill.
-13. **Prefilled amount Rp16.500.000** on 1.2 when this device has no earlier amount, to keep the judge's path short.
+. **The newest closed entry stays in `amplop.openOrders`** (S08-6 says closed entries are removed). It is the prefill for "the last amount this device sent" and is never shown as open; every other closed entry is removed. "Start again" passes the amount as `?amount=`.
+15. **`SimulatePaymentButton` is built with this spec** in `components/demo/DemoControls.tsx`, ahead of the rest of 15, since board 1.3 needs it. Parent home gets a plain "Send allowance" button until 14 builds board 1.1.
 
 ## Additions to 01 (status)
 

@@ -118,3 +118,15 @@ export function formatMonthYear(seconds: number, lang: Lang, timeZone?: string):
 function localZone(): string {
   return Intl.DateTimeFormat().resolvedOptions().timeZone;
 }
+
+/** `14:02` / `14.02`. */
+export function formatTime(seconds: number, lang: Lang, timeZone?: string): string {
+  return time(parts(seconds, lang, timeZone ?? localZone(), "short"), lang);
+}
+
+/** `Today at 23:59` when it falls today in the zone, else `Sun, 11 Oct at 14:05` (08 S08-7). */
+export function formatDue(seconds: number, now: number, lang: Lang, timeZone?: string): string {
+  const tz = timeZone ?? localZone();
+  if (localDay(seconds, tz) !== localDay(now, tz)) return formatDayTime(seconds, lang, tz);
+  return `${lang === "id" ? "Hari ini pukul" : "Today at"} ${formatTime(seconds, lang, tz)}`;
+}

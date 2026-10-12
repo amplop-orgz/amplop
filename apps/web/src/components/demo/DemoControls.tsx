@@ -4,8 +4,9 @@
 import { formatDay, formatDayTime } from "@amplop/shared/dates";
 import { dayOf, daysToNextMonday } from "@amplop/shared/schedule";
 import { useEffect, useRef, useState } from "react";
-import { Button, InlineMessage, Sheet } from "@/components/ui";
+import { Button, InfoBox, InlineMessage, Sheet } from "@/components/ui";
 import { switchProfile, useSession } from "@/lib/client/account";
+import { api, ApiError } from "@/lib/client/api";
 import { read } from "@/lib/client/chain/client";
 import { sendUserTx } from "@/lib/client/chain/write";
 import { DEMO } from "@/lib/client/env";
@@ -13,6 +14,7 @@ import { errorKey } from "@/lib/client/errors";
 import { hasKey, useT, type Key } from "@/lib/client/i18n";
 import { listProfiles, type Profile } from "@/lib/client/profiles";
 import { useRead } from "@/lib/client/query";
+import type { OrderView } from "@/lib/client/topup";
 
 export type SkipKind = "monday" | "48h";
 
@@ -226,5 +228,57 @@ export function ViewAsLink({ name }: { name: string }) {
       </Button>
       {error ? <InlineMessage kind="error">{t(error)}</InlineMessage> : null}
     </>
+  );
+}
+
+/** Board 1.3's test-mode box (15 S15-5). Double taps deposit once on the server (08 C6). */
+export function SimulatePaymentButton({
+  orderId,
+  accountId,
+  onDone,
+}: {
+  orderId: string;
+  accountId: bigint;
+  onDone: (o: OrderView) => void;
+}) {
+  const { t } = useT();
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  if (!DEMO) return <InfoBox>{t("order.testModeOnly")}</InfoBox>;
+  const simulate = () => {
+    if (busy) return;
+    setBusy(true);
+    setError(null);
+    api
+      .post<OrderView>(
+        `/api/topup/${orderId}/simulate`,
+        {},
+        { auth: { action: "topup.simulate", accountId } },
+      )
+      .then(onDone)
+      .catch((e: unknown) => {
+        setError(e instanceof ApiError ? e.message : t("error.generic"));
+      })
+      .finally(() => {
+        setBusy(false);
+      });
+  };
+  return (
+    <div className="flex flex-col gap-2">
+      <InfoBox>{t("order.testMode")}</InfoBox>
+      <Button
+        parent
+        variant="secondary"
+        busyLabel={busy ? t("order.simulating") : null}
+        onClick={simulate}
+      >
+        {t("order.simulate")}
+      </Button>
+      {error ? (
+        <InlineMessage kind="error" onRetry={simulate}>
+          {error}
+        </InlineMessage>
+      ) : null}
+    </div>
   );
 }

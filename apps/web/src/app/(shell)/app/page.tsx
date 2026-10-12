@@ -2,6 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { HomeEmpty } from "@/components/onboarding/HomeEmpty";
+import { useArrivedDeposit } from "@/components/topup/Arrived";
 import { Welcome } from "@/components/onboarding/Welcome";
 import { InlineMessage, TabBar } from "@/components/ui";
 import { useSession } from "@/lib/client/account";
@@ -30,6 +31,7 @@ function StudentHome({ accountId }: { accountId: bigint }) {
   const account = useAccount(accountId, { intervalMs: 10_000 });
   const profile = useProfileName(accountId);
   const trustedName = useTrustedName(accountId);
+  useArrivedDeposit(accountId);
   useEffect(() => {
     // S07-4: an account with no saved name finishes on the name step.
     if (profile.data === null) router.replace("/app/name");

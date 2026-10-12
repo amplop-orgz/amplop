@@ -190,3 +190,15 @@ describe("schemas (S05-19)", () => {
     expect(t.safeParse("a".repeat(61)).success).toBe(false);
   });
 });
+
+describe("formatTime and formatDue", () => {
+  it("shows a time, and Today only on the same local day", async () => {
+    const { formatDue, formatTime } = await import("../src/dates");
+    const at = Date.UTC(2026, 9, 12, 16, 59) / 1000; // 23:59 in Jakarta
+    expect(formatTime(at, "en", "Asia/Jakarta")).toBe("23:59");
+    expect(formatTime(at, "id", "Asia/Jakarta")).toBe("23.59");
+    expect(formatDue(at, at - 3600, "en", "Asia/Jakarta")).toBe("Today at 23:59");
+    expect(formatDue(at, at - 3600, "id", "Asia/Jakarta")).toBe("Hari ini pukul 23.59");
+    expect(formatDue(at, at - 86_400, "en", "Asia/Jakarta")).toBe("Mon, 12 Oct at 23:59");
+  });
+});

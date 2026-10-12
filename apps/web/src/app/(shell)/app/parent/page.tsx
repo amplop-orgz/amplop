@@ -3,7 +3,7 @@ import { formatUsd } from "@amplop/shared/money";
 import { shortName } from "@amplop/shared/names";
 import { useCallback } from "react";
 import { ViewAsLink } from "@/components/demo/DemoControls";
-import { ENVELOPE_BG, InlineMessage } from "@/components/ui";
+import { ButtonLink, ENVELOPE_BG, InlineMessage } from "@/components/ui";
 import { useSession } from "@/lib/client/account";
 import { read } from "@/lib/client/chain/client";
 import { useAccount, useProfileName } from "@/lib/client/data";
@@ -63,6 +63,9 @@ export default function ParentPage() {
       ) : (
         <div className="text-muted">{t("common.loading")}</div>
       )}
+      <ButtonLink parent href="/app/parent/send">
+        {t("parent.send")}
+      </ButtonLink>
       <ViewAsLink name={short} />
     </div>
   );
