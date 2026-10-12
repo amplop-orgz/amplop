@@ -85,6 +85,21 @@ export function canSend(amount: bigint | null, locked: bigint, reason: string): 
   return amount !== null && amount > 0n && amount <= locked && n >= 1 && n <= 280;
 }
 
+/** S12-8 as text: "47 h 12 min", "59 min" or "less than a minute". */
+export function countdownText(
+  t: (
+    key: "emergency.hoursMinutes" | "emergency.minutes" | "emergency.lessThanMinute",
+    vars?: Record<string, number>,
+  ) => string,
+  seconds: number,
+): string {
+  const cd = countdownParts(seconds);
+  if (seconds <= 0 || !cd) return t("emergency.lessThanMinute");
+  return cd.h > 0
+    ? t("emergency.hoursMinutes", { h: cd.h, m: cd.m })
+    : t("emergency.minutes", { m: cd.m });
+}
+
 /** S12-8: "47 h 12 min", "59 min", or null for under a minute. */
 export function countdownParts(seconds: number): { h: number; m: number } | null {
   if (seconds < 60) return null;

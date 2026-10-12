@@ -382,6 +382,8 @@ The PRD wins on conflict. Never use `wallet-integration` (Para) or `wallet`; Amp
 11. **Indexer "behind"** follows 01 section 9 and 16 S16-14: more than 30 blocks behind the chain head, not ready, or no answer within 4 seconds.
 12. **Share 1's row** in the release schedule shows the Monday of its arrival week, because same-week allowances share one record and the contract keeps no arrival day. Shares 2 to 4 show their exact Monday.
 13. **The pace period is the whole Monday week**, for the same reason.
+14. **No component tests with Testing Library.** The repository has no DOM test setup; the S11 pure pieces (tile state, rows, badges, move rule, rupiah reference, every schedule function) have unit tests, and the screens are covered by 19's end-to-end cases.
+15. **The Collect now slot on 2.10 is left for 15** (batch 5's demo work), as this spec says.
 
 ## Additions to 01 (status)
 

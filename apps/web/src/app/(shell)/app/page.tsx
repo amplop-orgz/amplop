@@ -4,7 +4,8 @@ import { useEffect } from "react";
 import { HomeEmpty } from "@/components/onboarding/HomeEmpty";
 import { useArrivedDeposit } from "@/components/topup/Arrived";
 import { Welcome } from "@/components/onboarding/Welcome";
-import { InlineMessage, TabBar } from "@/components/ui";
+import { Home } from "@/components/home/Home";
+import { InlineMessage } from "@/components/ui";
 import { useSession } from "@/lib/client/account";
 import { useAccount, useProfileName, useTrustedName } from "@/lib/client/data";
 import { appHome } from "@/lib/client/guard";
@@ -53,17 +54,7 @@ function StudentHome({ accountId }: { accountId: bigint }) {
   }
   if (!account.data || !profile.data)
     return <div className="p-5 text-muted">{t("common.loading")}</div>;
-  if (account.data.info.everDeposited) {
-    // S07-21: 11 builds board 2.2 here.
-    return (
-      <>
-        <div className="flex flex-1 flex-col gap-3 p-5">
-          <h1 className="m-0 text-[1.25rem] font-bold">{t("home.hi", { name: profile.data })}</h1>
-          <p className="m-0 text-muted">{t("home.arrivedSoon")}</p>
-        </div>
-        <TabBar current="envelopes" />
-      </>
-    );
-  }
+  if (account.data.info.everDeposited)
+    return <Home accountId={accountId} name={profile.data} trustedName={trustedName} />;
   return <HomeEmpty account={account.data} name={profile.data} trustedName={trustedName} />;
 }

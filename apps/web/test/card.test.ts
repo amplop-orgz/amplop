@@ -440,6 +440,16 @@ describe("card endpoints with the fake chain", () => {
       headers: await signedHeaders({ account: mama, action: "purchases.read", accountId: 1n }),
     });
     expect(errCode(m.json)).toBe("not_owner");
+    // 11 S11-27, S11-28: no private columns, a signature needed, and the old owner refused (I4).
+    const item = (r.json as { items: Record<string, unknown>[] }).items[0] ?? {};
+    for (const k of ["txHash", "tx_hash", "mcc", "idempotencyKey", "idempotency_key"])
+      expect(item).not.toHaveProperty(k);
+    expect((await call(purchasesRoute)).status).toBe(401);
+    rpc.accounts.set(1n, { owner: newAccount().address, trusted: mama.address });
+    const old = await call(purchasesRoute, {
+      headers: await signedHeaders({ account: raka, action: "purchases.read", accountId: 1n }),
+    });
+    expect([old.status, errCode(old.json)]).toEqual([403, "not_owner"]);
   });
 });
 
