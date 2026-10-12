@@ -167,6 +167,7 @@ export const INDEXER_URL = "http://127.0.0.1:8080/v1/graphql";
 /** The indexer's `_meta` row, or null while it is down (S19-11). */
 export async function indexerMeta(): Promise<{ progressBlock: number; isReady: boolean } | null> {
   try {
+    // nosemgrep -- test harness reading the local indexer over loopback
     const r = await fetch(INDEXER_URL, {
       method: "POST",
       headers: { "content-type": "application/json" },

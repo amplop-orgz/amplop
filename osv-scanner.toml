@@ -4,3 +4,8 @@
 id = "GHSA-vfj7-8cjw-p6xm"
 ignoreUntil = 2026-11-15T00:00:00Z
 reason = "braces <=3.0.3 has no fixed release. It is reached only through @next/eslint-plugin-next -> fast-glob at lint time, with the repository's own glob patterns; it is not in the app bundle or the server."
+
+[[IgnoredVulns]]
+id = "GHSA-ph9p-34f9-6g65"
+ignoreUntil = 2026-11-15T00:00:00Z
+reason = "tmp <0.2.6 (path traversal through a caller-chosen prefix or postfix) is reached only through @lhci/cli and its prompt library, which run Lighthouse in CI with their own fixed prefixes; it is not in the app bundle or the server. npm 11 would not apply an override to tmp 0.2.7 in the lockfile."

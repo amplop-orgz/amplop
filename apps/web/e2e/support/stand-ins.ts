@@ -97,6 +97,7 @@ export function midtrans(): Promise<Server> {
 }
 
 async function rpc(method: string, params: unknown[]): Promise<unknown> {
+  // nosemgrep -- test stand-in talking to the local Anvil over loopback
   const r = await fetch(ANVIL, {
     method: "POST",
     headers: { "content-type": "application/json" },
@@ -142,6 +143,7 @@ export function rpcProxy(port: number): Promise<Server> {
       json(res, 429, { error: "rate limited" }, cors);
       return;
     }
+    // nosemgrep -- test stand-in talking to the local Anvil over loopback
     const r = await fetch(ANVIL, {
       method: "POST",
       headers: { "content-type": "application/json" },

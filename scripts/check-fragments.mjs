@@ -18,6 +18,7 @@ export function normalise(md) {
 }
 
 export function copyOf(doc, name) {
+  // nosemgrep -- fragment names come from the committed fragments folder, not input
   const m = new RegExp(
     `<!-- fragment:${name}:start -->([\\s\\S]*?)<!-- fragment:${name}:end -->`,
   ).exec(doc);

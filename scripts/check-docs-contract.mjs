@@ -3,12 +3,15 @@ import { readFileSync } from "node:fs";
 import { fail, isMain } from "./lib.mjs";
 
 export function check(abi, page) {
-  return abi
-    .filter(
-      (x) => (x.type === "function" || x.type === "event") && x.name !== "EIP712DomainChanged",
-    )
-    .filter((x) => !new RegExp(`\\b${x.name}\\b`).test(page))
-    .map((x) => `contracts.mdx: missing ${x.type} ${x.name}`);
+  return (
+    abi
+      .filter(
+        (x) => (x.type === "function" || x.type === "event") && x.name !== "EIP712DomainChanged",
+      )
+      // nosemgrep -- ABI names are identifiers from the committed ABI
+      .filter((x) => !new RegExp(`\\b${x.name}\\b`).test(page))
+      .map((x) => `contracts.mdx: missing ${x.type} ${x.name}`)
+  );
 }
 
 if (isMain(import.meta)) {
