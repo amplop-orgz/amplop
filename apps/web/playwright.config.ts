@@ -33,8 +33,9 @@ export default defineConfig({
   retries: CI ? 1 : 0,
   // Stop early in CI so a broken engine ends the job and still uploads its report and traces.
   maxFailures: CI ? 5 : undefined,
-  // Cases mostly wait on the chain, so a CI shard runs six at once on its four cores.
-  workers: testnet ? 1 : process.env.E2E_SPLIT ? 6 : 4,
+  // CI sets E2E_WORKERS per engine: Chromium shards run six cases at once (they mostly wait on the
+  // chain); WebKit gets flaky above four on a four-core runner, so it gets more shards instead.
+  workers: testnet ? 1 : Number(process.env.E2E_WORKERS ?? 4),
   // Every case makes its own accounts, so cases run (and shard) one by one, not file by file.
   fullyParallel: !testnet,
   reporter: CI ? [["list"], ["html", { open: "never" }]] : "list",

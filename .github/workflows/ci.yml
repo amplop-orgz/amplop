@@ -359,15 +359,27 @@ jobs:
   # 19 S19-17: Tier 1 and SEC1-SEC3 in both engines against the local stack (Anvil, stand-ins,
   # indexer in Docker, a production build). global-setup starts and stops all of it.
   e2e-tier1:
+    name: e2e-tier1 (${{ matrix.engine }}, ${{ matrix.part }})
     runs-on: ubuntu-24.04
     timeout-minutes: 20
-    # Per engine, four shards and the indexer-off case (F10) side by side (S19-17, decision 23);
+    # Per engine, shards and the indexer-off case (F10) side by side (S19-17, decision 23);
     # each job starts its own local stack and scans its own server log (SEC3).
     strategy:
       fail-fast: false
       matrix:
-        engine: [chromium, webkit]
-        part: [1, 2, 3, 4, indexer-off]
+        include:
+          - { engine: chromium, part: 1, of: 4, workers: 6 }
+          - { engine: chromium, part: 2, of: 4, workers: 6 }
+          - { engine: chromium, part: 3, of: 4, workers: 6 }
+          - { engine: chromium, part: 4, of: 4, workers: 6 }
+          - { engine: chromium, part: indexer-off, of: 1, workers: 1 }
+          - { engine: webkit, part: 1, of: 6, workers: 4 }
+          - { engine: webkit, part: 2, of: 6, workers: 4 }
+          - { engine: webkit, part: 3, of: 6, workers: 4 }
+          - { engine: webkit, part: 4, of: 6, workers: 4 }
+          - { engine: webkit, part: 5, of: 6, workers: 4 }
+          - { engine: webkit, part: 6, of: 6, workers: 4 }
+          - { engine: webkit, part: indexer-off, of: 1, workers: 1 }
     services:
       db:
         image: postgres:16@sha256:2d2b8998d31037bf721cfdf764d76ba74171b4fab3431b7f72c27c56ddbdf9e3
@@ -411,11 +423,12 @@ jobs:
           if [ "${{ matrix.part }}" = indexer-off ]; then
             npm run e2e:tier1:ci -- --project=indexer-off
           else
-            npm run e2e:tier1:ci -- --project=${{ matrix.engine }}-phone --shard=${{ matrix.part }}/4
+            npm run e2e:tier1:ci -- --project=${{ matrix.engine }}-phone --shard=${{ matrix.part }}/${{ matrix.of }}
           fi
         env:
           E2E_ENGINE: ${{ matrix.engine }}
           E2E_SPLIT: "1"
+          E2E_WORKERS: ${{ matrix.workers }}
       - if: ${{ !cancelled() }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
