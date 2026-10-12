@@ -64,10 +64,7 @@ describe("decideRoute (S06-8)", () => {
         "/app/card",
         [{ unlock: true }, { redirect: "/app" }, { allow: true }, { redirect: "/app/parent" }],
       ],
-      [
-        "/app/parent",
-        [{ unlock: true }, { redirect: "/app" }, { redirect: "/app" }, { allow: true }],
-      ],
+      ["/app/parent", [{ unlock: true }, { allow: true }, { redirect: "/app" }, { allow: true }]],
       [
         "/app/name",
         [{ unlock: true }, { allow: true }, { allow: true }, { redirect: "/app/parent" }],
@@ -85,6 +82,7 @@ describe("decideRoute (S06-8)", () => {
     }
     expect(cell("/app/card", both)).toEqual({ allow: true });
     expect(cell("/app/parent/send", both)).toEqual({ allow: true });
+    expect(cell("/app/parent/send", none)).toEqual({ redirect: "/app" });
     expect(guardFor("/recover")).toBe("none");
     expect(guardFor("/recover/x")).toBe("signedIn");
     expect(guardFor("/app/setup")).toBe("onboarding");

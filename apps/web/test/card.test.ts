@@ -440,6 +440,12 @@ describe("card endpoints with the fake chain", () => {
       headers: await signedHeaders({ account: mama, action: "purchases.read", accountId: 1n }),
     });
     expect(errCode(m.json)).toBe("not_owner");
+    // 14 J4: the trusted person with Account = 0 is refused too, with no items.
+    const zero = await call(purchasesRoute, {
+      headers: await signedHeaders({ account: mama, action: "purchases.read", accountId: 0n }),
+    });
+    expect(zero.status).toBe(403);
+    expect(zero.json).not.toHaveProperty("items");
     // 11 S11-27, S11-28: no private columns, a signature needed, and the old owner refused (I4).
     const item = (r.json as { items: Record<string, unknown>[] }).items[0] ?? {};
     for (const k of ["txHash", "tx_hash", "mcc", "idempotencyKey", "idempotency_key"])

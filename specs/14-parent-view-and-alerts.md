@@ -227,6 +227,9 @@ The PRD wins on conflict. Never use `wallet-integration` (Para) or `wallet`. Amp
 6. **No alert** for not-enough declines, deposits, collections, an immediate split before the first allowance, or the end of a wait. R26 does not list them, and 16 stores none.
 7. **Rupiah total** is shown in millions with one decimal at Rp1.000.000 or more ("Rp10,9 million").
 8. **J7 prompt** copy: "No allowance yet" / "Send the first one and it splits into <Name>'s envelopes." / "Send the first allowance".
+9. **The route guard lets a signed-in person with no role open `/app/parent`** (a change to 06 S06-8's table), so a replaced trusted person sees "You are not linked to a student" (S14-1, J6) instead of being sent to Welcome. A student is still sent to `/app`.
+10. **`<when>` uses 06's relative formatter**, which writes older days as "Tue, 6 Oct at 13:42" (with "at"), like every other date-time in the app.
+11. **The contract-built removal row sorts by its start time** (`readyAt` minus 48 hours) among the indexer alerts.
 
 ## Additions to 01 (status)
 

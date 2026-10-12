@@ -28,6 +28,8 @@ export function decideRoute(path: string, state: GuardState): Decision {
       return { redirect: trusted ? "/app/parent" : "/app" };
     case "trusted":
       if (trusted) return ALLOW;
+      // 14 S14-1, J6: someone no longer linked sees "You are not linked to a student" there.
+      if (!student && path === "/app/parent") return ALLOW;
       return { redirect: "/app" };
     case "onboarding":
       if (trusted && !student) return { redirect: "/app/parent" };
