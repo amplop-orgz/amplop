@@ -176,7 +176,7 @@ export function signOut(): void {
 export async function switchProfile(
   credentialId: string,
   opts: { stay?: boolean } = {},
-): Promise<Session> {
+): Promise<{ session: Session; home: "/app" | "/app/parent" | null }> {
   if (!DEMO) throw new Error("View as is only available in the demo");
   const known = profileFor(credentialId);
   let r;
@@ -194,17 +194,15 @@ export async function switchProfile(
   saveProfile(known ?? { credentialId: r.credentialId, label: "Amplop" });
   const session = start(deriveSigner(r.prfOutput), r.credentialId);
   const role = await refreshRole();
-  // 15 S15-7: the approval page reloads on the same address as the other profile.
-  if (opts.stay) {
-    location.reload();
-    return session;
-  }
-  location.replace(
-    role.trustedAccountId !== undefined && role.studentAccountId === undefined
-      ? "/app/parent"
-      : "/app",
-  );
-  return session;
+  // 15 S15-7: the caller navigates in-app; a full page load would drop the new in-memory session.
+  if (opts.stay) return { session, home: null };
+  return {
+    session,
+    home:
+      role.trustedAccountId !== undefined && role.studentAccountId === undefined
+        ? "/app/parent"
+        : "/app",
+  };
 }
 
 /** S06-20: the contract is the only source of the role. */

@@ -3,6 +3,7 @@
 "use client";
 import { formatDay, formatDayTime } from "@amplop/shared/dates";
 import { dayOf, daysToNextMonday } from "@amplop/shared/schedule";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Button, InfoBox, InlineMessage, ProofLink, Sheet } from "@/components/ui";
 import { switchProfile, useSession } from "@/lib/client/account";
@@ -176,6 +177,7 @@ function useOtherProfile(): Profile | null {
 /** The "View as" row in Settings (15 S15-6, S15-7). */
 export function ViewAsRow({ name }: { name: string }) {
   const { t } = useT();
+  const router = useRouter();
   const other = useOtherProfile();
   const [error, setError] = useState<Key | null>(null);
   if (!DEMO) return null;
@@ -193,9 +195,13 @@ export function ViewAsRow({ name }: { name: string }) {
           type="button"
           onClick={() => {
             setError(null);
-            switchProfile(other.credentialId).catch((e: unknown) => {
-              setError(errorKey(e, hasKey) as Key);
-            });
+            switchProfile(other.credentialId)
+              .then(({ home }) => {
+                if (home) router.replace(home);
+              })
+              .catch((e: unknown) => {
+                setError(errorKey(e, hasKey) as Key);
+              });
           }}
           className="flex h-11 shrink-0 items-center text-[0.9375rem] font-bold text-link"
         >
@@ -209,6 +215,7 @@ export function ViewAsRow({ name }: { name: string }) {
 /** "Demo only: view as Raka" under parent home's actions, or "View as Mama" on the approval page (15 S15-6). */
 export function ViewAsLink({ name, onApproval = false }: { name: string; onApproval?: boolean }) {
   const { t } = useT();
+  const router = useRouter();
   const other = useOtherProfile();
   const [error, setError] = useState<Key | null>(null);
   if (!DEMO || !other) return null;
@@ -219,9 +226,14 @@ export function ViewAsLink({ name, onApproval = false }: { name: string; onAppro
         parent
         onClick={() => {
           setError(null);
-          switchProfile(other.credentialId, { stay: onApproval }).catch((e: unknown) => {
-            setError(errorKey(e, hasKey) as Key);
-          });
+          switchProfile(other.credentialId, { stay: onApproval })
+            .then(({ home }) => {
+              if (home) router.replace(home);
+              else router.refresh();
+            })
+            .catch((e: unknown) => {
+              setError(errorKey(e, hasKey) as Key);
+            });
         }}
       >
         <span className="user-text">
