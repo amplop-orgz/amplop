@@ -109,3 +109,15 @@ describe("approval page states (S12-18, S12-19)", () => {
     expect(approvalState({ ...o, em: em(EmergencyStatus.Open, 2n) })).toBe("closed");
   });
 });
+
+describe("indexer lag rule (16 S16-14)", () => {
+  it("is behind when not ready, over 30 blocks back, or before a block this screen wrote", async () => {
+    const { isBehind } = await import("@/lib/client/indexer");
+    expect(isBehind(undefined, 100n)).toBe(true);
+    expect(isBehind({ progressBlock: 100, isReady: false }, 100n)).toBe(true);
+    expect(isBehind({ progressBlock: 70, isReady: true }, 100n)).toBe(false);
+    expect(isBehind({ progressBlock: 69, isReady: true }, 100n)).toBe(true);
+    expect(isBehind({ progressBlock: 95, isReady: true }, 100n, 96n)).toBe(true);
+    expect(isBehind({ progressBlock: 96, isReady: true }, 100n, 96n)).toBe(false);
+  });
+});

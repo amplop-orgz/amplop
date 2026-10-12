@@ -50,6 +50,12 @@ export default tseslint.config(
     },
   },
   {
+    // The indexer is its own pnpm project with generated types (16 S16-18); it is type-checked by its
+    // own tsc, so lint here skips the rules that need its types.
+    files: ["indexer/**/*.ts"],
+    extends: [tseslint.configs.disableTypeChecked],
+  },
+  {
     rules: {
       "no-empty": ["error", { allowEmptyCatch: false }],
       "no-console": "error",

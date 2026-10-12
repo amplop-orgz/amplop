@@ -1,0 +1,5 @@
+# The indexer is its own pnpm project (16 S16-18): Envio v3 installs with pnpm during codegen.
+# Only these two dependencies may run build scripts; rescript compiles the generated code.
+allowBuilds:
+  esbuild: true
+  rescript: true

@@ -1,0 +1,32 @@
+{
+  "name": "@amplop/indexer",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "pnpm@12.11.2",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "codegen": "envio codegen",
+    "dev": "envio dev",
+    "start": "envio start",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "abi:sync": "node scripts/abi-sync.mjs",
+    "check": "node scripts/check.mjs",
+    "e2e:config": "node scripts/write-e2e-config.mjs"
+  },
+  "dependencies": {
+    "envio": "3.0.0-alpha.21"
+  },
+  "optionalDependencies": {
+    "generated": "./generated"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "typescript": "5.9.3",
+    "vitest": "4.0.18"
+  }
+}

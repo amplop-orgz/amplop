@@ -41,6 +41,10 @@
     "./schedule": {
       "types": "./dist/schedule.d.ts",
       "default": "./dist/schedule.js"
+    },
+    "./indexer": {
+      "types": "./dist/indexer/queries.d.ts",
+      "default": "./dist/indexer/queries.js"
     }
   },
   "scripts": {

@@ -16,3 +16,6 @@ audits/tool-output/**
 audits/tools/**
 coverage
 *.sol
+indexer/abis
+indexer/pnpm-lock.yaml
+indexer/config.e2e.yaml

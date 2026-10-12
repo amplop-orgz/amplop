@@ -442,6 +442,16 @@ None. Screens that show this data: 2.1 (history link), 2.3, 2.9, 2.10 (11); 3.2 
 6. **Lag threshold:** 30 blocks or a 4 s timeout.
 7. **Envio Cloud deploys from `main` with `--root-dir ./indexer`** (Envio's default branch is `envio`). The ABI is copied into `indexer/abis/` because the build may only see that folder.
 8. **`AccountByOwnerQuery` exists but core code never uses it**; account lookup stays on the contract.
+9. **The indexer is its own pnpm project with its own `pnpm-lock.yaml` (S16-18 applied from the start).** Envio 3.0.0-alpha.21 runs `pnpm install` itself during codegen, its generated package must compile with `rescript` (a build script), and its dependency tree (GPL-3.0 CLI, Fuel packages) would otherwise enter the web app's lockfile and install-script checks. Only `rescript` and `esbuild` may run build scripts (`indexer/pnpm-workspace.yaml`). CI runs it in its own `test-indexer` job; pnpm's version is `PNPM` in `tools/versions.env`.
+10. **Handlers register with the generated `AmplopEnvelopes.<Event>.handler(...)`**, the API this Envio version generates, in place of S16-10's `indexer.onEvent`.
+11. **`EIP712DomainChanged` is not indexed.** It is in the ABI (from OpenZeppelin's EIP712) but this contract never emits it, so the check compares against the other 22 events.
+12. **Hasura names the enum types in lower case** (`$envelope: envelope!`), since Envio creates them unquoted. BigInt fields are typed `string | number` in the query results and read with `toBig`, because the local Docker images could not be pulled here to confirm which the endpoint returns; every stored value fits a safe integer.
+13. **`config.e2e.yaml` is generated and ignored by git**, since `deployments/anvil.json` is local.
+ 9. **The indexer is its own pnpm project with its own `pnpm-lock.yaml` (S16-18 applied from the start).** Envio 3.0.0-alpha.21 runs `pnpm install` itself during codegen, its generated package must compile with `rescript` (a build script), and its dependency tree (GPL-3.0 CLI, Fuel packages) would otherwise enter the web app's lockfile and install-script checks. Only `rescript` and `esbuild` may run build scripts (`indexer/pnpm-workspace.yaml`). CI runs it in its own `test-indexer` job; pnpm's version is `PNPM` in `tools/versions.env`.
+ 10. **Handlers register with the generated `AmplopEnvelopes.<Event>.handler(...)`**, the API this Envio version generates, in place of S16-10's `indexer.onEvent`.
+ 11. **`EIP712DomainChanged` is not indexed.** It is in the ABI (from OpenZeppelin's EIP712) but this contract never emits it, so the check compares against the other 22 events.
+ 12. **Hasura names the enum types in lower case** (`: envelope!`), since Envio creates them unquoted. BigInt fields are typed `string | number` in the query results and read with `toBig`, because the local Docker images could not be pulled here to confirm which the endpoint returns; every stored value fits a safe integer.
+ 13. **`config.e2e.yaml` is generated and ignored by git**, since `deployments/anvil.json` is local.
 
 ## Additions to 01 (status)
 
@@ -450,5 +460,5 @@ None. Screens that show this data: 2.1 (history link), 2.3, 2.9, 2.10 (11); 3.2 
 3. `INDEXER_MAX_LAG_BLOCKS = 30`, `INDEXER_TIMEOUT_MS = 4000`: Merged into 01 (section 9).
 4. `deployments/monad-testnet.json` fields: Merged into 01 (section 2); 04 names them `address` and `deployBlock` (S04-11), which S16-4 reads.
 5. Route `/app/arrived/[deposit]` uses the `paymentId`: Merged into 01 (section 9).
-6. Own `indexer/package-lock.json` if Envio Cloud needs it: Not merged; applied only if S16-18's check fails, and then 01 section 2 is updated in the same commit.
+6. Own `indexer/package-lock.json` if Envio Cloud needs it: Applied with pnpm (decision 9); 01 section 2 updated.
 7. Entity and field names (`accountClock`, `sortKey`, `status`, alert kinds): Merged into 01 (section 9) by reference to S16-7 to S16-9.

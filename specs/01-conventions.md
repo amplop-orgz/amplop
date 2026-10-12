@@ -38,7 +38,7 @@ submission             portal texts and scripts (spec 20)
 tools, scripts         pinned tool versions, skill installer, deploy helpers
 ```
 
-Package manager: npm workspaces with one committed `package-lock.json`, installed with `npm ci`. Node 24 LTS (Mera, PRD 6, declares Node 24 or newer, and `engine-strict` enforces it).
+Package manager: npm workspaces with one committed `package-lock.json`, installed with `npm ci`. The one exception is `indexer/`, its own pnpm project with `indexer/pnpm-lock.yaml`, because Envio v3 installs with pnpm (16 S16-18, decision 9). Node 24 LTS (Mera, PRD 6, declares Node 24 or newer, and `engine-strict` enforces it).
 
 Inside `apps/web/src`:
 

@@ -292,11 +292,34 @@ jobs:
           [ "$n" = "0" ]
       - run: npm run check:deps
 
+  test-indexer:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+      - id: versions
+        run: grep -v "^#" tools/versions.env >> "$GITHUB_OUTPUT"
+      - name: pnpm (Envio v3 installs with pnpm during codegen, 16 S16-18)
+        env:
+          PNPM_VERSION: ${{ steps.versions.outputs.PNPM }}
+        run: npm install -g "pnpm@$PNPM_VERSION"
+      - name: Install, generate, check config, types and handler tests (16 S16-6, U1-U20)
+        working-directory: indexer
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm codegen
+          pnpm check
+          pnpm typecheck
+          pnpm test
+
   all-green:
     needs:
       - static
       - commits
       - test-ts
+      - test-indexer
       - build
       - test-contracts
       - coverage-contracts

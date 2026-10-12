@@ -24,3 +24,4 @@ indexer/.envio/
 *.log
 .DS_Store
 *.tsbuildinfo
+indexer/config.e2e.yaml

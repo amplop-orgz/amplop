@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=./node_modules/envio/evm.schema.json
+# Monad testnet (16 S16-4). Address and start_block come from deployments/monad-testnet.json;
+# `pnpm check` fails when they differ.
+name: amplop
+description: Amplop envelopes - activity and parent alerts
+schema: ./schema.graphql
+field_selection:
+  transaction_fields:
+    - hash # "View transaction proof" links
+contracts:
+  - name: AmplopEnvelopes
+    abi_file_path: ./abis/AmplopEnvelopes.json
+    events: # all 22 of 01 section 3, in its order
+      - event: AccountCreated
+      - event: SplitSaved
+      - event: InviteCreated
+      - event: TrustedLinked
+      - event: TrustedRemovalStarted
+      - event: TrustedRemoved
+      - event: Deposited
+      - event: PurchaseApproved
+      - event: PurchaseDeclined
+      - event: PurchaseCollected
+      - event: HoldReleased
+      - event: PurchaseRefunded
+      - event: PurchaseMoved
+      - event: EmergencyRequested
+      - event: EmergencyOpened
+      - event: EmergencyCancelled
+      - event: LockOffStarted
+      - event: LockOffDone
+      - event: RecoveryApproved
+      - event: RecoveryDone
+      - event: PendingCancelled
+      - event: DaysSkipped
+chains:
+  - id: 10143
+    start_block: 70137747
+    rpc:
+      - url: https://testnet-rpc.monad.xyz
+        for: fallback # HyperSync is the primary source
+    contracts:
+      - name: AmplopEnvelopes
+        address: "0x5596Bf1014EC25F760e8976f1DD8a40Ee250c56C"

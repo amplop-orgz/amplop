@@ -1,0 +1,163 @@
+# Five entities from AmplopEnvelopes events (16 S16-7 to S16-9). Public chain data only: no shop
+# names, reasons, invite names or student names (R27).
+
+enum Envelope {
+  Food
+  Transport
+  Study
+  Everyday
+  Emergency
+}
+
+enum PurchaseStatus {
+  Held
+  Collected
+  Released
+  Refunded
+  Declined
+}
+
+enum DeclineReason {
+  Blocked
+  NotEnough
+}
+
+enum EmergencyStatus {
+  Open
+  Opened
+  Cancelled
+}
+
+enum OpenedBy {
+  Approval
+  Time
+}
+
+enum AlertKind {
+  EmergencyRequested
+  PurchaseBlocked
+  PurchaseMoved
+  SplitSaved
+  LockOffStarted
+  TrustedRemovalStarted
+  RecoveryApproved
+}
+
+enum AlertStatus {
+  Active
+  Done
+  Cancelled
+  Replaced
+}
+
+type Account {
+  id: ID!
+  accountId: BigInt!
+  owner: String! @index
+  trusted: String @index
+  trustedSince: BigInt
+  split: [Int!]!
+  pendingSplit: [Int!]
+  pendingSplitStartsAt: BigInt
+  lockOn: Boolean!
+  skipSeconds: BigInt!
+  inviteKey: String
+  inviteExpiresAt: BigInt
+  openAlertSplit: String
+  openAlertRemoval: String
+  openAlertLockOff: String
+  openAlertRecovery: String
+  openAlertEmergency: String
+  createdAt: BigInt!
+  createdBlock: Int!
+  createdTx: String!
+}
+
+type Deposit {
+  id: ID!
+  accountId: BigInt! @index
+  paymentId: String!
+  amount: BigInt!
+  parts: [BigInt!]!
+  startDay: BigInt!
+  blockNumber: Int!
+  logIndex: Int!
+  sortKey: BigInt! @index
+  timestamp: BigInt!
+  accountClock: BigInt!
+  txHash: String!
+}
+
+type Purchase {
+  id: ID!
+  accountId: BigInt! @index
+  purchaseId: String!
+  status: PurchaseStatus! @index
+  envelope: Envelope @index
+  originalEnvelope: Envelope
+  amount: BigInt!
+  held: BigInt!
+  collected: BigInt!
+  returned: BigInt!
+  refunded: BigInt!
+  shopType: Int!
+  everydayStepIn: Boolean!
+  declineReason: DeclineReason
+  moved: Boolean!
+  movedFrom: Envelope
+  movedTo: Envelope
+  collectedTx: String
+  releasedTx: String
+  refundedTx: String
+  movedTx: String
+  updatedAt: BigInt!
+  blockNumber: Int!
+  logIndex: Int!
+  sortKey: BigInt! @index
+  timestamp: BigInt!
+  accountClock: BigInt!
+  txHash: String!
+}
+
+type EmergencyRequest {
+  id: ID!
+  accountId: BigInt! @index
+  requestSeq: BigInt!
+  amount: BigInt!
+  reasonHash: String!
+  opensAt: BigInt!
+  status: EmergencyStatus! @index
+  openedBy: OpenedBy
+  openedAmount: BigInt
+  closedAt: BigInt
+  closedTx: String
+  blockNumber: Int!
+  logIndex: Int!
+  sortKey: BigInt! @index
+  timestamp: BigInt!
+  accountClock: BigInt!
+  txHash: String!
+}
+
+type Alert {
+  id: ID!
+  accountId: BigInt! @index
+  trusted: String! @index
+  kind: AlertKind!
+  status: AlertStatus!
+  statusAt: BigInt
+  statusTx: String
+  amount: BigInt
+  requestSeq: BigInt
+  shopType: Int
+  fromEnvelope: Envelope
+  toEnvelope: Envelope
+  split: [Int!]
+  readyAt: BigInt
+  blockNumber: Int!
+  logIndex: Int!
+  sortKey: BigInt! @index
+  timestamp: BigInt!
+  accountClock: BigInt!
+  txHash: String!
+}
