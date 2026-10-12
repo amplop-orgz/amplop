@@ -1,0 +1,31 @@
+# Foundry from cache, or installed (with one retry) when the cache misses. GitHub's release
+# download sometimes answers 504, and with many parallel jobs one of them would hit it.
+name: Foundry
+description: Install the pinned Foundry version, from cache when possible
+inputs:
+  version:
+    description: Foundry version (tools/versions.env FOUNDRY)
+    required: true
+runs:
+  using: composite
+  steps:
+    - id: cache
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ~/.foundry/bin
+        key: foundry-bin-${{ runner.os }}-${{ inputs.version }}
+    - if: steps.cache.outputs.cache-hit == 'true'
+      shell: bash
+      run: echo "$HOME/.foundry/bin" >> "$GITHUB_PATH"
+    - id: first
+      if: steps.cache.outputs.cache-hit != 'true'
+      continue-on-error: true
+      uses: foundry-rs/foundry-toolchain@908c540300062bd5a7e473851cdb4282204cee09 # v1.9.1
+      with:
+        version: ${{ inputs.version }}
+    - if: steps.cache.outputs.cache-hit != 'true' && steps.first.outcome == 'failure'
+      uses: foundry-rs/foundry-toolchain@908c540300062bd5a7e473851cdb4282204cee09 # v1.9.1
+      with:
+        version: ${{ inputs.version }}
+    - shell: bash
+      run: forge --version

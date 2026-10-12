@@ -28,7 +28,7 @@ jobs:
           cache: npm
       - id: versions
         run: grep -v "^#" tools/versions.env >> "$GITHUB_OUTPUT"
-      - uses: foundry-rs/foundry-toolchain@908c540300062bd5a7e473851cdb4282204cee09 # v1.9.1
+      - uses: ./.github/actions/foundry
         with:
           version: ${{ steps.versions.outputs.FOUNDRY }}
       - run: npm ci
@@ -91,7 +91,7 @@ jobs:
           cache: npm
       - id: versions
         run: grep -v "^#" tools/versions.env >> "$GITHUB_OUTPUT"
-      - uses: foundry-rs/foundry-toolchain@908c540300062bd5a7e473851cdb4282204cee09 # v1.9.1
+      - uses: ./.github/actions/foundry
         with:
           version: ${{ steps.versions.outputs.FOUNDRY }}
       - run: npm ci
@@ -151,7 +151,7 @@ jobs:
           submodules: recursive
       - id: versions
         run: grep -v "^#" tools/versions.env >> "$GITHUB_OUTPUT"
-      - uses: foundry-rs/foundry-toolchain@908c540300062bd5a7e473851cdb4282204cee09 # v1.9.1
+      - uses: ./.github/actions/foundry
         with:
           version: ${{ steps.versions.outputs.FOUNDRY }}
       - name: Foundry build cache
@@ -184,7 +184,7 @@ jobs:
           node-version-file: .nvmrc
       - id: versions
         run: grep -v "^#" tools/versions.env >> "$GITHUB_OUTPUT"
-      - uses: foundry-rs/foundry-toolchain@908c540300062bd5a7e473851cdb4282204cee09 # v1.9.1
+      - uses: ./.github/actions/foundry
         with:
           version: ${{ steps.versions.outputs.FOUNDRY }}
       - run: npm run coverage:contracts
@@ -200,7 +200,7 @@ jobs:
           node-version-file: .nvmrc
       - id: versions
         run: grep -v "^#" tools/versions.env >> "$GITHUB_OUTPUT"
-      - uses: foundry-rs/foundry-toolchain@908c540300062bd5a7e473851cdb4282204cee09 # v1.9.1
+      - uses: ./.github/actions/foundry
         with:
           version: ${{ steps.versions.outputs.FOUNDRY }}
       - run: |
@@ -223,7 +223,7 @@ jobs:
           python-version: "3.12"
       - id: versions
         run: grep -v "^#" tools/versions.env >> "$GITHUB_OUTPUT"
-      - uses: foundry-rs/foundry-toolchain@908c540300062bd5a7e473851cdb4282204cee09 # v1.9.1
+      - uses: ./.github/actions/foundry
         with:
           version: ${{ steps.versions.outputs.FOUNDRY }}
       - run: |
@@ -388,7 +388,7 @@ jobs:
           cache: npm
       - id: versions
         run: grep -v "^#" tools/versions.env >> "$GITHUB_OUTPUT"
-      - uses: foundry-rs/foundry-toolchain@908c540300062bd5a7e473851cdb4282204cee09 # v1.9.1
+      - uses: ./.github/actions/foundry
         with:
           version: ${{ steps.versions.outputs.FOUNDRY }}
       - name: pnpm for the indexer
