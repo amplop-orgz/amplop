@@ -28,7 +28,9 @@ const LAST_ENGINE = PHONES.at(-1)?.[1] ?? PIXEL;
 export default defineConfig({
   testDir: "./e2e/cases",
   globalSetup: "./e2e/global-setup.ts",
-  timeout: testnet ? 300_000 : 120_000,
+  // Long cases (C14, H2, I1, L2) come close to two minutes on a busy CI runner; a timeout there
+  // costs a two-minute retry, a higher limit costs nothing when they pass.
+  timeout: testnet ? 300_000 : 180_000,
   expect: { timeout: 15_000 },
   retries: CI ? 1 : 0,
   // Stop early in CI so a broken engine ends the job and still uploads its report and traces.
