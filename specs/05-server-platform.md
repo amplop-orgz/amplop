@@ -291,6 +291,7 @@ CREATE ROLE amplop_app LOGIN PASSWORD :'app_pw';
 REVOKE CREATE ON SCHEMA public FROM PUBLIC;
 GRANT USAGE, CREATE ON SCHEMA public TO amplop_migrator;
 GRANT USAGE ON SCHEMA public TO amplop_app;
+GRANT amplop_migrator TO CURRENT_USER;  -- hosted owners are not superusers
 ALTER DEFAULT PRIVILEGES FOR ROLE amplop_migrator IN SCHEMA public
   GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO amplop_app;
 ALTER DEFAULT PRIVILEGES FOR ROLE amplop_migrator IN SCHEMA public

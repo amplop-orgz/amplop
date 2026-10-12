@@ -8,6 +8,8 @@ SELECT format('CREATE ROLE amplop_app LOGIN PASSWORD %L', :'app_pw')
 REVOKE CREATE ON SCHEMA public FROM PUBLIC;
 GRANT USAGE, CREATE ON SCHEMA public TO amplop_migrator;
 GRANT USAGE ON SCHEMA public TO amplop_app;
+-- A non-superuser owner (Neon, Supabase) may only set default privileges for a role it belongs to.
+SELECT format('GRANT amplop_migrator TO %I', current_user) \gexec
 ALTER DEFAULT PRIVILEGES FOR ROLE amplop_migrator IN SCHEMA public
   GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO amplop_app;
 ALTER DEFAULT PRIVILEGES FOR ROLE amplop_migrator IN SCHEMA public
