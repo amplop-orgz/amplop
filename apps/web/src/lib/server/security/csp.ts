@@ -6,6 +6,9 @@ export const MERA_CONNECT_ORIGINS: readonly string[] = [];
 
 type CspEnv = {
   NODE_ENV?: string;
+  /** Plain http on localhost (local runs and the e2e harness): no upgrade-insecure-requests, which
+   *  WebKit would apply to the page's own scripts and styles. */
+  localHttp?: boolean;
   NEXT_PUBLIC_MONAD_RPC_URL?: string;
   NEXT_PUBLIC_MONAD_RPC_URL_FALLBACK?: string;
   NEXT_PUBLIC_INDEXER_URL?: string;
@@ -49,7 +52,7 @@ export function buildCsp(nonce: string, e: CspEnv): string {
     "object-src 'none'",
     "base-uri 'none'",
     "form-action 'self'",
-    "upgrade-insecure-requests",
+    ...(e.localHttp ? [] : ["upgrade-insecure-requests"]),
   ].join("; ");
 }
 

@@ -4,8 +4,10 @@ import { buildCsp, makeNonce } from "@/lib/server/security/csp";
 
 export function proxy(request: NextRequest) {
   const nonce = makeNonce();
+  const { protocol, hostname } = request.nextUrl;
   const csp = buildCsp(nonce, {
     NODE_ENV: process.env.NODE_ENV,
+    localHttp: protocol === "http:" && (hostname === "localhost" || hostname === "127.0.0.1"),
     NEXT_PUBLIC_MONAD_RPC_URL: process.env.NEXT_PUBLIC_MONAD_RPC_URL,
     NEXT_PUBLIC_MONAD_RPC_URL_FALLBACK: process.env.NEXT_PUBLIC_MONAD_RPC_URL_FALLBACK,
     NEXT_PUBLIC_INDEXER_URL: process.env.NEXT_PUBLIC_INDEXER_URL,

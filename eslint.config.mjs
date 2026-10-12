@@ -88,6 +88,11 @@ export default tseslint.config(
     },
   },
   {
+    // Playwright's fixture `use` is not a React hook.
+    files: ["apps/web/e2e/**"],
+    rules: { "react-hooks/rules-of-hooks": "off" },
+  },
+  {
     files: ["apps/web/public/sw.js"],
     languageOptions: { globals: globals.serviceworker },
   },

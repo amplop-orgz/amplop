@@ -207,6 +207,8 @@ describe("T05-13 headers and CSP", () => {
     expect(p).not.toMatch(/script-src[^;]*unsafe-inline/);
     expect(p).not.toContain("/key");
     expect(buildCsp("n", { NODE_ENV: "development" })).toContain("'unsafe-eval'");
+    expect(p).toContain("upgrade-insecure-requests");
+    expect(buildCsp("n", { localHttp: true })).not.toContain("upgrade-insecure-requests");
   });
   it("sets the static headers exactly", async () => {
     const h = await config.headers?.();
