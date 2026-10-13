@@ -12,6 +12,8 @@
   --sl-color-text: #111b33;
 }
 :root[data-theme="dark"] {
+  /* Starlight draws the current page link in accent-low on accent-high, so dark mode needs a dark low. */
+  --sl-color-accent-low: #111b33;
   --sl-color-accent: #9ab8e6;
   --sl-color-accent-high: #e6eaf2;
 }
