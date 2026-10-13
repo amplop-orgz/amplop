@@ -4,8 +4,11 @@ FROM node:24.21.0-slim
 # The HyperSync client checks TLS against the system roots, which the slim image leaves out.
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/*
 RUN npm install -g pnpm@12.11.2
+# Build and run as the image's unprivileged user.
+RUN mkdir /indexer && chown node:node /indexer
+USER node
 WORKDIR /indexer
-COPY . .
+COPY --chown=node:node . .
 RUN pnpm install --frozen-lockfile && pnpm codegen
 # No terminal UI in a container; plain logs instead.
 ENV TUI_OFF=true
