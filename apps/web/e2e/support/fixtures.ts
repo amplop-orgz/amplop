@@ -11,6 +11,7 @@ import {
 } from "@playwright/test";
 
 import { installSoftAuthenticator } from "./soft-authenticator";
+import { TESTNET } from "./stack";
 
 export type Profile = {
   name: "raka" | "mama" | "stranger";
@@ -73,11 +74,14 @@ async function makeProfile(
 ): Promise<Profile> {
   // Each person is on their own phone, so per-IP limits (07 S07-27) count them apart.
   const ip = `10.${[0, 0, 0].map(() => String(Math.floor(Math.random() * 256))).join(".")}`;
-  // Set on the context, not by route(): WebKit drops headers that route() adds.
+  // Set on the context, not by route(): WebKit drops headers that route() adds. Not on testnet: the
+  // header reaches the public RPCs too, which refuse it in CORS, and Vercel replaces it anyway.
   const context = await browser.newContext({
     ...use,
     timezoneId: ZONES[name],
-    extraHTTPHeaders: { ...use?.extraHTTPHeaders, "x-real-ip": ip },
+    extraHTTPHeaders: TESTNET
+      ? { ...use?.extraHTTPHeaders }
+      : { ...use?.extraHTTPHeaders, "x-real-ip": ip },
   });
   const seen: string[] = [];
   violations.set(context, seen);
