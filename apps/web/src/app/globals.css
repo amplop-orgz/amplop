@@ -63,6 +63,14 @@ body {
   outline-offset: 2px;
 }
 
+/* Tailwind v4 dropped the pointer cursor on buttons; in the base layer so utilities still win. */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+}
+
 dialog::backdrop {
   background: rgb(17 27 51 / 0.4);
 }
