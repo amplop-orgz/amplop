@@ -60,13 +60,15 @@ export function redactString(s: string): string {
   return out.length > MAX ? out.slice(0, MAX) : out;
 }
 
-function errorFields(e: Error): Fields {
+function errorFields(e: Error, nested = false): Fields {
   const short = (e as { shortMessage?: unknown }).shortMessage;
   const code = (e as { code?: unknown }).code;
   return {
     name: e.name,
     ...(code === undefined ? {} : { code: redact(code, 1) }),
     message: redactString(typeof short === "string" ? short : e.message),
+    // Drizzle wraps the driver error, so the Postgres reason (e.g. 42P01, 42501) is only on the cause.
+    ...(!nested && e.cause instanceof Error ? { cause: errorFields(e.cause, true) } : {}),
   };
 }
 

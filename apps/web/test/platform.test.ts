@@ -542,6 +542,19 @@ describe("T05-15 logger redaction", () => {
     expect(out.hash).toBe(hash);
     expect(out.name).toBe("[redacted]");
   });
+  it("keeps the redacted cause of a wrapped error", () => {
+    const pg = Object.assign(new Error("permission denied for table rate_limits"), {
+      code: "42501",
+    });
+    const out = redact(new Error("Failed query", { cause: pg })) as {
+      cause: Record<string, unknown>;
+    };
+    expect(out.cause).toEqual({
+      name: "Error",
+      code: "42501",
+      message: "permission denied for table rate_limits",
+    });
+  });
 });
 
 describe("T05-16, T05-17 demo flag and cron", () => {
