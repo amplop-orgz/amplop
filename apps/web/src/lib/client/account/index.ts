@@ -98,9 +98,7 @@ function start(prfOutput: Uint8Array, credentialId: string): Session {
   state.signer?.end();
   const session: Session = { address: account.address, credentialId, account };
   set({ session, signer, role: "loading" });
-  refreshRole().catch(() => {
-    set({ role: "error" });
-  });
+  void roleWithRetry(session);
   return session;
 }
 
@@ -117,6 +115,23 @@ if (typeof window !== "undefined") {
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "hidden") touch();
   });
+}
+
+/** A dropped RPC request must not strand the person on "No connection": three tries, 1 s then 2 s apart. */
+async function roleWithRetry(session: Session): Promise<void> {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      await refreshRole();
+      return;
+    } catch {
+      if (state.session !== session) return;
+      if (attempt === 3) {
+        set({ role: "error" });
+        return;
+      }
+      await new Promise((r) => setTimeout(r, attempt * 1000));
+    }
+  }
 }
 
 /** S06-12. */

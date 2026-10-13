@@ -19,7 +19,8 @@ export const transport = fallback(
     http(RPC_URL, { batch: true, retryCount: 0, timeout: 10_000 }),
     http(RPC_URL_FALLBACK, { batch: true, retryCount: 0, timeout: 10_000 }),
   ],
-  { rank: false, retryCount: 1 },
+  // Public RPCs drop the odd request under load; viem backs off 150 ms, 300 ms, 600 ms between tries.
+  { rank: false, retryCount: 3 },
 );
 
 export const publicClient: PublicClient = createPublicClient({ chain, transport });
