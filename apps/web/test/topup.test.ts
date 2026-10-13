@@ -101,8 +101,8 @@ beforeAll(() => {
       return json(201, {
         status_code: "201",
         transaction_status: "pending",
-        transaction_time: "2026-10-12 14:02:00",
-        expiry_time: "2026-10-13 14:02:00",
+        transaction_time: "2098-12-31 14:02:00",
+        expiry_time: "2099-01-01 14:02:00",
         va_numbers: [{ bank: "bca", va_number: VA }],
       });
     }
@@ -277,7 +277,7 @@ describe("POST /api/topup", () => {
       rupiah: "50000000",
       dollars: "3030303030",
       rate: 16500,
-      expiresAt: "2026-10-13T07:02:00.000Z",
+      expiresAt: "2099-01-01T07:02:00.000Z",
     });
     expect(midtrans.charges.at(-1)).toEqual({
       payment_type: "bank_transfer",
