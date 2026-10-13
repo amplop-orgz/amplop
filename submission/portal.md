@@ -17,10 +17,10 @@ Amplop is an allowance wallet for Indonesian students studying far from home. A 
 
 | Link                       | Address                                                                            |
 | -------------------------- | ---------------------------------------------------------------------------------- |
-| Live app                   | **To fill:** `NEXT_PUBLIC_SITE_URL` after the first production deploy              |
+| Live app                   | https://www.amplop.xyz                                                             |
 | Repository                 | https://github.com/amplop-orgz/amplop                                              |
-| Docs site                  | **To fill:** `NEXT_PUBLIC_DOCS_URL`                                                |
-| Try-it guide               | **To fill:** the docs site's `/try-it/` page                                       |
+| Docs site                  | https://docs.amplop.xyz                                                            |
+| Try-it guide               | https://docs.amplop.xyz/try-it/                                                    |
 | Demo video                 | **To fill** after recording (S20-4)                                                |
 | Pitch video                | **To fill** after recording (S20-5)                                                |
 | Contract (verified source) | https://testnet.monadvision.com/address/0x5596Bf1014EC25F760e8976f1DD8a40Ee250c56C |
