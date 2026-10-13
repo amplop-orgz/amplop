@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "cd ../.. && npm ci",
+  "installCommand": "cd ../.. && npm ci && npm run build -w @amplop/shared",
   "crons": [
     { "path": "/api/cron/deposits", "schedule": "0 2 * * *" },
     { "path": "/api/cron/collect", "schedule": "30 2 * * *" }
