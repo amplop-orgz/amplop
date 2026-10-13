@@ -1,0 +1,29 @@
+# Local rehearsal of the Railway setup: `docker compose -f docker-compose.selfhost.yml up --build`.
+services:
+  postgres:
+    image: postgres:18.3
+    environment: { POSTGRES_USER: envio, POSTGRES_PASSWORD: envio, POSTGRES_DB: envio }
+  hasura:
+    image: hasura/graphql-engine:v2.43.0
+    restart: on-failure
+    depends_on: [postgres]
+    ports: ["8081:8080"]
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://envio:envio@postgres:5432/envio
+      HASURA_GRAPHQL_ADMIN_SECRET: local-admin
+      HASURA_GRAPHQL_UNAUTHORIZED_ROLE: public
+      HASURA_GRAPHQL_STRINGIFY_NUMERIC_TYPES: "true"
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "false"
+  indexer:
+    build: .
+    depends_on: [postgres, hasura]
+    restart: on-failure
+    env_file: [.env.selfhost] # ENVIO_API_TOKEN=..., git-ignored
+    environment:
+      ENVIO_PG_HOST: postgres
+      ENVIO_PG_PORT: "5432"
+      ENVIO_PG_USER: envio
+      ENVIO_PG_PASSWORD: envio
+      ENVIO_PG_DATABASE: envio
+      HASURA_GRAPHQL_ENDPOINT: http://hasura:8080/v1/metadata
+      HASURA_GRAPHQL_ADMIN_SECRET: local-admin
