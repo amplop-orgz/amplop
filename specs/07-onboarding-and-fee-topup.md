@@ -54,7 +54,7 @@ A new student opens the app, creates a passkey, types a name, sets the split and
 | Student      | name saved                     | any              | `/app` (home). `/app/name` redirects to `/app`. `/app/setup` opens in edit mode (S07-17).                                                                                                                     |
 | Trusted only | any                            | any              | `/app/parent` (06 guard)                                                                                                                                                                                      |
 
-- **S07-5** A reload after the passkey and before the name shows the unlock sheet on `/app/name`. After the passkey prompt the student is back on the name step, not on Welcome (A13).
+- **S07-5** A reload after the passkey and before the name keeps the session (06 S06-16a) and stays on `/app/name`; only a new tab or an expired session shows the unlock sheet there first. After the passkey prompt the student is back on the name step, not on Welcome (A13).
 
 ### C. Board 0.1 Open in browser
 

@@ -2,6 +2,7 @@
 - A real card through a licensed issuer, using the same authorisation message.
 - Real rupiah in and a licensed conversion partner; IDRX if it reaches Monad.
 - A relayer in place of the fee top-up, so accounts never hold MON.
+- Device session keys: a key the browser cannot export, allowed by the contract to spend only this week's released money until it expires. Opening the app needs no passkey prompt; changing the split, Emergency, the trusted person and recovery still do.
 - Push notifications for the trusted person.
 - More than one trusted person, and a separate role for someone who only sends money.
 - A parent with several children.
