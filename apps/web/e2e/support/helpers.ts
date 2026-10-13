@@ -127,18 +127,48 @@ export async function askEmergency(
  * just made is the newest AccountCreated. The testnet run is serial, so it is this profile's.
  * shortcut: assumes nobody else signs up in the same seconds; fine for the judged demo deployment.
  */
+// Testnet only: the block each account was created in, where scans for its events start.
+const createdAt = new Map<bigint, bigint>();
+// The public Monad RPC answers eth_getLogs for at most 100 blocks at a time.
+const LOG_RANGE = 100n;
+
 async function learnFromChain(p: Profile): Promise<void> {
   const head = await chain.getBlockNumber();
   const logs = await chain.getContractEvents({
     address: contract(),
     abi: amplopEnvelopesAbi,
     eventName: "AccountCreated",
-    fromBlock: head - 100n,
+    fromBlock: head - LOG_RANGE + 1n,
+    toBlock: head,
   });
-  const last = logs.at(-1)?.args as { accountId: bigint; owner: string } | undefined;
-  if (!last) throw new Error("no AccountCreated in the last 100 blocks");
+  const log = logs.at(-1);
+  const last = log?.args as { accountId: bigint; owner: string } | undefined;
+  if (!log || !last) throw new Error("no AccountCreated in the last 100 blocks");
   p.known.accountId = last.accountId;
   p.known.address = last.owner;
+  createdAt.set(last.accountId, log.blockNumber);
+}
+
+/** This account's events of one name, oldest first; on testnet in 100-block pages from its creation. */
+async function eventsOf(accountId: bigint, eventName: string) {
+  const q = {
+    address: contract(),
+    abi: amplopEnvelopesAbi,
+    eventName: eventName as "Deposited",
+    args: { accountId },
+  };
+  if (!TESTNET) return chain.getContractEvents({ ...q, fromBlock: 0n });
+  const head = await chain.getBlockNumber();
+  const out = [];
+  for (
+    let from = createdAt.get(accountId) ?? head - LOG_RANGE + 1n;
+    from <= head;
+    from += LOG_RANGE
+  ) {
+    const to = from + LOG_RANGE - 1n < head ? from + LOG_RANGE - 1n : head;
+    out.push(...(await chain.getContractEvents({ ...q, fromBlock: from, toBlock: to })));
+  }
+  return out;
 }
 
 /** A1: create a passkey, type the name, keep or set the split, land on the invite step. */
@@ -262,25 +292,13 @@ export async function waitForIndexer(): Promise<void> {
 
 /** Every Deposited event for this account, oldest first. */
 export async function deposits(accountId: bigint) {
-  const logs = await chain.getContractEvents({
-    address: contract(),
-    abi: amplopEnvelopesAbi,
-    eventName: "Deposited",
-    args: { accountId },
-    fromBlock: 0n,
-  });
+  const logs = await eventsOf(accountId, "Deposited");
   return logs.map((l) => l.args as { amount: bigint; parts: readonly bigint[] });
 }
 
 /** Every event of this name for this account, oldest first (E13, F2, G1…). */
 export async function accountEvents(accountId: bigint, eventName: string) {
-  const logs = await chain.getContractEvents({
-    address: contract(),
-    abi: amplopEnvelopesAbi,
-    eventName: eventName as "Deposited",
-    args: { accountId },
-    fromBlock: 0n,
-  });
+  const logs = await eventsOf(accountId, eventName);
   return logs.map((l) => l.args as Record<string, unknown>);
 }
 
