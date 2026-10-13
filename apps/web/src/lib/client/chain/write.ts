@@ -162,9 +162,12 @@ export async function sendUserTx(
       } catch (e) {
         throw decode(e) ?? e;
       }
+      // prepare: false sends a plain estimate. With fee fields, some providers (dRPC) price the whole
+      // gas cap and answer "insufficient balance" for a freshly funded account.
       const estimate = await publicClient.estimateContractGas({
         ...request,
         account: session.account,
+        prepare: false,
       });
       const gas = gasLimitFor(estimate, call.functionName);
       const fees = await publicClient.estimateFeesPerGas();
