@@ -1,5 +1,5 @@
-// Passkey accounts with Mera (06 S06-11 to S06-20). The key lives only inside Mera's signing session,
-// in memory; nothing here touches browser storage (profiles.ts keeps credential ids and labels).
+// Passkey accounts with Mera (06 S06-11 to S06-20). The key lives inside Mera's signing session, in
+// memory; keep.ts holds the only stored copy, encrypted and for this tab (S06-16a).
 "use client";
 import {
   createPasskeyWithPrfOutput,
@@ -17,8 +17,9 @@ import type { LocalAccount } from "viem";
 import { read } from "../chain/client";
 import { DEMO } from "../env";
 import type { Role } from "../guard";
-import { profileFor, saveProfile } from "../profiles";
+import { forgetLast, profileFor, saveProfile } from "../profiles";
 import { invalidateAll } from "../query";
+import { forget, keep, restore, touch } from "./keep";
 
 export type Session = { address: `0x${string}`; credentialId: string; account: LocalAccount };
 export type { Role };
@@ -38,9 +39,19 @@ type State = {
   role: Role | "loading" | "error";
   signer: Secp256k1SigningSession | null;
   createdHere: Set<string>;
+  /** True until the tab's kept session (S06-16a) has been restored or ruled out. */
+  restoring: boolean;
 };
 
-let state: State = { session: null, role: "loading", signer: null, createdHere: new Set() };
+let state: State = {
+  session: null,
+  role: "loading",
+  signer: null,
+  createdHere: new Set(),
+  restoring: typeof window !== "undefined",
+};
+// The server render and hydration both show the restoring state, so they match.
+const SERVER: State = { ...state, restoring: true };
 const listeners = new Set<() => void>();
 
 function set(next: Partial<State>): void {
@@ -80,7 +91,9 @@ function mapError(e: unknown): Error {
   return new PasskeyFailed(e instanceof Error ? e.name : "unknown");
 }
 
-function start(signer: Secp256k1SigningSession, credentialId: string): Session {
+function start(prfOutput: Uint8Array, credentialId: string): Session {
+  void keep(prfOutput.slice(), credentialId).catch(() => undefined);
+  const signer = deriveSigner(prfOutput);
   const account = toViemAccount(signer);
   state.signer?.end();
   const session: Session = { address: account.address, credentialId, account };
@@ -89,6 +102,21 @@ function start(signer: Secp256k1SigningSession, credentialId: string): Session {
     set({ role: "error" });
   });
   return session;
+}
+
+if (typeof window !== "undefined") {
+  restore()
+    .then((r) => {
+      if (r && !state.session) start(r.prf, r.credentialId);
+    })
+    .catch(() => undefined)
+    .finally(() => {
+      set({ restoring: false });
+    });
+  window.addEventListener("pagehide", touch);
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") touch();
+  });
 }
 
 /** S06-12. */
@@ -136,7 +164,7 @@ export async function createPasskeyAccount(
       ...(r.transports ? { transports: [...r.transports] } : {}),
     });
     state.createdHere.add(r.credentialId);
-    return start(deriveSigner(r.prfOutput), r.credentialId);
+    return start(r.prfOutput, r.credentialId);
   } catch (e) {
     throw mapError(e);
   }
@@ -159,14 +187,16 @@ export async function signInWithPasskey(opts: { credentialId?: string } = {}): P
     });
     const listed = profileFor(r.credentialId);
     saveProfile(listed ?? { credentialId: r.credentialId, label: "Amplop" });
-    return start(deriveSigner(r.prfOutput), r.credentialId);
+    return start(r.prfOutput, r.credentialId);
   } catch (e) {
     throw mapError(e);
   }
 }
 
-/** S06-16: ends the signing session and forgets everything read for it. */
+/** S06-16: ends the signing session and forgets everything read for it, including the kept copy. */
 export function signOut(): void {
+  void forget();
+  forgetLast(); // S06-10a: after a sign-out, /app shows Welcome rather than Welcome back
   state.signer?.end();
   invalidateAll();
   set({ session: null, signer: null, role: "loading" });
@@ -192,7 +222,7 @@ export async function switchProfile(
   invalidateAll();
   set({ session: null, signer: null, role: "loading" });
   saveProfile(known ?? { credentialId: r.credentialId, label: "Amplop" });
-  const session = start(deriveSigner(r.prfOutput), r.credentialId);
+  const session = start(r.prfOutput, r.credentialId);
   const role = await refreshRole();
   // 15 S15-7: the caller navigates in-app; a full page load would drop the new in-memory session.
   if (opts.stay) return { session, home: null };
@@ -231,14 +261,18 @@ export function currentSession(): Session | null {
   return state.session;
 }
 
-export function useSession(): { session: Session | null; role: Role | "loading" | "error" } {
+export function useSession(): {
+  session: Session | null;
+  role: Role | "loading" | "error";
+  restoring: boolean;
+} {
   const s = useSyncExternalStore(
     (l) => {
       listeners.add(l);
       return () => listeners.delete(l);
     },
     () => state,
-    () => state,
+    () => SERVER,
   );
-  return { session: s.session, role: s.role };
+  return { session: s.session, role: s.role, restoring: s.restoring };
 }

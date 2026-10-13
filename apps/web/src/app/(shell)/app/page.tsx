@@ -1,25 +1,34 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { use, useEffect } from "react";
 import { HomeEmpty } from "@/components/onboarding/HomeEmpty";
 import { useArrivedDeposit } from "@/components/topup/Arrived";
 import { Welcome } from "@/components/onboarding/Welcome";
 import { Home } from "@/components/home/Home";
 import { RecoveryBanner } from "@/components/settings/RecoveryBanner";
+import { UnlockSheet } from "@/components/shell/UnlockSheet";
 import { InlineMessage } from "@/components/ui";
 import { useSession } from "@/lib/client/account";
 import { useAccount, useProfileName, useTrustedName } from "@/lib/client/data";
 import { appHome } from "@/lib/client/guard";
 import { useT } from "@/lib/client/i18n";
+import { lastProfileId } from "@/lib/client/profiles";
 
 // /app: Welcome, the student's home, or parent home (06 S06-8, 07 S07-4, S07-19, S07-21).
-export default function AppPage() {
+export default function AppPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const { start } = use(searchParams);
   const { session, role } = useSession();
   const router = useRouter();
   const where = typeof role === "object" ? appHome(role) : undefined;
   useEffect(() => {
     if (where === "/app/parent") router.replace("/app/parent");
   }, [where, router]);
+  // S06-10a: someone who signed in on this device before gets Welcome back; ?start opens Welcome.
+  if (!session && lastProfileId() && start === undefined) return <UnlockSheet />;
   if (!session || where === null) return <Welcome />;
   if (where === "home" && typeof role === "object" && role.studentAccountId !== undefined) {
     return <StudentHome accountId={role.studentAccountId} />;

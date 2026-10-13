@@ -117,5 +117,12 @@ export default tseslint.config(
       "no-restricted-properties": ["error", { object: "document", property: "cookie" }],
     },
   },
+  {
+    // 06 S06-16a: keep.ts alone stores the encrypted session copy, its non-extractable key in IndexedDB.
+    files: ["apps/web/src/lib/client/account/keep.ts"],
+    rules: {
+      "no-restricted-globals": ["error", "localStorage", "sessionStorage"],
+    },
+  },
   prettier,
 );

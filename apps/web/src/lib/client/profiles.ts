@@ -45,6 +45,10 @@ export function setProfileLabel(credentialId: string, label: string): void {
   writeItem("local", KEY, JSON.stringify(list));
 }
 
+export function forgetLast(): void {
+  writeItem("local", LAST, null);
+}
+
 export function lastProfileId(): string | null {
   return readItem("local", LAST);
 }

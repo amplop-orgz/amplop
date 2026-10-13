@@ -64,7 +64,7 @@ export function UnlockSheet() {
           </Button>
         ) : null}
         <Link
-          href="/app"
+          href="/app?start"
           className="flex min-h-12 items-center justify-center font-bold text-link no-underline"
         >
           {t("unlock.new")}

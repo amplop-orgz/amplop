@@ -77,7 +77,7 @@ function Guard({ children }: { children: ReactNode }) {
   const path = usePathname();
   const router = useRouter();
   const { t } = useT();
-  const { session, role } = useSession();
+  const { session, role, restoring } = useSession();
   // A page whose guard ignores the role stays mounted while the role loads, so a sign-in made on it
   // (Welcome, /recover) does not remount it mid-flow and lose its state.
   const ready =
@@ -105,7 +105,7 @@ function Guard({ children }: { children: ReactNode }) {
       </div>
     );
   }
-  if (!decision) return <div className="p-5 text-muted">{t("common.loading")}</div>;
+  if (restoring || !decision) return <div className="p-5 text-muted">{t("common.loading")}</div>;
   if ("unlock" in decision) return <UnlockSheet />;
   if ("redirect" in decision) return null; // S06-9: a refused page renders nothing
   return <>{children}</>;

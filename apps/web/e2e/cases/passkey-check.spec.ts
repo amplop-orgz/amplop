@@ -11,7 +11,17 @@ test("passkey check: create, reload, sign in, same address", async ({ raka }) =>
   const first = await raka.address();
   expect(await raka.authenticator.credentials()).toHaveLength(1);
 
+  // 06 S06-16a: a reload keeps the session, with no passkey prompt.
   await page.reload();
-  await page.getByRole("button", { name: "Sign in with passkey" }).first().click();
+  await page.getByLabel("Your name").waitFor();
+  await expect.poll(() => raka.address()).toBe(first);
+
+  // Closing the tab drops the kept copy (cleared here); /app then shows Welcome back (S06-10a).
+  await page.evaluate(() => {
+    sessionStorage.clear();
+  });
+  await page.goto("/app");
+  await expect(page.getByRole("heading", { name: "Welcome back" })).toBeVisible();
+  await page.getByRole("button", { name: "Sign in with passkey" }).click();
   await expect.poll(() => raka.address()).toBe(first);
 });
