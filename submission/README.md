@@ -38,7 +38,7 @@ Write the time (WIB) next to each box as it is ticked.
 - [ ] No open high or medium finding: code scanning, Dependabot, Slither and Aderyn, the self-review report, the Mon 12 Oct review pass.
 - [ ] Three different server wallets. Treasury at least 20.000 AUSD (aim for 40.000) and above 10 MON plus its daily budget; card service above 10 MON plus its daily budget; fee sponsor at least 60 MON.
 - [ ] Contract verified; README, docs and SECURITY.md addresses match `deployments/monad-testnet.json`.
-- [ ] Envio Cloud deployment promoted, `_meta.isReady` true, auto-deploy turned off.
+- [x] Production indexer (self-hosted on Railway, 16 decision 14) reports `_meta.isReady` true.
 - [ ] Landing page, app and docs open on a phone from a logged-out browser; L3 passes on production.
 - [ ] An annotated tag `submission-2026-10-13` is pushed on the final commit (a new tag, never a moved one).
 

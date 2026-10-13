@@ -422,7 +422,7 @@ None. Screens that show this data: 2.1 (history link), 2.3, 2.9, 2.10 (11); 3.2 
 - [ ] U1–U20 pass in CI.
 - [ ] Query documents live in `@amplop/shared/indexer` and pass the query check.
 - [ ] The lag rule in S16-14 is implemented by 06 and used by 11 and 14.
-- [ ] Envio Cloud deployment is promoted, `_meta.isReady` is true, and `NEXT_PUBLIC_INDEXER_URL` points at it in Vercel.
+- [ ] The production indexer (decision 14) reports `_meta.isReady` true, and `NEXT_PUBLIC_INDEXER_URL` points at it in Vercel.
 - [ ] F10 passes: with the indexer off, home, card and Emergency still work.
 - [ ] Bounty materials exist: config, schema, handlers, screenshot, `indexer/README.md`.
 
@@ -447,11 +447,7 @@ None. Screens that show this data: 2.1 (history link), 2.3, 2.9, 2.10 (11); 3.2 
 11. **`EIP712DomainChanged` is not indexed.** It is in the ABI (from OpenZeppelin's EIP712) but this contract never emits it, so the check compares against the other 22 events.
 12. **Hasura names the enum types in lower case** (`$envelope: envelope!`), since Envio creates them unquoted. BigInt fields are typed `string | number` in the query results and read with `toBig`, because the local Docker images could not be pulled here to confirm which the endpoint returns; every stored value fits a safe integer.
 13. **`config.e2e.yaml` is generated and ignored by git**, since `deployments/anvil.json` is local.
- 9. **The indexer is its own pnpm project with its own `pnpm-lock.yaml` (S16-18 applied from the start).** Envio 3.0.0-alpha.21 runs `pnpm install` itself during codegen, its generated package must compile with `rescript` (a build script), and its dependency tree (GPL-3.0 CLI, Fuel packages) would otherwise enter the web app's lockfile and install-script checks. Only `rescript` and `esbuild` may run build scripts (`indexer/pnpm-workspace.yaml`). CI runs it in its own `test-indexer` job; pnpm's version is `PNPM` in `tools/versions.env`.
- 10. **Handlers register with the generated `AmplopEnvelopes.<Event>.handler(...)`**, the API this Envio version generates, in place of S16-10's `indexer.onEvent`.
- 11. **`EIP712DomainChanged` is not indexed.** It is in the ABI (from OpenZeppelin's EIP712) but this contract never emits it, so the check compares against the other 22 events.
- 12. **Hasura names the enum types in lower case** (`: envelope!`), since Envio creates them unquoted. BigInt fields are typed `string | number` in the query results and read with `toBig`, because the local Docker images could not be pulled here to confirm which the endpoint returns; every stored value fits a safe integer.
- 13. **`config.e2e.yaml` is generated and ignored by git**, since `deployments/anvil.json` is local.
+14. **Production runs self-hosted, not on Envio Cloud (S16-15 replaced).** On 13 Oct the Envio Cloud org never saw the GitHub App installation, so `indexer add` could not link the repo. The same `config.yaml` runs from `indexer/Dockerfile` on Railway (project `amplop-indexer`: Postgres, Hasura v2.43.0 with `HASURA_GRAPHQL_UNAUTHORIZED_ROLE=public`, and the indexer with `ENVIO_API_TOKEN` for HyperSync). `docker-compose.selfhost.yml` runs the same stack locally. Endpoint: `https://hasura-production-1503.up.railway.app/v1/graphql`. There is no auto-deploy, so the auto-deploy step in S16-15 does not apply.
 
 ## Additions to 01 (status)
 

@@ -7,7 +7,7 @@ Spec 20 S20-9, the materials from 16 S16-19. Links point at the submission tag o
 - Config: [`indexer/config.yaml`](https://github.com/amplop-orgz/amplop/blob/main/indexer/config.yaml), start block 70137747 on Monad testnet (chain 10143).
 - Schema: [`indexer/schema.graphql`](https://github.com/amplop-orgz/amplop/blob/main/indexer/schema.graphql)
 - Handlers: [`indexer/src/handlers/`](https://github.com/amplop-orgz/amplop/blob/main/indexer/src/handlers)
-- GraphQL endpoint: **To fill** with the Envio Cloud URL after deploying (`NEXT_PUBLIC_INDEXER_URL`).
+- GraphQL endpoint: `https://hasura-production-1503.up.railway.app/v1/graphql` (`NEXT_PUBLIC_INDEXER_URL`). The same HyperIndex project runs self-hosted from [`indexer/Dockerfile`](https://github.com/amplop-orgz/amplop/blob/main/indexer/Dockerfile) with Postgres and Hasura, syncing through HyperSync, because the Envio Cloud org could not link the GitHub repo on 13 Oct.
 
 ## The parent's alerts
 
